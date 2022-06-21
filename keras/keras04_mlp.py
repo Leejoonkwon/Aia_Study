@@ -16,7 +16,7 @@ x = x.T
 print(x)
 print(x.shape) #(10,2)
 
-
+'''
 #2. 모델구성
 model = Sequential()
 model.add(Dense(5,input_dim=2))
@@ -39,3 +39,4 @@ print('[10,1.4]의 예측값 :',result)
 
 #loss : 4.490359970077407e-06
 #[10,1.4]의 예측값 : [[19.996462]]
+'''
