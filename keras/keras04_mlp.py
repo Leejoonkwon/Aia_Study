@@ -11,28 +11,31 @@ print(x.shape) # (2, 10)
 print(y.shape) # (10,)
 
 # x = x.T
-# x = x.transtpose()
+# x = x.transtpose(10,2)
 x = x.T
 print(x)
-print(x.shape)
+print(x.shape) #(10,2)
+
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(5,input_dim=1))
+model.add(Dense(5,input_dim=2))
 model.add(Dense(4))
+model.add(Dense(3))
+model.add(Dense(3))
 model.add(Dense(3))
 model.add(Dense(4))
 model.add(Dense(1))
 
 #3. 컴파일,훈련
 model.compile(loss='mse', optimizer='adam')
-model.fit(x, y , epochs=100, batch_size=3)
+model.fit(x, y , epochs=800, batch_size=1)
 
 #4. 평가,예측
 loss = model.evaluate(x,y)
 print('loss :',loss)
-model.predict([10,1.4])
-result = model,predict([[10,1.4]])
+result = model.predict([[10, 1.4]])
 print('[10,1.4]의 예측값 :',result)
 
-
+#loss : 4.490359970077407e-06
+#[10,1.4]의 예측값 : [[19.996462]]
