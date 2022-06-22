@@ -3,14 +3,14 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 
 #1. 데이터
-x = np.array([1,2,3,4,6,7,8,9,10])
-y = np.array([1,2,3,4,6,7,8,9,10])
+x = np.array([1,2,3,4,5,6,7,8,9,10])
+y = np.array([1,2,3,4,5,6,7,8,9,10])
 
 # [과제] 넘파이 리스트의 슬라이싱!! 7:3으로 잘라라 (6/21 과제)
-x_train = x[7:]
-x_test = x[:3]
-y_train = y[7:]
-y_test =y[:3]
+x_train = x[:7]
+x_test = x[-3:]
+y_train = y[:7]
+y_test =y[-3:]
 
 #x_train = np.array([1,2,3,4,5,6,7])
 #x_test = np.array([8,9,10])
@@ -36,7 +36,7 @@ print('loss :', loss)
 result = model.predict([11])
 print('[11]의 예측값 :',result)
 
-#loss : 0.020162180066108704
-#[11]의 예측값 : [[11.028331]]
+#loss : 4.2443084637133754e-12
+#[11]의 예측값 : [[11.000002]]
 
 
