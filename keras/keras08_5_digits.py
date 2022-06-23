@@ -9,7 +9,7 @@ datasets = load_digits()
 x = datasets.data
 y = datasets.target
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size=0.94,shuffle=True, random_state=12 ) 
+    x, y, train_size=0.95,shuffle=True, random_state=12 ) 
 print(x)
 print(y)
 print(x.shape, y.shape) #(1797, 64) (1797,)
@@ -20,18 +20,19 @@ print(datasets.DESCR)
 #2. 모델 구성
 
 model = Sequential()
-model.add(Dense(73,input_dim=64))
+model.add(Dense(54,input_dim=64))
 model.add(Dense(83))
 model.add(Dense(32))
 model.add(Dense(28))
 model.add(Dense(20))
+model.add(Dense(18))
 model.add(Dense(12))
 model.add(Dense(8))
 model.add(Dense(1))
 
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
-model.fit(x_train, y_train, epochs = 150, batch_size = 12)
+model.fit(x_train, y_train, epochs = 360, batch_size = 6)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
