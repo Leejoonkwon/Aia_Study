@@ -45,5 +45,6 @@ from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print('r2스코어 :', r2)
 
+# r2 스코어 "0.8이상"
 # loss : 18.920406341552734
 # r2스코어 : 0.7709868068338679
