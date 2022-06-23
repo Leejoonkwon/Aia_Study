@@ -19,9 +19,9 @@ print(datasets.DESCR)
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(8, input_dim=8))
-model.add(Dense(32))
-model.add(Dense(34))
+model.add(Dense(4, input_dim=8))
+model.add(Dense(12))
+model.add(Dense(27))
 model.add(Dense(38))
 model.add(Dense(42))
 model.add(Dense(50))
@@ -34,7 +34,7 @@ model.add(Dense(1))
 #3. 컴파일,훈련
 
 model.compile(loss='mse', optimizer='adam')
-model.fit(x_train, y_train, epochs=50, batch_size=82)
+model.fit(x_train, y_train, epochs=50, batch_size=30)
 
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
@@ -46,7 +46,6 @@ from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print('r2스코어 :', r2)
 
-# [실습 시작!!] #0.57이상
-# loss : 0.637947678565979
-# r2스코어 : 0.5350813419599821
-
+# [실습 시작!!] #0.54이상
+# loss : 0.6105058789253235
+# r2스코어 : 0.5448620536102959

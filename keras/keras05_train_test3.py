@@ -12,12 +12,13 @@ y = np.array([1,2,3,4,5,6,7,8,9,10]) #안전하다?
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3,train_size=0.7, 
                                                 #    shuffle=True ,
-                                                    random_state=66
+                                                    random_state=138
 )
 #셔플의 기본값은 True
 
 print(x_train) # [2 7 6 3 4 8 5]
 print(x_test)  # [1 9 10]
+"""
 print(y_train)
 print(y_test)
 
@@ -43,4 +44,4 @@ print('[11]의 예측값 :',result)
 
 #loss : 1.1216201301067485e-06
 #[11]의 예측값 : [[10.998204]]
-
+"""
