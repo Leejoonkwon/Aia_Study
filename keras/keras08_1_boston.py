@@ -7,7 +7,7 @@ datasets = load_boston()
 x = datasets.data
 y = datasets.target
 x_train, x_test ,y_train, y_test = train_test_split(
-          x, y, train_size=0.7,shuffle=True,random_state=66)
+          x, y, train_size=0.9,shuffle=True,random_state=66)
 
 # print(x.shape, y.shape) #(506, 13)-> 13개의 피쳐 (506,) 
 
@@ -33,7 +33,7 @@ model.add(Dense(1))
 #3. 컴파일,훈련
 
 model.compile(loss='mae', optimizer='adam')
-model.fit(x_train, y_train, epochs=150, batch_size=2)
+model.fit(x_train, y_train, epochs=150, batch_size=4)
 
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
