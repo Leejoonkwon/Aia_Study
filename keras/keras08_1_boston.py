@@ -7,7 +7,7 @@ datasets = load_boston()
 x = datasets.data
 y = datasets.target
 x_train, x_test ,y_train, y_test = train_test_split(
-          x, y, train_size=0.9,shuffle=True,random_state=66)
+          x, y, train_size=0.94,shuffle=True,random_state=12)
 
 # print(x.shape, y.shape) #(506, 13)-> 13개의 피쳐 (506,) 
 
@@ -33,7 +33,7 @@ model.add(Dense(1))
 #3. 컴파일,훈련
 
 model.compile(loss='mae', optimizer='adam')
-model.fit(x_train, y_train, epochs=150, batch_size=4)
+model.fit(x_train, y_train, epochs=150, batch_size=2)
 
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
@@ -46,5 +46,5 @@ r2 = r2_score(y_test, y_predict)
 print('r2스코어 :', r2)
 
 # r2 스코어 "0.8이상"
-# loss : 18.920406341552734
-# r2스코어 : 0.7709868068338679
+# loss : 3.1941933631896973
+# r2스코어 : 0.8146167932510104
