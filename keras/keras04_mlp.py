@@ -39,4 +39,8 @@ print('[10,1.4]의 예측값 :',result)
 
 #loss : 4.490359970077407e-06
 #[10,1.4]의 예측값 : [[19.996462]]
+df = pd.DataFrame({'hour': [hour], 'hour_bef_temperature': [hour_bef_temperature], 'hour_bef_precipitation': [hour_bef_precipitation],
+       'hour_bef_windspeed': [hour_bef_windspeed], 'hour_bef_humidity': [hour_bef_humidity], 'hour_bef_visibility': [hour_bef_visibility],
+       'hour_bef_ozone': [hour_bef_ozone], 'hour_bef_pm10': [hour_bef_pm10], 'hour_bef_pm2.5': [hour_bef_pm25]})
+df.fillna(method='pad')
 '''
