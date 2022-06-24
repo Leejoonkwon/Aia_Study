@@ -32,7 +32,7 @@ model.add(Dense(1))
 
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
-model.fit(x_train, y_train, epochs = 360, batch_size = 6)
+model.fit(x_train, y_train, epochs = 150, batch_size = 12)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
