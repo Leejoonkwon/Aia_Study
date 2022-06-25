@@ -1,6 +1,7 @@
 # 데이콘 따릉이 문제풀이
 import numpy as np
 import pandas as pd
+from sqlalchemy import null
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
@@ -23,9 +24,9 @@ print(train_set.columns)
 print(train_set.info()) #null은 누락된 값이라고 하고 "결측치"라고도 한다.
 print(train_set.describe()) 
 
-###### 결측치 처리 1.제거#####
+###### 결측치 처리 1.제거##### dropna 사용
 print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
-train_set = train_set.dropna()
+train_set = train_set.fillna(train_set.mean())
 print(train_set.isnull().sum())
 print(train_set.shape)
 
@@ -36,7 +37,7 @@ print(x.shape) #(1459, 9)
 
 y = train_set['count']
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size = 0.93, shuffle = True, random_state = 10
+    x, y, train_size = 0.9, shuffle = True, random_state = 16
  )
 print(y)
 print(y.shape) # (1459,)
@@ -45,21 +46,22 @@ print(y.shape) # (1459,)
 #2. 모델구성
 
 model = Sequential()
-model.add(Dense(4,input_dim=9))
-model.add(Dense(16))
-model.add(Dense(14))
+model.add(Dense(10,input_dim=9))
+model.add(Dense(96))
+model.add(Dense(182))
 model.add(Dense(23))
-model.add(Dense(16))
-model.add(Dense(24))
-model.add(Dense(8))
+model.add(Dense(28))
+model.add(Dense(84))
+model.add(Dense(48))
+model.add(Dense(12))
+model.add(Dense(18))
+model.add(Dense(10))
 model.add(Dense(1))
-import time
+
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
-start_time = time.time()
-model.fit(x, y , epochs = 12000, batch_size=12, verbose=1)
-end_time = time.time() - start_time
-print("걸린시간 :",end_time)
+model.fit(x, y , epochs = 2060, batch_size=150, verbose=3)
+
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
 print('loss :',loss)
@@ -71,6 +73,5 @@ def RMSE(y_test, y_predict):
 rmse = RMSE(y_test, y_predict)
 print("RMSE :",rmse)  
   
-# loss : 2414.48779296875
-# RMSE : 49.13743680108331
-
+# loss : 2022.3809814453125
+# RMSE : 44.97089119001261
