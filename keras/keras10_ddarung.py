@@ -37,7 +37,7 @@ print(x.shape) #(1459, 9)
 
 y = train_set['count']
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size = 0.88, shuffle = True, random_state = 16
+    x, y, train_size = 0.91, shuffle = True, random_state = 16
  )
 print(y)
 print(y.shape) # (1459,)
@@ -46,22 +46,22 @@ print(y.shape) # (1459,)
 #2. 모델구성
 
 model = Sequential()
-model.add(Dense(28,input_dim=9))
-model.add(Dense(32))
-model.add(Dense(42))
-model.add(Dense(24))
-model.add(Dense(37))
-model.add(Dense(58))
-model.add(Dense(42))
+model.add(Dense(14,input_dim=9))
+model.add(Dense(96))
+model.add(Dense(78))
+model.add(Dense(36))
 model.add(Dense(37))
 model.add(Dense(24))
-model.add(Dense(16))
-model.add(Dense(9))
+model.add(Dense(42))
+model.add(Dense(24))
+model.add(Dense(18))
+model.add(Dense(10))
+model.add(Dense(4))
 model.add(Dense(1))
 
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
-model.fit(x, y , epochs = 172, batch_size=18, verbose=2)
+model.fit(x, y , epochs = 1282, batch_size=182, verbose=2)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
