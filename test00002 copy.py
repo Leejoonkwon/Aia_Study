@@ -61,7 +61,7 @@ model.add(Dense(1))
 
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
-model.fit(x, y , epochs = 172, batch_size=18, verbose=2)
+model.fit(x, y , epochs = 184, batch_size=18, verbose=2)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -73,6 +73,7 @@ def RMSE(y_test, y_predict):
      return np.sqrt(mean_squared_error(y_test, y_predict))
 rmse = RMSE(y_test, y_predict)
 print("RMSE :",rmse)  
+
 # loss : 2022.3809814453125
 # RMSE : 44.97089119001261 
 # train_size = 0.9, shuffle = True, random_state = 16
