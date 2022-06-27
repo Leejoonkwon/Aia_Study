@@ -40,7 +40,7 @@ print(x.shape) #(1459, 9)
 
 y = train_set['count']
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size = 0.989, shuffle = True, random_state = 100
+    x, y, train_size = 0.992, shuffle = True, random_state = 68
  )
 print(y)
 print(y.shape) # (1459,)
@@ -56,7 +56,7 @@ model.add(Dense(1))
 
 #3. 컴파일, 훈련
 model.compile(loss='mae', optimizer='adam')
-model.fit(x, y , epochs =519, batch_size=68, verbose=2)
+model.fit(x, y , epochs =824, batch_size=750, verbose=2)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -72,12 +72,13 @@ y_summit = model.predict(test_set)
 # print(y_summit)
 # print(y_summit.shape)
 
-# loss : 12.754810333251953
-# RMSE : 15.155596996167779
-# train_size = 0.989, shuffle = True, random_state = 100
-# epochs =519, batch_size=68, verbose=2
+# loss : 17.80689811706543
+# RMSE : 22.725119090100282
+# train_size = 0.992, shuffle = True, random_state = 68
+# epochs =824, batch_size=750, verbose=2
+
 
 submission['count'] = y_summit
 submission = submission.fillna(submission.mean())
-submission.to_csv('test9.csv',index=True)
+submission.to_csv('test10.csv',index=True)
 
