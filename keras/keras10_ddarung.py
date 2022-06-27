@@ -37,7 +37,7 @@ print(x.shape) #(1459, 9)
 
 y = train_set['count']
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size = 0.9899, shuffle = True, random_state = 100
+    x, y, train_size = 0.989, shuffle = True, random_state = 100
  )
 print(y)
 print(y.shape) # (1459,)
@@ -53,7 +53,7 @@ model.add(Dense(1))
 
 #3. 컴파일, 훈련
 model.compile(loss='mae', optimizer='adam')
-model.fit(x, y , epochs =519, batch_size=64, verbose=2)
+model.fit(x, y , epochs =519, batch_size=61, verbose=2)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -66,9 +66,9 @@ def RMSE(y_test, y_predict):
 rmse = RMSE(y_test, y_predict)
 print("RMSE :",rmse)  
 
-# loss : 10.569381713867188
-# RMSE : 13.37488122962967
-# train_size = 0.96, shuffle = True, random_state = 100
+# loss : 9.813878059387207
+# RMSE : 13.010238299709307
+# train_size = 0.989, shuffle = True, random_state = 100
 
 
 
