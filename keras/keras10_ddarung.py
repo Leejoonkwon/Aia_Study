@@ -29,10 +29,10 @@ print(train_set.describe())
 
 ###### 결측치 처리 1.제거##### dropna 사용
 print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
-train_set = train_set.fillna(train_set.mean())
+train_set = train_set.fillna(train_set.median())
 print(train_set.isnull().sum())
 print(train_set.shape)
-test_set = test_set.fillna(test_set.mean())
+test_set = test_set.fillna(test_set.median())
 
 x = train_set.drop(['count'],axis=1) #axis는 컬럼 
 print(x.columns)
@@ -40,7 +40,7 @@ print(x.shape) #(1459, 9)
 
 y = train_set['count']
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size = 0.992, shuffle = True, random_state = 68
+    x, y, train_size = 0.991, shuffle = True, random_state = 100
  )
 print(y)
 print(y.shape) # (1459,)
@@ -56,7 +56,7 @@ model.add(Dense(1))
 
 #3. 컴파일, 훈련
 model.compile(loss='mae', optimizer='adam')
-model.fit(x, y , epochs =824, batch_size=750, verbose=2)
+model.fit(x, y , epochs =524, batch_size=62, verbose=2)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -72,13 +72,13 @@ y_summit = model.predict(test_set)
 # print(y_summit)
 # print(y_summit.shape)
 
-# loss : 17.80689811706543
-# RMSE : 22.725119090100282
-# train_size = 0.992, shuffle = True, random_state = 68
-# epochs =824, batch_size=750, verbose=2
+# loss : 11.38288402557373
+# RMSE : 15.380415308892427
+# train_size = 0.991, shuffle = True, random_state = 100
+# epochs =524, batch_size=62, verbose=2
 
 
 submission['count'] = y_summit
-submission = submission.fillna(submission.mean())
-submission.to_csv('test10.csv',index=True)
+submission = submission.fillna(submission.median())
+submission.to_csv('test12.csv',index=True)
 
