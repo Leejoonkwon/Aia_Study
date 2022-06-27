@@ -32,6 +32,8 @@ import matplotlib.pyplot as plt
 
 plt.scatter(x,y)
 plt.plot(x, y_predict, color='red')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
 plt.show()
 
 #tep - loss: 2.1752

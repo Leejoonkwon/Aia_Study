@@ -17,6 +17,9 @@ print(train_set.shape) #(1459, 10)
 
 test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
                        index_col=0)
+submission = pd.read_csv(path + 'submission.csv',#예측에서 쓸거야!!
+                       index_col=0)
+                       
 print(test_set)
 print(test_set.shape) #(715, 9) #train_set과 열 값이 '1'차이 나는 건 count를 제외했기 때문이다.예측 단계에서 값을 대입
 
@@ -29,7 +32,7 @@ print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
 train_set = train_set.fillna(train_set.mean())
 print(train_set.isnull().sum())
 print(train_set.shape)
-
+test_set = test_set.fillna(test_set.mean())
 
 x = train_set.drop(['count'],axis=1) #axis는 컬럼 
 print(x.columns)
@@ -53,7 +56,7 @@ model.add(Dense(1))
 
 #3. 컴파일, 훈련
 model.compile(loss='mae', optimizer='adam')
-model.fit(x, y , epochs =519, batch_size=61, verbose=2)
+model.fit(x, y , epochs =519, batch_size=68, verbose=2)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -65,10 +68,16 @@ def RMSE(y_test, y_predict):
      return np.sqrt(mean_squared_error(y_test, y_predict))
 rmse = RMSE(y_test, y_predict)
 print("RMSE :",rmse)  
+y_summit = model.predict(test_set)
+# print(y_summit)
+# print(y_summit.shape)
 
-# loss : 9.813878059387207
-# RMSE : 13.010238299709307
+# loss : 12.754810333251953
+# RMSE : 15.155596996167779
 # train_size = 0.989, shuffle = True, random_state = 100
+# epochs =519, batch_size=68, verbose=2
 
-
+submission['count'] = y_summit
+submission = submission.fillna(submission.mean())
+submission.to_csv('test9.csv',index=True)
 
