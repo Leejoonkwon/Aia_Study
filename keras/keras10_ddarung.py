@@ -37,7 +37,7 @@ print(x.shape) #(1459, 9)
 
 y = train_set['count']
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size = 0.91, shuffle = True, random_state = 16
+    x, y, train_size = 0.9899, shuffle = True, random_state = 100
  )
 print(y)
 print(y.shape) # (1459,)
@@ -46,22 +46,14 @@ print(y.shape) # (1459,)
 #2. 모델구성
 
 model = Sequential()
-model.add(Dense(14,input_dim=9))
-model.add(Dense(96))
-model.add(Dense(78))
-model.add(Dense(36))
-model.add(Dense(37))
-model.add(Dense(24))
-model.add(Dense(42))
-model.add(Dense(24))
-model.add(Dense(18))
-model.add(Dense(10))
-model.add(Dense(4))
+model.add(Dense(100,input_dim=9))
+model.add(Dense(100, activation='swish'))
+model.add(Dense(100, activation='swish'))
 model.add(Dense(1))
 
 #3. 컴파일, 훈련
-model.compile(loss='mse', optimizer='adam')
-model.fit(x, y , epochs = 1282, batch_size=182, verbose=2)
+model.compile(loss='mae', optimizer='adam')
+model.fit(x, y , epochs =519, batch_size=64, verbose=2)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -73,6 +65,10 @@ def RMSE(y_test, y_predict):
      return np.sqrt(mean_squared_error(y_test, y_predict))
 rmse = RMSE(y_test, y_predict)
 print("RMSE :",rmse)  
-# loss : 2022.3809814453125
-# RMSE : 44.97089119001261 
-# train_size = 0.9, shuffle = True, random_state = 16
+
+# loss : 10.569381713867188
+# RMSE : 13.37488122962967
+# train_size = 0.96, shuffle = True, random_state = 100
+
+
+
