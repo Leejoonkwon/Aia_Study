@@ -3,10 +3,16 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 
 #1. 데이터
-x = np.array([[1,2,3,4,5,6,7,8,9,10],
-              [1, 1, 1, 1, 2, 1.3, 1.4, 1.5, 1.6, 1.4]]
+x = np.array([{'aa' : [1,2,3,4,5,6,7,8,9,10],
+              'bb':[1, 1, 1, 1, 2, 1.3, 1.4, 1.5, 1.6, 1.4]}]
              )
 y = np.array([11,12,13,14,15,16,17,18,19,20])
+
+
+y['bb'] = x['bb']
+
+print(y)
+'''
 print(x.shape) # (2, 10)
 print(y.shape) # (10,)
 
@@ -16,7 +22,7 @@ x = x.T
 print(x)
 print(x.shape) #(10,2)
 
-'''
+
 #2. 모델구성
 model = Sequential()
 model.add(Dense(5,input_dim=2))

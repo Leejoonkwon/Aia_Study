@@ -52,11 +52,12 @@ model = Sequential()
 model.add(Dense(100,input_dim=9))
 model.add(Dense(100, activation='swish'))
 model.add(Dense(100, activation='swish'))
+model.add(Dense(100, activation='swish'))
 model.add(Dense(1))
 
 #3. 컴파일, 훈련
 model.compile(loss='mae', optimizer='adam')
-model.fit(x, y , epochs =519, batch_size=62, verbose=2)
+model.fit(x, y , epochs =2540, batch_size=47, verbose=2)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -80,5 +81,9 @@ y_summit = model.predict(test_set)
 
 submission['count'] = y_summit
 submission = submission.fillna(submission.median())
-submission.to_csv('test12.csv',index=True)
+submission = abs(submission)
+submission.to_csv('test13.csv',index=True)
+
+
+
 
