@@ -59,7 +59,7 @@ model.add(Dense(1))
 
 #3. 컴파일, 훈련
 model.compile(loss='mae', optimizer='adam')
-model.fit(x, y , epochs =3936, batch_size=178, verbose=2)
+model.fit(x, y , epochs =5830, batch_size=516, verbose=2)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -76,11 +76,12 @@ y_summit = model.predict(test_set)
 # print(y_summit)
 # print(y_summit.shape)
 
-# loss : 55.3439826965332
-# RMSE : 98.98607995677362
-# train_size = 0.935, shuffle = True, random_state = 100
-# epochs =5830, batch_size=516, verbose=2
+# loss : 66.93109893798828
+# RMSE : 112.39337949312592
+# train_size = 0.949, shuffle = True, random_state = 100
+# # epochs =5830, batch_size=516, verbose=2
 sampleSubmission['count'] = y_summit
+sampleSubmission= abs(sampleSubmission)
 sampleSubmission.to_csv('test16.csv',index=True)
 
 
