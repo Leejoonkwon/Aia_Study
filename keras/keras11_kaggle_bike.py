@@ -76,8 +76,8 @@ y_summit = model.predict(test_set)
 # print(y_summit)
 # print(y_summit.shape)
 
-# loss : 66.93109893798828
-# RMSE : 112.39337949312592
+# loss : 356.1080
+# RMSE :  50.77395531000674
 # train_size = 0.949, shuffle = True, random_state = 100
 # # epochs =5830, batch_size=516, verbose=2
 sampleSubmission['count'] = y_summit
