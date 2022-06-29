@@ -73,7 +73,7 @@ model.add(Dense(1))
 
 #3. 컴파일, 훈련
 model.compile(loss='mae', optimizer='adam')
-history = model.fit(x_train, y_train , epochs =2560,validation_split=0.3, batch_size=560, verbose=2)
+history = model.fit(x_train, y_train , epochs =102560,validation_split=0.3, batch_size=560, verbose=2)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
