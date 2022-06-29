@@ -10,7 +10,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import r2_score, mean_squared_error
 from tqdm import tqdm_notebook
 from sklearn.model_selection import KFold
-from sklearn.model_selection import RepeatedKFold
+from sklearn.model_selection import StratifiedKFold
 
 #1. 데이터
 path = './_data/kaggle_house/' # ".은 현재 폴더"
@@ -59,9 +59,12 @@ print(x.columns)
 print(x.shape) #(1460, 75)
 
 y = train_set['SalePrice']
+
+
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size = 0.8, shuffle = True, random_state = 100
+    x, y, train_size = 0.918, shuffle = True, random_state = 100
  )
+
 print(y)
 print(y.shape) # (1460,)
 
@@ -69,7 +72,8 @@ print(y.shape) # (1460,)
 #2. 모델구성
 
 model = Sequential()
-model.add(Dense(100,input_dim=75,activation='swish'))
+model.add(Dense(100,input_dim=75))
+model.add(Dense(100, activation='swish'))
 model.add(Dense(100, activation='swish'))
 model.add(Dense(1))
 
@@ -77,20 +81,13 @@ model.add(Dense(1))
 #3. 컴파일, 훈련
 model.compile(loss='mae', optimizer='adam')
 
-history = model.fit(x_train, y_train , epochs =2320,validation_split=0.3, batch_size=510, verbose=2)
-
-kf = KFold(n_splits=5,shuffle=True,random_state=100)
-for train_idx, valid_idx in kf.split(train_set) :
-
-  train_data = train_set.iloc[train_idx]
-
-  valid_data = train_set.iloc[valid_idx]
+history = model.fit(x_train, y_train, epochs = 680, validation_split=0.3, batch_size=182, verbose=2)
 
 
 
 
 #4. 평가, 예측
-loss = model.evaluate(x_test, y_test)
+loss = model.evaluate(x_test, y)
 print('loss :',loss)
 
 y_predict = model.predict(x_test) #훈련으로 예측된 값 y_predict와 원래 테스트 값 y_test와 비교
@@ -111,10 +108,10 @@ plt.xlabel('Epoch')
 plt.ylabel('loss')
 plt.legend(['train_set', 'test_set'], loc='upper left')
 plt.show()
-# loss : 17714.576171875
-# RMSE : 28843.116140289672
-# train_size = 0.91, shuffle = True, random_state = 100
-# epochs =8410,validation_split=0.3, batch_size=1460, verbose=2
+#loss : 23206.5234375
+# RMSE : 36149.20052259165
+# ttrain_size = 0.84, shuffle = True, random_state = 100
+# epochs = 2320,validation_split=0.3, batch_size=310, verbose=2
 
 
 submission['SalePrice'] = y_summit

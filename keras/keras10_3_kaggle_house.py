@@ -7,7 +7,6 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import OrdinalEncoder
 from sklearn.metrics import r2_score, mean_squared_error
 from tqdm import tqdm_notebook
 
@@ -48,10 +47,10 @@ print(train_set.describe())
 
 ###### 결측치 처리 1.제거##### dropna 사용
 print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
-train_set = train_set.fillna(train_set.mean())
+train_set = train_set.fillna(train_set.median())
 print(train_set.isnull().sum())
 print(train_set.shape)
-test_set = test_set.fillna(test_set.mean())
+test_set = test_set.fillna(test_set.median())
 
 x = train_set.drop(['SalePrice'],axis=1) #axis는 컬럼 
 print(x.columns)
@@ -59,7 +58,7 @@ print(x.shape) #(1460, 75)
 
 y = train_set['SalePrice']
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size = 0.91, shuffle = True, random_state = 100
+    x, y, train_size = 0.962, shuffle = True, random_state = 100
  )
 print(y)
 print(y.shape) # (1460,)
@@ -68,13 +67,13 @@ print(y.shape) # (1460,)
 #2. 모델구성
 
 model = Sequential()
-model.add(Dense(100,input_dim=75,activation='swish'))
+model.add(Dense(100,input_dim=75))
 model.add(Dense(100, activation='swish'))
 model.add(Dense(1))
 
 #3. 컴파일, 훈련
 model.compile(loss='mae', optimizer='adam')
-history = model.fit(x_train, y_train , epochs =4410,validation_split=0.3, batch_size=1460, verbose=2)
+history = model.fit(x_train, y_train , epochs =2560,validation_split=0.3, batch_size=560, verbose=2)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -98,10 +97,10 @@ plt.xlabel('Epoch')
 plt.ylabel('loss')
 plt.legend(['train_set', 'test_set'], loc='upper left')
 plt.show()
-# loss : 18127.6171875
-# RMSE : 28723.033821945508
-# train_size = 0.91, shuffle = True, random_state = 100
-# epochs =8410,validation_split=0.3, batch_size=1460, verbose=2
+# loss : 19787.166015625
+# RMSE : 28577.005981119877
+# train_size = 0.962, shuffle = True, random_state = 100
+# epochs =2560,validation_split=0.3, batch_size=560, verbose=2
 
 
 submission['SalePrice'] = y_summit
