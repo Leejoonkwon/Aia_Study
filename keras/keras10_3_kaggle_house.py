@@ -59,7 +59,7 @@ print(x.shape) #(1460, 75)
 
 y = train_set['SalePrice']
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size = 0.84, shuffle = True, random_state = 100
+    x, y, train_size = 0.91, shuffle = True, random_state = 100
  )
 print(y)
 print(y.shape) # (1460,)
@@ -68,15 +68,13 @@ print(y.shape) # (1460,)
 #2. 모델구성
 
 model = Sequential()
-model.add(Dense(100,input_dim=75))
-model.add(Dense(100, activation='swish'))
-model.add(Dense(100, activation='swish'))
+model.add(Dense(100,input_dim=75,activation='swish'))
 model.add(Dense(100, activation='swish'))
 model.add(Dense(1))
 
 #3. 컴파일, 훈련
 model.compile(loss='mae', optimizer='adam')
-history = model.fit(x_train, y_train , epochs =5450,validation_split=0.25, batch_size=130, verbose=2)
+history = model.fit(x_train, y_train , epochs =4410,validation_split=0.3, batch_size=1460, verbose=2)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -100,14 +98,14 @@ plt.xlabel('Epoch')
 plt.ylabel('loss')
 plt.legend(['train_set', 'test_set'], loc='upper left')
 plt.show()
-# loss : 18704.109375
-# RMSE : 25966.91846774703
-# train_size = 0.949, shuffle = True, random_state = 100
-# epochs =2350,validation_split=0.3, batch_size=150, verbose=2
+# loss : 18127.6171875
+# RMSE : 28723.033821945508
+# train_size = 0.91, shuffle = True, random_state = 100
+# epochs =8410,validation_split=0.3, batch_size=1460, verbose=2
 
 
 submission['SalePrice'] = y_summit
 submission = submission.fillna(submission.mean())
-submission.to_csv('test18.csv',index=True)
+submission.to_csv('test20.csv',index=True)
 
 
