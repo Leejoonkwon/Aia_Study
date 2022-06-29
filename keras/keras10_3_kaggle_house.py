@@ -1,6 +1,7 @@
 # 데이콘 따릉이 문제풀이
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from sqlalchemy import null
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
@@ -9,6 +10,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.metrics import r2_score, mean_squared_error
 from tqdm import tqdm_notebook
+
 #1. 데이터
 path = './_data/kaggle_house/' # ".은 현재 폴더"
 train_set = pd.read_csv(path + 'train.csv',
@@ -46,10 +48,10 @@ print(train_set.describe())
 
 ###### 결측치 처리 1.제거##### dropna 사용
 print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
-train_set = train_set.fillna(train_set.median())
+train_set = train_set.fillna(train_set.mean())
 print(train_set.isnull().sum())
 print(train_set.shape)
-test_set = test_set.fillna(test_set.median())
+test_set = test_set.fillna(test_set.mean())
 
 x = train_set.drop(['SalePrice'],axis=1) #axis는 컬럼 
 print(x.columns)
@@ -57,7 +59,7 @@ print(x.shape) #(1460, 75)
 
 y = train_set['SalePrice']
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size = 0.919, shuffle = True, random_state = 100
+    x, y, train_size = 0.84, shuffle = True, random_state = 100
  )
 print(y)
 print(y.shape) # (1460,)
@@ -73,8 +75,8 @@ model.add(Dense(100, activation='swish'))
 model.add(Dense(1))
 
 #3. 컴파일, 훈련
-model.compile(loss='mse', optimizer='adam')
-model.fit(x_train, y_train , epochs =10, batch_size=2, verbose=2)
+model.compile(loss='mae', optimizer='adam')
+history = model.fit(x_train, y_train , epochs =5450,validation_split=0.25, batch_size=130, verbose=2)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -90,14 +92,22 @@ y_summit = model.predict(test_set)
 # print(y_summit)
 # print(y_summit.shape)
 
-# loss : 24.451862335205078
-# RMSE : 40.51339291351674
-# train_size = 0.919, shuffle = True, random_state = 100
-# epochs =519, batch_size=62, verbose=2
+
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('Model accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('loss')
+plt.legend(['train_set', 'test_set'], loc='upper left')
+plt.show()
+# loss : 18704.109375
+# RMSE : 25966.91846774703
+# train_size = 0.949, shuffle = True, random_state = 100
+# epochs =2350,validation_split=0.3, batch_size=150, verbose=2
 
 
 submission['SalePrice'] = y_summit
-submission = submission.fillna(submission.median())
+submission = submission.fillna(submission.mean())
 submission.to_csv('test18.csv',index=True)
 
 
