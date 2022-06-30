@@ -18,7 +18,7 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3,train_si
 
 print(x_train) # [2 7 6 3 4 8 5]
 print(x_test)  # [1 9 10]
-"""
+
 print(y_train)
 print(y_test)
 
@@ -44,4 +44,4 @@ print('[11]의 예측값 :',result)
 
 #loss : 1.1216201301067485e-06
 #[11]의 예측값 : [[10.998204]]
-"""
+

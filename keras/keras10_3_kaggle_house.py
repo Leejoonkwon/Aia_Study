@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sqlalchemy import null
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+from tensorflow.python.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import r2_score, mean_squared_error
@@ -39,7 +39,8 @@ for col in tqdm_notebook(cols):
 
 
 print(test_set)
-print(test_set.shape) #(715, 9) #train_set과 열 값이 '1'차이 나는 건 count를 제외했기 때문이다.예측 단계에서 값을 대입
+print(train_set.shape) #(1460,76)
+print(test_set.shape) #(1459, 75) #train_set과 열 값이 '1'차이 나는 건 count를 제외했기 때문이다.예측 단계에서 값을 대입
 
 print(train_set.columns)
 print(train_set.info()) #null은 누락된 값이라고 하고 "결측치"라고도 한다.
@@ -58,7 +59,7 @@ print(x.shape) #(1460, 75)
 
 y = train_set['SalePrice']
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size = 0.962, shuffle = True, random_state = 100
+    x, y, train_size = 0.89, shuffle = True, random_state = 68
  )
 print(y)
 print(y.shape) # (1460,)
@@ -69,12 +70,13 @@ print(y.shape) # (1460,)
 model = Sequential()
 model.add(Dense(100,input_dim=75))
 model.add(Dense(100, activation='swish'))
+model.add(Dense(100, activation='swish'))
 model.add(Dense(1))
 
 #3. 컴파일, 훈련
 model.compile(loss='mae', optimizer='adam')
-history = model.fit(x_train, y_train , epochs =102560,validation_split=0.3, batch_size=560, verbose=2)
-
+history = model.fit(x_train, y_train , epochs =11250,validation_split=0.2, batch_size=64, verbose=2)
+#validation은 검증의 수단으로 전체 데이터 중 train 데이터를 분할하여 검증하여 test에 대입한다.
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
 print('loss :',loss)
@@ -97,14 +99,14 @@ plt.xlabel('Epoch')
 plt.ylabel('loss')
 plt.legend(['train_set', 'test_set'], loc='upper left')
 plt.show()
-# loss : 19787.166015625
-# RMSE : 28577.005981119877
-# train_size = 0.962, shuffle = True, random_state = 100
-# epochs =2560,validation_split=0.3, batch_size=560, verbose=2
+
+# loss : 16526.791015625
+# RMSE : 28939.292472545123
+# train_size = 0.89, shuffle = True, random_state = 68
+# epochs =1250,validation_split=0.2, batch_size=64, verbose=2
 
 
 submission['SalePrice'] = y_summit
 submission = submission.fillna(submission.mean())
 submission.to_csv('test20.csv',index=True)
-
 
