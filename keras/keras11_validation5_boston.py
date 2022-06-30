@@ -8,7 +8,7 @@ datasets = load_boston()
 x = datasets.data
 y = datasets.target
 x_train, x_test ,y_train, y_test = train_test_split(
-          x, y, train_size=0.96,shuffle=True,random_state=100)
+          x, y, train_size=0.96,shuffle=True,random_state=30)
 
 # print(x.shape, y.shape) #(506, 13)-> 13개의 피쳐 (506,) 
 
