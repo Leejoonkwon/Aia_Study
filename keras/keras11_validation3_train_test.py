@@ -15,9 +15,9 @@ x_train, x_test, y_train, y_test = train_test_split(
 print(x_train)
 
 x_train, x_val, y_train, y_val= train_test_split(
-    x_train, y_train, train_size= 0.625, shuffle = True, random_state = 68
+    x, y, train_size= 0.5, shuffle = True, random_state = 68
  )
-print(x_train)
+print(x_train,x_test,x_val)
 '''
 #2. 모델 구성
 model = Sequential()
