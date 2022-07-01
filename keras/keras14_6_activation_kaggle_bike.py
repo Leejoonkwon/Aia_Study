@@ -69,19 +69,10 @@ earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min',
                               verbose=1,restore_best_weights=True)
 model.compile(loss='mae', optimizer='adam')
 
-start_time = time.time()
-print(start_time)
 hist = model.fit(x_train, y_train, epochs=1010, batch_size=2500, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
-                verbose=2
-                )
-
-end_time = time.time() - start_time
-
-#verbose = 0으로 할 시 출력해야할 데이터가 없어 속도가 빨라진다.강제 지연 발생을 막는다.
-
-
+                verbose=2)
 
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
@@ -99,7 +90,6 @@ print("============")
 print(hist.history['loss'])
 print("============")
 print(hist.history['val_loss'])
-print("걸린시간 :",end_time)
 # y_predict = model.predict(x_test)
 plt.figure(figsize=(9,6))
 plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
