@@ -2,6 +2,10 @@ from sklearn.datasets import load_diabetes
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
+from matplotlib import font_manager, rc
+font_path = "C:/Windows/Fonts/NGULIM.TTF"
+font = font_manager.FontProperties(fname=font_path).get_name()
+rc('font', family=font)
 
 #1. 데이터
 datasets = load_diabetes()
@@ -49,4 +53,3 @@ print('r2스코어 :', r2)
 # validation 적용 후(+mae로 측정)
 # loss : 39.017478942871094
 # r2스코어 : 0.5731992742645576
-sadfsdfsdf
