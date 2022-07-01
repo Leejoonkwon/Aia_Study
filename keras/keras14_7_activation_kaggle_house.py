@@ -4,57 +4,73 @@
 # EarlyStopping  넣고
 # 성능비교
 # 감상문 2줄이상!
-import matplotlib
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from tensorflow.python.keras.models import Sequential
+from sqlalchemy import null
+from tensorflow.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import r2_score, mean_squared_error
+from tqdm import tqdm_notebook
+import matplotlib
 matplotlib.rcParams['font.family']='Malgun Gothic'
 matplotlib.rcParams['axes.unicode_minus']=False
-
-
 #1. 데이터
-path = './_data/kaggle_bike/' # ".은 현재 폴더"
+path = './_data/kaggle_house/' # ".은 현재 폴더"
 train_set = pd.read_csv(path + 'train.csv',
                         index_col=0)
-print(train_set)
-
-print(train_set.shape) #(10886, 11)
-
 test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
                        index_col=0)
-
-sampleSubmission = pd.read_csv(path + 'sampleSubmission.csv',#예측에서 쓸거야!!
+drop_cols = ['Alley', 'PoolQC', 'Fence', 'MiscFeature']
+test_set.drop(drop_cols, axis = 1, inplace =True)
+submission = pd.read_csv(path + 'submission.csv',#예측에서 쓸거야!!
                        index_col=0)
-            
+print(train_set)
+
+print(train_set.shape) #(1459, 10)
+
+train_set.drop(drop_cols, axis = 1, inplace =True)
+cols = ['MSZoning', 'Street','LandContour','Neighborhood','Condition1','Condition2',
+                'RoofStyle','RoofMatl','Exterior1st','Exterior2nd','MasVnrType','Foundation',
+                'Heating','GarageType','SaleType','SaleCondition','ExterQual','ExterCond','BsmtQual','BsmtCond','BsmtExposure','BsmtFinType1',
+                'BsmtFinType2','HeatingQC','CentralAir','Electrical','KitchenQual','Functional',
+                'FireplaceQu','GarageFinish','GarageQual','GarageCond','PavedDrive','LotShape',
+                'Utilities','LandSlope','BldgType','HouseStyle','LotConfig']
+
+for col in tqdm_notebook(cols):
+    le = LabelEncoder()
+    train_set[col]=le.fit_transform(train_set[col])
+    test_set[col]=le.fit_transform(test_set[col])
+
+
 print(test_set)
-print(test_set.shape) #(6493, 8) #train_set과 열 값이 '1'차이 나는 건 count를 제외했기 때문이다.예측 단계에서 값을 대입
+print(train_set.shape) #(1460,76)
+print(test_set.shape) #(1459, 75) #train_set과 열 값이 '1'차이 나는 건 count를 제외했기 때문이다.예측 단계에서 값을 대입
 
 print(train_set.columns)
 print(train_set.info()) #null은 누락된 값이라고 하고 "결측치"라고도 한다.
 print(train_set.describe()) 
 
-
 ###### 결측치 처리 1.제거##### dropna 사용
 print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
-print(train_set.shape) #(10886,11)
+train_set = train_set.fillna(train_set.median())
+print(train_set.isnull().sum())
+print(train_set.shape)
+test_set = test_set.fillna(test_set.median())
 
-
-x = train_set.drop([ 'casual', 'registered','count'],axis=1) #axis는 컬럼 
-
-
+x = train_set.drop(['SalePrice'],axis=1) #axis는 컬럼 
 print(x.columns)
-print(x.shape) #(10886, 8)
+print(x.shape) #(1460, 75)
 
-y = train_set['count']
+y = train_set['SalePrice']
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size = 0.949, shuffle = True, random_state = 100
+    x, y, train_size = 0.89, shuffle = True, random_state = 68
  )
-print(test_set)
-# print(y)
-# print(y.shape) # (10886,)
+print(y)
+print(y.shape) # (1460,)
 
 
 #2. 모델구성
@@ -69,15 +85,12 @@ earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min',
                               verbose=1,restore_best_weights=True)
 model.compile(loss='mae', optimizer='adam')
 
-start_time = time.time()
-print(start_time)
-hist = model.fit(x_train, y_train, epochs=1010, batch_size=2500, 
+hist = model.fit(x_train, y_train, epochs=1010, batch_size=100, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2
                 )
 
-end_time = time.time() - start_time
 
 #verbose = 0으로 할 시 출력해야할 데이터가 없어 속도가 빨라진다.강제 지연 발생을 막는다.
 
@@ -99,13 +112,12 @@ print("============")
 print(hist.history['loss'])
 print("============")
 print(hist.history['val_loss'])
-print("걸린시간 :",end_time)
 # y_predict = model.predict(x_test)
 plt.figure(figsize=(9,6))
 plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
 plt.plot(hist.history['val_loss'],marker='.',c='blue',label='val_loss')
 plt.grid()
-plt.title('이결바보') #맥플러립 한글 깨짐 현상 알아서 해결해라 
+plt.title('영어싫어') #맥플러립 한글 깨짐 현상 알아서 해결해라 
 plt.ylabel('loss')
 plt.xlabel('epochs')
 # plt.legend(loc='upper right')
@@ -115,7 +127,7 @@ plt.show()
 # loss : 356.1080
 # RMSE :  50.77395531000674
 ###################
-# activation 및 EarlyStopping 으로 적용 후
-# loss : 97.43128967285156
-# r2스코어 : 0.3425327427467255
+# activation 및 EarlyStopping 적용 
+# loss : 97.37265014648438
+# r2스코어 : 0.36341653990677303
 
