@@ -1,3 +1,4 @@
+'''
 import numpy as np  
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
@@ -12,7 +13,7 @@ y = np.array([11,12,13,14,15,16,17,18,19,20])
 y['bb'] = x['bb']
 
 print(y)
-'''
+
 print(x.shape) # (2, 10)
 print(y.shape) # (10,)
 
@@ -50,3 +51,6 @@ df = pd.DataFrame({'hour': [hour], 'hour_bef_temperature': [hour_bef_temperature
        'hour_bef_ozone': [hour_bef_ozone], 'hour_bef_pm10': [hour_bef_pm10], 'hour_bef_pm2.5': [hour_bef_pm25]})
 df.fillna(method='pad')
 '''
+!pip uninstall tensorflow
+
+!pip install tensorflow

@@ -6,7 +6,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error, mean_squared_log_error
-from keras.layers.recurrent import LSTM, SimpleRNN
+from tensorflow.keras.layers import LSTM, SimpleRNN
 import datetime as dt
 
 #1. 데이터
@@ -65,7 +65,7 @@ print(y.shape) # (10886,)
 
 x_train, x_test, y_train, y_test = train_test_split(x,y,
                                                     train_size=0.25,
-                                                    random_state=31
+                                                    random_state=100
                                                     )
 
 print(x_train)
@@ -111,3 +111,5 @@ print(submission_set)
 
 
 submission_set.to_csv(path + 'submission__.csv', index = True)
+
+# https://www.kaggle.com/code/drcapa/bike-sharing-demand-rnn
