@@ -18,7 +18,7 @@ print('y의 라벨값 :', np.unique(y,return_counts=True))
     #   dtype=int64))
 
 
-###########(keras 버전 원핫인코딩)###############
+###########(sklearn 버전 원핫인코딩)###############
 from sklearn.preprocessing import OneHotEncoder
 y = np.array(y).reshape(-1,1)
 print(y) # (581012, 8)

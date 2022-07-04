@@ -18,8 +18,7 @@ print('y의 라벨값 :', np.unique(y,return_counts=True))
     #   dtype=int64))
 
 
-###########(keras 버전 원핫인코딩)###############
-from sklearn.preprocessing import OneHotEncoder
+###########(pandas 버전 원핫인코딩)###############
 y_class = pd.get_dummies((y))
 print(y_class.shape) # (581012, 7)
 
@@ -67,7 +66,7 @@ model.add(Dense(7, activation='softmax'))
 earlyStopping = EarlyStopping(monitor='loss', patience=150, mode='min', 
                               verbose=1,restore_best_weights=True)
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(x_train, y_train, epochs=10, batch_size=14000, 
+model.fit(x_train, y_train, epochs=1000, batch_size=14000, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2
@@ -86,14 +85,22 @@ model.fit(x_train, y_train, epochs=10, batch_size=14000,
 # print('loss :',result[0])
 # print('accuracy :',result[1])
 
+
+
+
 y_predict = model.predict(x_test)
 
-y_test = np.argmax(y_test,axis=1)
-print(y_test)
+print(y_predict) 
 
-y_predict = np.argmax(y_predict,axis=1)
+# y_test = np.argmax(y_test,axis=1)
+import tensorflow as tf
+y_test = tf.argmax(y_test,axis=1)
+y_predict = tf.argmax(y_predict,axis=1)
+#pandas 에서 인코딩 진행시 argmax는 tensorflow 에서 임포트한다.
+print(y_predict) #(87152, )
+# print(y_test.shape) #(87152,7)
 # y_test와 y_predict의  shape가 일치해야한다.
-print(y_predict)
+
 
 
 acc = accuracy_score(y_test, y_predict)
@@ -112,5 +119,5 @@ print('acc 스코어 :', acc)
 
 
 
-#acc 스코어 : 0.843859004956857
+#acc 스코어 : 0.7632412337066276
 
