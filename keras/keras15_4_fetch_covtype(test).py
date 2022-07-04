@@ -66,7 +66,7 @@ model.add(Dense(7, activation='softmax'))
 earlyStopping = EarlyStopping(monitor='loss', patience=150, mode='min', 
                               verbose=1,restore_best_weights=True)
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(x_train, y_train, epochs=1000, batch_size=14000, 
+model.fit(x_train, y_train, epochs=3000, batch_size=14000, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2
@@ -119,5 +119,5 @@ print('acc 스코어 :', acc)
 
 
 
-#acc 스코어 : 0.7632412337066276
+#acc 스코어 : 0.8353107214980723
 
