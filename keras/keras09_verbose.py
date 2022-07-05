@@ -27,8 +27,7 @@ model.add(Dense(12))
 model.add(Dense(14))
 model.add(Dense(2))
 model.add(Dense(1))
-
-import time
+modelimport time
 #3. 컴파일,훈련
 
 model.compile(loss='mae', optimizer='adam')
