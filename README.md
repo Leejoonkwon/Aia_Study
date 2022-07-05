@@ -203,3 +203,4 @@ train_set['AgeBand'] = pd.cut(train_set['Age'], 5)
 # 임의로 5개 그룹을 지정
 train_set[['AgeBand', 'Survived']].groupby(['AgeBand'], as_index=False).mean().sort_values(by='AgeBand', ascending=True)
 
+https://computer-science-student.tistory.com/113
