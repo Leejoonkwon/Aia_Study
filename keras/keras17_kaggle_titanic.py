@@ -17,7 +17,6 @@ from tensorflow.python.keras.callbacks import EarlyStopping
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import r2_score, mean_squared_error
-from tqdm import tqdm_notebook
 
 #1.데이터
 
@@ -116,7 +115,7 @@ train_set.drop(drop_cols, axis = 1, inplace =True)
 test_set.drop(drop_cols, axis = 1, inplace =True)
 
 cols = ['Sex','Embarked','Initial']
-for col in tqdm_notebook(cols):
+for col in cols:
     le = LabelEncoder()
     train_set[col]=le.fit_transform(train_set[col])
     test_set[col]=le.fit_transform(test_set[col])
