@@ -7,6 +7,7 @@
 # pandas의  y 라벨의 종류가 무엇인지 확인하는 함수 쓸것
 # numpy 에서는 np.unique(y,return_counts=True)
 
+from pydoc import describe
 import numpy as np
 import pandas as pd 
 from tensorflow.python.keras.models import Sequential
@@ -92,7 +93,7 @@ gender_submission = pd.read_csv(path + 'gender_submission.csv',#예측에서 쓸
 
 
 
-x_train, x_test, y_train, y_test = train_test_split(x,y, train_size=0.89,shuffle=True ,random_state=100)
+x_train, x_test, y_train, y_test = train_test_split(x,y, train_size=0.91,shuffle=True ,random_state=100)
 #셔플을 False 할 경우 순차적으로 스플릿하다보니 훈련에서는 나오지 않는 값이 생겨 정확도가 떨어진다.
 #디폴트 값인  shuffle=True 를 통해 정확도를 올린다.
 
@@ -110,7 +111,7 @@ model.add(Dense(1, activation='sigmoid'))
 earlyStopping = EarlyStopping(monitor='loss', patience=200, mode='min', 
                               verbose=1,restore_best_weights=True)
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(x_train, y_train, epochs=5000, batch_size=20, 
+model.fit(x_train, y_train, epochs=100, batch_size=20, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2
@@ -166,11 +167,11 @@ y_summit = model.predict(test_set)
 
 gender_submission['Survived'] = y_summit
 submission = gender_submission.fillna(gender_submission.mean())
-
-submission [(submission <0.5)] =0
-submission [(submission >=0.5)] =1 
-submission.astype(int)
+submission [(submission <0.5)] = 0  
+submission [(submission >=0.5)] = 1  
+submission = submission.astype(int)
 submission.to_csv('test21.csv',index=True)
+
 
 # acc 스코어 : 0.7654320987654321
 

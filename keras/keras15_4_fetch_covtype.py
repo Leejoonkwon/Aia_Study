@@ -79,7 +79,8 @@ model.fit(x_train, y_train, epochs=15000, batch_size=14000,
                 callbacks = [earlyStopping],
                 verbose=2
                 )
-#다중 분류 모델은 'categorical_crossentropy'만 사용한다 !!!!
+#다중 분류 모델은 'categorical_crossentropy'만 사용한다 !!!!단 이진 분류 모델에도 카테고리 크로스 엔트로피를 사용 가능하지만
+#다중 분류 모델에서 이진 분류인 바이너리 크로스 엔트로피는 사용 불가하다.
 
 #4.  평가,예측
 
