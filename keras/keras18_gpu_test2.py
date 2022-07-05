@@ -1,3 +1,4 @@
+from time import time
 import numpy as np
 from sklearn.datasets import load_breast_cancer
 from tensorflow.python.keras.models import Sequential
@@ -6,8 +7,20 @@ from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping
 from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
-
 import matplotlib
+import tensorflow as tf
+
+
+gpus = tf.config.experimental.list_physical_devices('GPU')
+print(gpus)
+if(gpus) : 
+    print("쥐피유 돈다")
+    aaa = 'gpu'
+else:
+    print("쥐피유 안도라")
+    bbb = 'cpu'
+
+
 matplotlib.rcParams['font.family']='Malgun Gothic'
 matplotlib.rcParams['axes.unicode_minus']=False
 #1. 데이터
@@ -33,9 +46,10 @@ print(x_test.shape)
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(100, activation='linear',input_dim=30))
-model.add(Dense(100, activation='sigmoid'))
-model.add(Dense(100, activation='relu')) #'relu'가 현시점 가장 성능 좋음
+model.add(Dense(500, activation='linear',input_dim=30))
+model.add(Dense(400, activation='relu'))
+model.add(Dense(300, activation='relu')) #'relu'가 현시점 가장 성능 좋음
+model.add(Dense(400, activation='relu')) #'relu'가 현시점 가장 성능 좋음
 model.add(Dense(1,activation='sigmoid'))
 #sigmoid는 0~1 사이의 값으로 반환하는 활성화함수 이진 분류 모델에서 아웃풋 활성화함수는 무조건  sigmoid 사용
 #회귀 모델은 최종 노드가 무조건 linear인 디폴트 사용 하지만 분류 모델에서는 
@@ -54,53 +68,28 @@ model.compile(loss='binary_crossentropy', optimizer='adam',
 # 즉, 0.5만 저장하고 다른 0.5는 다른 문제에서 가정하며, 첫 번째 확률이 0.7이면 다른 0.5는 0.3)이라고 가정합니다. 
 # 또한 알고리즘(Log loss)을 사용합니다.
 from tensorflow.python.keras.callbacks import EarlyStopping
-earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
+earlyStopping = EarlyStopping(monitor='loss', patience=200, mode='min', 
                               verbose=1,restore_best_weights=True)
 #monitor -확인할 대상+fit 안에서만 기능하는 / patience- 최솟값 이후 멈추기 전 횟수 /mode- 스탑 결정할 모델 
-hist = model.fit(x_train, y_train, epochs=10, batch_size=15, 
+import time
+start_time = time.time()
+hist = model.fit(x_train, y_train, epochs=200, batch_size=15, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2
                 )
 #callbacks 함수는 earlystopping 외에도 checkpoint가 있다.
 
+end_time = time.time()-start_time
+
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
 print('loss :', loss)
 
-# print("============")
-# print(hist) #<tensorflow.python.keras.callbacks.History object at 0x000001B6B522F0A0>
-# print("============")
-# # print(hist.history) #(지정된 변수,history)를 통해 딕셔너리 형태의 데이터 확인 가능 
-# print("============")
-# print(hist.history['loss'])
-# print("============")
-# print(hist.history['val_loss'])
-
-y_predict = model.predict(x_test)
-print(x_test.shape)
-
-y_predict[(y_predict<0.5)] = 0  
-y_predict[(y_predict>=0.5)] = 1  
-
-print(y_predict)
-print(y_predict.shape)
+print(aaa,"걸린시간 :",end_time)
 
 
-# r2 = r2_score(y_test, y_predict)
-acc = accuracy_score(y_test, y_predict)
-print('acc 스코어 :', acc)
 
+# GPU 환경에서 걸린시간 : 25.983750820159912
+# GPU 환경에서 걸린시간 : 12.76516604423523
 
-# y_predict = model.predict(x_test)
-plt.figure(figsize=(9,6))
-plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
-plt.plot(hist.history['val_loss'],marker='.',c='blue',label='val_loss')
-plt.grid()
-plt.title('영어싫어') #맥플러립 한글 깨짐 현상 알아서 해결해라 
-plt.ylabel('loss')
-plt.xlabel('epochs')
-# plt.legend(loc='upper right')
-plt.legend()
-plt.show()
-#cc 스코어 : acc 스코어 : 0.9130434782608695
