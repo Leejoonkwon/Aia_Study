@@ -7,7 +7,6 @@
 # pandas의  y 라벨의 종류가 무엇인지 확인하는 함수 쓸것
 # numpy 에서는 np.unique(y,return_counts=True)
 
-from pydoc import describe
 import numpy as np
 import pandas as pd 
 from tensorflow.python.keras.models import Sequential
@@ -57,6 +56,7 @@ print(test_set.isnull().sum())
 # Fare          1
 # Cabin       327
 # Embarked      0
+print(train_set.head())
 
 drop_cols = ['Cabin','Ticket']
 train_set.drop(drop_cols, axis = 1, inplace =True)
@@ -116,11 +116,12 @@ train_set.drop(drop_cols, axis = 1, inplace =True)
 test_set.drop(drop_cols, axis = 1, inplace =True)
 
 cols = ['Sex','Embarked','Initial']
-for col in tqdm_notebook(cols):
+for col in cols:
     le = LabelEncoder()
     train_set[col]=le.fit_transform(train_set[col])
     test_set[col]=le.fit_transform(test_set[col])
 x = train_set.drop(['Survived'],axis=1) #axis는 컬럼 
+
 print(x) #(891, 8)
 y = train_set['Survived']
 print(y.shape) #(891,)
@@ -155,10 +156,13 @@ model.add(Dense(1, activation='sigmoid'))
 
 
 #3. 컴파일,훈련
-earlyStopping = EarlyStopping(monitor='loss', patience = 150, mode='min', 
-                              verbose=1,restore_best_weights=True)
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(x_train, y_train, epochs=530, batch_size=8, 
+earlyStopping = EarlyStopping(monitor='loss', patience = 150, mod
++6
+                              verbose=1,restore_best_weights=True
+                              +6
+model.compile(loss='binary_crossentropy', optimizer='adam', metri
++6
+model.fit(x_train, y_train, epochs=500530, batch_size=8, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2

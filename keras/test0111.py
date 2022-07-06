@@ -17,6 +17,8 @@ from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import r2_score, mean_squared_error
 from tqdm import tqdm_notebook
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 #1.데이터
 
@@ -29,7 +31,20 @@ print(train_set) # [891 rows x 11 columns]
 print(train_set.describe())
 print(train_set.info())
 
-
+# f, ax = plt.subplots(1,2,figsize=(18,8))
+# train_set['Survived'].value_counts().plot.pie(explode = [0,0.1], autopct = '%1.1f%%', ax=ax[0], shadow = True)
+# ax[0].set_title('Survived')
+# ax[0].set_ylabel('')
+# sns.countplot('Survived', data = train_set, ax = ax[1])
+# ax[1].set_title('Survived')
+# plt.show()
+f, ax = plt.subplots(1,2,figsize=(18,8))
+train_set[['Sex','Survived']].groupby(['Sex']).mean().plot.bar(ax=ax[0])
+ax[0].set_title('Survived vs Sex')
+sns.countplot('Sex', hue = 'Survived', data = train_set, ax = ax[1])
+ax[1].set_title('Sex:Survived vs Dead')
+plt.show()
+'''
 print(test_set) # [418 rows x 10 columns]
 print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
 # Survived      0
@@ -173,5 +188,5 @@ submission.astype(int)
 submission.to_csv('test21.csv',index=True)
 
 # acc 스코어 : 0.7654320987654321
-
+'''
 
