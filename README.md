@@ -1,6 +1,4 @@
 # Titanic 분석
-<<<<<<< HEAD
-![image](https://user-images.githubusercontent.com/107663853/177347554-0046387b-7e14-4f16-afed-d002dc548189.png)
 
 =======
 ## 데이터 확인
@@ -207,5 +205,78 @@ train_set['AgeBand'] = pd.cut(train_set['Age'], 5)
 # 임의로 5개 그룹을 지정
 train_set[['AgeBand', 'Survived']].groupby(['AgeBand'], as_index=False).mean().sort_values(by='AgeBand', ascending=True)
 
-https://computer-science-student.tistory.com/113
->>>>>>> 5a4068ddc77fb2e8e915a99b5c6cccf06eb8e113
+for dataset in combine:    
+    dataset.loc[ dataset['Age'] <= 16, 'Age'] = 0
+    dataset.loc[(dataset['Age'] > 16) & (dataset['Age'] <= 32), 'Age'] = 1
+    dataset.loc[(dataset['Age'] > 32) & (dataset['Age'] <= 48), 'Age'] = 2
+    dataset.loc[(dataset['Age'] > 48) & (dataset['Age'] <= 64), 'Age'] = 3
+    dataset.loc[ dataset['Age'] > 64, 'Age'] = 4
+train_set = train_set.drop(['AgeBand'], axis=1)
+combine = [train_set, test_set]
+
+![image](https://user-images.githubusercontent.com/107663853/177437054-216d2d9b-bc2b-4b71-831c-63f7e9118fc1.png)
+
+#### SibSp와 Parch를 가족과의 동반여부를 알 수 있는 새로운 변수로 통합
+
+for dataset in combine:
+    dataset['FamilySize'] = dataset['SibSp'] + dataset['Parch'] + 1
+
+train_set[['FamilySize', 'Survived']].groupby(['FamilySize'], as_index=False).mean().sort_values(by='Survived', ascending=False)
+
+![image](https://user-images.githubusercontent.com/107663853/177437285-29e9c8cc-40c3-42c6-86e9-2aaa61bd9abe.png)
+
+FamilySize가 1인 것은 가족과 동반하지 않음을 의미
+
+for dataset in combine:
+    dataset['IsAlone'] = 0
+    dataset.loc[dataset['FamilySize'] == 1, 'IsAlone'] = 1
+
+train_set[['IsAlone', 'Survived']].groupby(['IsAlone'], as_index=False).mean()
+
+![image](https://user-images.githubusercontent.com/107663853/177437434-70b1d91f-bee5-4152-be40-b9a59571f998.png)
+
+1은 동반X
+0은 동반했다는 새로운 변수 IsAlone을 생성
+
+train_set = train_set.drop(['Parch', 'SibSp', 'FamilySize'], axis=1)
+test_set = test_set.drop(['Parch', 'SibSp', 'FamilySize'], axis=1)
+combine = [train_set, test_set]
+print(train_set.head())
+
+![image](https://user-images.githubusercontent.com/107663853/177437607-bb5f66a7-9b92-4070-9804-7e2649a47698.png)
+
+'Parch', 'SibSp', 'FamilySize' 특성들을 결합해 IsAlone이라는 특성을 만들었으니 3가지 특성은 삭제 해준다.
+
+test_set 에 Fare 결측치는 중앙값으로 대체 후 결측 여부 확인
+
+test_set['Fare'].fillna(test_set['Fare'].dropna().median(), inplace=True)
+print(test_set.isnull().sum())
+
+![image](https://user-images.githubusercontent.com/107663853/177437968-f2b6c736-4536-4165-9b76-a871ba0e1c83.png)
+
+Embarked의 결측치는 valuse_counts를 통해 가장 많은 값인 'S'로 대치한다.
+
+print(train_set['Embarked'].value_counts())
+
+train_set['Embarked'].fillna('S', inplace=True)
+
+![image](https://user-images.githubusercontent.com/107663853/177438050-c7d666d5-a88e-438d-91ba-1daf56259899.png)
+
+승선지(Ebmarked) 변수를 범주형 변수로 바꿔줌
+for dataset in combine:
+    dataset['Embarked'] = dataset['Embarked'].map( {'S': 0, 'C': 1, 'Q': 2} ).astype(int)
+
+a = train_set.head()
+print(a)
+
+![image](https://user-images.githubusercontent.com/107663853/177438520-a8dc8dc7-a14a-41d0-b234-3736ef8867a9.png)
+
+요금(Fare)을 숫자 범주형 변수로 바꿔줌
+
+train_set['FareBand'] = pd.qcut(train_set['Fare'], 4)
+a = train_set[['FareBand', 'Survived']].groupby(['FareBand'], as_index=False).mean().sort_values(by='FareBand', ascending=True)
+print(a)
+
+![image](https://user-images.githubusercontent.com/107663853/177438677-79a83639-052e-45d3-a0f7-4568f469b249.png)
+
+![image](https://user-images.githubusercontent.com/107663853/177438840-c0cea00e-8cde-4478-bcf0-eeadeac5f1ef.png)
