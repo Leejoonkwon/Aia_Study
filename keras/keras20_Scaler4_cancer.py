@@ -29,9 +29,12 @@ print(y)
 
 x_train, x_test ,y_train, y_test = train_test_split(
           x, y, train_size=0.8,shuffle=True,random_state=100)
+from sklearn.preprocessing import MaxAbsScaler,RobustScaler 
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
 # scaler = MinMaxScaler()
 scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+# scaler = RobustScaler()
 scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 scaler.transform(x_train)
 x_train = scaler.transform(x_train)
@@ -61,6 +64,8 @@ model.compile(loss='binary_crossentropy', optimizer='adam',
 # 반면Binary Cross Entropy Loss는 하나의 값만 저장합니다. 
 # 즉, 0.5만 저장하고 다른 0.5는 다른 문제에서 가정하며, 첫 번째 확률이 0.7이면 다른 0.5는 0.3)이라고 가정합니다. 
 # 또한 알고리즘(Log loss)을 사용합니다.
+import time
+start_time = time.time()
 from tensorflow.python.keras.callbacks import EarlyStopping
 earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
                               verbose=1,restore_best_weights=True)
@@ -98,7 +103,8 @@ print(y_predict.shape)
 # r2 = r2_score(y_test, y_predict)
 acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
-
+end_time = time.time() - start_time
+print("걸린시간 :",end_time)
 
 # y_predict = model.predict(x_test)
 # plt.figure(figsize=(9,6))
@@ -122,5 +128,14 @@ print('acc 스코어 :', acc)
 # acc 스코어 : : 0.9736842105263158
 ##################
 #3. 스탠다드
-# loss : [0.0895392969250679, 0.9649122953414917, 0.025756411254405975]
-# acc 스코어 : : 0.9649122807017544
+# loss : [0.0943220779299736, 0.9473684430122375, 0.029835190623998642]
+# acc 스코어 : 0.9473684210526315
+# 걸린시간 : 2.292578935623169
+#4. 절댓값
+# loss : [0.136466383934021, 0.9298245906829834, 0.04213083162903786]
+# acc 스코어 : 0.9298245614035088
+# 걸린시간 : 2.2992329597473145
+#5. RobustScaler
+# loss : [0.09985142201185226, 0.9561403393745422, 0.03045959398150444]
+# acc 스코어 : 0.956140350877193
+# 걸린시간 : 2.373518228530884

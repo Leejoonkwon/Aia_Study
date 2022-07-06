@@ -59,13 +59,16 @@ print(y_class.shape) # (581012, 7)
 # print(x.shape, y.shape) #(581012, 54) (581012,)
 
 x_train, x_test, y_train, y_test = train_test_split(x,y_class, test_size=0.15,shuffle=True ,random_state=100)
+from sklearn.preprocessing import MaxAbsScaler,RobustScaler 
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
 # scaler = MinMaxScaler()
 # scaler = StandardScaler()
-# scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
-# scaler.transform(x_train)
-# x_train = scaler.transform(x_train)
-# x_test = scaler.transform(x_test)
+# scaler = MaxAbsScaler()
+scaler = RobustScaler()
+scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
+scaler.transform(x_train)
+x_train = scaler.transform(x_train)
+x_test = scaler.transform(x_test)
 #셔플을 False 할 경우 순차적으로 스플릿하다보니 훈련에서는 나오지 않는 값이 생겨 정확도가 떨어진다.
 #디폴트 값인  shuffle=True 를 통해 정확도를 올린다.
 print(y_train,y_test)
@@ -100,8 +103,8 @@ model.fit(x_train, y_train, epochs=10, batch_size=14000,
 
 #4.  평가,예측
 
-# loss,acc = model.evaluate(x_test,y_test)
-# print('loss :',loss)
+loss,acc = model.evaluate(x_test,y_test)
+print('loss :',loss)
 # print('accuracy :',acc)
 # print("+++++++++  y_test       +++++++++")
 # print(y_test[:5])
@@ -140,11 +143,24 @@ print(aaa,"걸린시간 :",end_time)
 #1. 스케일러 하기전
 # acc 스코어 : 0.5015145951900128
 ##################
-#2. 민맥스
-# acc 스코어 : 0.7641476959794382
+#2. MinMaxScaler
+# loss : 0.5164511203765869
+# acc 스코어 : 0.7776757848356893
+# gpu 걸린시간 : 13.73131513595581
 ##################
-#3. 스탠다드
-# acc 스코어 : 0.8464751239214247
-
+#3. StandardScaler
+# loss : 0.3597228229045868
+# acc 스코어 : 0.8545300165228567
+# gpu 걸린시간 : 14.07124948501587
+##################
+#4. MaxAbsScaler
+# loss : 0.5727503895759583
+# acc 스코어 : 0.7530406645860106
+# gpu 걸린시간 : 13.901057958602905
+##################
+#5. RobustScaler
+# loss : 0.3719959855079651
+# acc 스코어 : 0.8467849274830181
+# gpu 걸린시간 : 13.62384843826294
 
 

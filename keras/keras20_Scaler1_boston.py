@@ -3,6 +3,7 @@ from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
+from sklearn.preprocessing import MaxAbsScaler,RobustScaler #직접 찾아라!
 import numpy as np
 
 datasets = load_boston()
@@ -13,8 +14,11 @@ y = datasets.target
 x_train, x_test, y_train, y_test = train_test_split(
     x,  y, train_size= 0.7 , random_state=66
 )
-# scaler = MinMaxScaler()
-scaler = StandardScaler()
+scaler = MinMaxScaler()
+# scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+# scaler = RobustScaler()
+
 scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 scaler.transform(x_train)
 x_train = scaler.transform(x_train)
@@ -35,7 +39,8 @@ model.add(Dense(1))
 #3. 컴파일,훈련
 
 model.compile(loss='mae', optimizer='adam')
-
+import time
+start_time = time.time()
 from tensorflow.python.keras.callbacks import EarlyStopping
 earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
                               verbose=1,restore_best_weights=True)
@@ -62,6 +67,8 @@ y_predict = model.predict(x_test)
 from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print('r2스코어 :', r2)
+end_time = time.time() - start_time
+print("걸린 시간 :", end_time)
 
 # y_predict = model.predict(x_test)
 # plt.figure(figsize=(9,6))
@@ -83,12 +90,18 @@ print('r2스코어 :', r2)
 # r2스코어 : 0.8146167932510104
 
 #2. 민맥스
-# loss : 2.45501708984375
-# r2스코어 : 0.8395224687282794
+# loss : 2.4100306034088135
+# r2스코어 : 0.8553779164226989
+# 걸린 시간 : 24.65588116645813
 #3. 스탠다드
-# loss : 2.3829352855682373
-# r2스코어 : 0.864692149962925
-
-
-
-
+# loss : 2.596243143081665
+# r2스코어 : 0.8408439029524983
+# 걸린 시간 : 24.737785577774048
+#4. 절댓값
+# loss : 2.8734331130981445
+# r2스코어 : 0.7695440276622324
+# 걸린 시간 : 24.929853677749634
+#5. RobustScaler
+# loss : 2.805102586746216
+# r2스코어 : 0.6344604436586637
+# 걸린 시간 : 25.684573888778687

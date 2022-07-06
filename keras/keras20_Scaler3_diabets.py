@@ -21,9 +21,12 @@ x = datasets.data #데이터를 리스트 형태로 불러올 때 함
 y = datasets.target
 x_train, x_test ,y_train, y_test = train_test_split(
           x, y, train_size=0.9,shuffle=True,random_state=100)
+from sklearn.preprocessing import MaxAbsScaler,RobustScaler 
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
 # scaler = MinMaxScaler()
-scaler = StandardScaler()
+# scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+scaler = RobustScaler()
 scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 scaler.transform(x_train)
 x_train = scaler.transform(x_train)
@@ -68,7 +71,7 @@ y_predict = model.predict(x_test)
 from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print('r2스코어 :', r2)
-
+print("걸린시간 :",end_time)
 # print("============")
 # print(hist) #<tensorflow.python.keras.callbacks.History object at 0x000001B6B522F0A0>
 # print("============")
@@ -77,18 +80,18 @@ print('r2스코어 :', r2)
 # print(hist.history['loss'])
 # print("============")
 # print(hist.history['val_loss'])
-# print("걸린시간 :",end_time)
-# y_predict = model.predict(x_test)
-plt.figure(figsize=(9,6))
-plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
-plt.plot(hist.history['val_loss'],marker='.',c='blue',label='val_loss')
-plt.grid()
-plt.title('영어싫어') #맥플러립 한글 깨짐 현상 알아서 해결해라 
-plt.ylabel('loss')
-plt.xlabel('epochs')
-# plt.legend(loc='upper right')
-plt.legend()
-plt.show()
+
+# # y_predict = model.predict(x_test)
+# plt.figure(figsize=(9,6))
+# plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
+# plt.plot(hist.history['val_loss'],marker='.',c='blue',label='val_loss')
+# plt.grid()
+# plt.title('영어싫어') #맥플러립 한글 깨짐 현상 알아서 해결해라 
+# plt.ylabel('loss')
+# plt.xlabel('epochs')
+# # plt.legend(loc='upper right')
+# plt.legend()
+# plt.show()
 # validation 적용 전
 # loss : 2155.687744140625
 # r2스코어 : 0.6430334416083464
@@ -112,3 +115,11 @@ plt.show()
 #3. 스탠다드
 # loss : 56.96323776245117
 # r2스코어 : 0.08252106217043276
+#4. 절댓값
+# loss : 45.68850326538086
+# r2스코어 : 0.4511882013382986
+# 걸린시간 : 36.95505738258362
+#5. RobustScaler
+# loss : 50.58927917480469
+# r2스코어 : 0.3017407260022037
+# 걸린시간 : 38.65032076835632

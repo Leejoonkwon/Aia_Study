@@ -25,9 +25,9 @@ y = datasets['target']
 # train_cat
 print('y의 라벨값 :', np.unique(y,return_counts=True))
 import matplotlib.pylab as plt
-plt.gray()
-plt.matshow(datasets.images[1])
-plt.show()
+# plt.gray()
+# plt.matshow(datasets.images[1])
+# plt.show()
 
 # print(num)
 ###########(keras 버전 원핫인코딩)###############
@@ -58,9 +58,12 @@ print(y.shape) #(1797,10)
 # print(x.shape, y.shape) #(150, 4) (150,)
 
 x_train, x_test, y_train, y_test = train_test_split(x,y, test_size=0.25,shuffle=True ,random_state=100)
+from sklearn.preprocessing import MaxAbsScaler,RobustScaler 
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
 # scaler = MinMaxScaler()
-scaler = StandardScaler()
+# scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+scaler = RobustScaler()
 scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 scaler.transform(x_train)
 x_train = scaler.transform(x_train)
@@ -81,7 +84,8 @@ model.add(Dense(10, activation='softmax'))
 #다중 분류로 나오는 아웃풋 노드의 개수는 y 값의 클래스의 수와 같다.활성화함수 'softmax'를 통해 
 # 아웃풋의 합은 1이 된다.
 
-
+import time
+start_time = time.time()
 #3. 컴파일,훈련
 earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
                               verbose=1,restore_best_weights=True)
@@ -95,8 +99,8 @@ hist = model.fit(x_train, y_train, epochs=150, batch_size=40,
 
 #4.  평가,예측
 
-# loss,acc = model.evaluate(x_test,y_test)
-# print('loss :',loss)
+loss,acc = model.evaluate(x_test,y_test)
+print('loss :',loss)
 # print('accuracy :',acc)
 # print("+++++++++  y_test       +++++++++")
 # print(y_test[:5])
@@ -113,9 +117,10 @@ y_predict = np.argmax(y_predict,axis=1)
 # y_test와 y_predict의  shape가 일치해야한다.
 print(y_predict)
 
-
+end_time = time.time()-start_time 
 acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
+print("걸린시간 :",end_time)
 
 # plt.figure(figsize=(9,6))
 # plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
@@ -133,8 +138,22 @@ print('acc 스코어 :', acc)
 #1. 스케일러 하기전
 # acc 스코어 : 0.9688888888888889
 ##################
-#2. 민맥스
-# acc 스코어 : 0.9711111111111111
+#2. MinMaxScaler
+# loss : 0.1889442652463913
+# acc 스코어 : 0.9733333333333334
+# 걸린시간 : 15.372355461120605
 ##################
-#3. 스탠다드
-# acc 스코어 : 0.9711111111111111
+#3. StandardScaler
+# loss : 0.16102011501789093
+# acc 스코어 : 0.9755555555555555
+# 걸린시간 : 15.514368295669556
+##################
+#4. MaxAbsScaler
+# loss : 0.18443894386291504
+# acc 스코어 : 0.9733333333333334
+# 걸린시간 : 15.312106132507324
+##################
+#5. RobustScaler
+# loss : 0.1985497772693634
+# acc 스코어 : 0.9666666666666667
+# 걸린시간 : 15.576245307922363

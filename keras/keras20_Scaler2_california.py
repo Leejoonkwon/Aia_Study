@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.datasets import fetch_california_housing
 from tensorflow.python.keras.callbacks import EarlyStopping
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import MinMaxScaler,StandardScaler
+
 import matplotlib
 matplotlib.rcParams['font.family']='Malgun Gothic'
 matplotlib.rcParams['axes.unicode_minus']=False
@@ -22,8 +22,13 @@ x = datasets.data #데이터를 리스트 형태로 불러올 때 함
 y = datasets.target
 x_train, x_test ,y_train, y_test = train_test_split(
           x, y, train_size=0.8,shuffle=True,random_state=100)
+from sklearn.preprocessing import MaxAbsScaler,RobustScaler 
+from sklearn.preprocessing import MinMaxScaler,StandardScaler
 # scaler = MinMaxScaler()
-scaler = StandardScaler()
+# scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+scaler = RobustScaler()
+
 scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 scaler.transform(x_train)
 x_train = scaler.transform(x_train)
@@ -67,6 +72,7 @@ y_predict = model.predict(x_test)
 from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print('r2스코어 :', r2)
+print("걸린 시간 :",end_time)
 
 # print("============")
 # print(hist) #<tensorflow.python.keras.callbacks.History object at 0x000001B6B522F0A0>
@@ -112,3 +118,12 @@ print('r2스코어 :', r2)
 #3. 스탠다드
 # loss : 0.3460002839565277
 # r2스코어 : 0.8088948945752725
+#4. 절댓값
+# loss : 0.4312553405761719
+# r2스코어 : 0.686649003612051
+# 걸린 시간 : 36.01555895805359
+#5. RobustScaler
+# loss : 0.3402252495288849
+# r2스코어 : 0.7961290757181281
+# 걸린 시간 : 34.902045249938965
+

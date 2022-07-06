@@ -33,16 +33,17 @@ model.add(Dense(1))
 #3. 컴파일,훈련
 
 model.compile(loss='mae', optimizer='adam')
-model.fit(x_train, y_train, epochs=150, batch_size=2)
+model.fit(x_train, y_train, epochs=10, batch_size=10)
 
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
 print('loss :', loss)
 
-y_predict = model.predict(x_test)
-
+y_predict = model.predict(x)
+print(y.shape)
+print(y_predict.shape)
 from sklearn.metrics import r2_score
-r2 = r2_score(y_test, y_predict)
+r2 = r2_score(y, y_predict)
 print('r2스코어 :', r2)
 
 # r2 스코어 "0.8이상"

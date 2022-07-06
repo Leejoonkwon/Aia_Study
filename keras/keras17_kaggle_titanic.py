@@ -226,7 +226,7 @@ gender_submission = pd.read_csv(path + 'gender_submission.csv',#예측에서 쓸
 #
 
 
-x_train, x_test, y_train, y_test = train_test_split(x,y, train_size=0.75,shuffle=True ,random_state=100)
+x_train, x_test, y_train, y_test = train_test_split(x,y, train_size=0.91,shuffle=True ,random_state=68)
 #셔플을 False 할 경우 순차적으로 스플릿하다보니 훈련에서는 나오지 않는 값이 생겨 정확도가 떨어진다.
 #디폴트 값인  shuffle=True 를 통해 정확도를 올린다.
 
@@ -247,7 +247,7 @@ model.add(Dense(1, activation='sigmoid'))
 earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
                               verbose=1,restore_best_weights=True)
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-hist = model.fit(x_train, y_train, epochs=680, batch_size=80, 
+hist = model.fit(x_train, y_train, epochs=3000, batch_size=80, 
                 validation_split=0.25,
                 callbacks = [earlyStopping],
                 verbose=2)
