@@ -40,12 +40,12 @@ print(train_set.info())
 # sns.countplot('Survived', data = train_set, ax = ax[1])
 # ax[1].set_title('Survived')
 # plt.show()
-f, ax = plt.subplots(1,2,figsize=(18,8))
-train_set[['Sex','Survived']].groupby(['Sex']).mean().plot.bar(ax=ax[0])
-ax[0].set_title('Survived vs Sex')
-sns.countplot('Sex', hue = 'Survived', data = train_set, ax = ax[1])
-ax[1].set_title('Sex:Survived vs Dead')
-plt.show()
+# f, ax = plt.subplots(1,2,figsize=(18,8))
+# train_set[['Sex','Survived']].groupby(['Sex']).mean().plot.bar(ax=ax[0])
+# ax[0].set_title('Survived vs Sex')
+# sns.countplot('Sex', hue = 'Survived', data = train_set, ax = ax[1])
+# ax[1].set_title('Sex:Survived vs Dead')
+# plt.show()
 
 print(test_set) # [418 rows x 10 columns]
 print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
@@ -109,13 +109,13 @@ gender_submission = pd.read_csv(path + 'gender_submission.csv',#예측에서 쓸
 
 
 
-x_train, x_test, y_train, y_test = train_test_split(x,y, train_size=0.89,shuffle=True ,random_state=100)
+x_train, x_test, y_train, y_test = train_test_split(x,y, train_size=0.8,shuffle=True ,random_state=100)
 from sklearn.preprocessing import MaxAbsScaler,RobustScaler 
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
-# scaler = MinMaxScaler()
+scaler = MinMaxScaler()
 # scaler = StandardScaler()
 # scaler = MaxAbsScaler()
-scaler = RobustScaler()
+# scaler = RobustScaler()
 scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 scaler.transform(x_train)
 x_train = scaler.transform(x_train)
@@ -126,8 +126,11 @@ x_test = scaler.transform(x_test)
 #2. 모델 구성
 
 model = Sequential()
-model.add(Dense(100,input_dim=9))
-model.add(Dense(100, activation='relu'))
+model.add(Dense(500,input_dim=9))
+model.add(Dense(400,activation='relu'))
+model.add(Dense(400,activation='relu'))
+model.add(Dense(300,activation='relu'))
+model.add(Dense(200, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
 #다중 분류로 나오는 아웃풋 노드의 개수는 y 값의 클래스의 수와 같다.활성화함수 'softmax'를 통해 
 # 아웃풋의 합은 1이 된다.
@@ -138,7 +141,7 @@ start_time = time.time()
 earlyStopping = EarlyStopping(monitor='loss', patience=150, mode='min', 
                               verbose=1,restore_best_weights=True)
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(x_train, y_train, epochs=500, batch_size=20, 
+model.fit(x_train, y_train, epochs=700, batch_size=20, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2

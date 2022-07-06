@@ -227,6 +227,12 @@ gender_submission = pd.read_csv(path + 'gender_submission.csv',#예측에서 쓸
 
 
 x_train, x_test, y_train, y_test = train_test_split(x,y, train_size=0.91,shuffle=True ,random_state=68)
+from sklearn.preprocessing import MaxAbsScaler,RobustScaler 
+from sklearn.preprocessing import MinMaxScaler,StandardScaler
+scaler = MinMaxScaler()
+# scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+# scaler = RobustScaler()
 #셔플을 False 할 경우 순차적으로 스플릿하다보니 훈련에서는 나오지 않는 값이 생겨 정확도가 떨어진다.
 #디폴트 값인  shuffle=True 를 통해 정확도를 올린다.
 
@@ -278,16 +284,16 @@ print(y_test.shape)# (223,)
 
 acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
-plt.figure(figsize=(9,6))
-plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
-plt.plot(hist.history['val_loss'],marker='.',c='blue',label='val_loss')
-plt.grid()
-plt.title('영어싫어') #맥플러립 한글 깨짐 현상 알아서 해결해라 
-plt.ylabel('loss')
-plt.xlabel('epochs')
-# plt.legend(loc='upper right')
-plt.legend()
-plt.show()
+# plt.figure(figsize=(9,6))
+# plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
+# plt.plot(hist.history['val_loss'],marker='.',c='blue',label='val_loss')
+# plt.grid()
+# plt.title('영어싫어') #맥플러립 한글 깨짐 현상 알아서 해결해라 
+# plt.ylabel('loss')
+# plt.xlabel('epochs')
+# # plt.legend(loc='upper right')
+# plt.legend()
+# plt.show()
 # print(x_test) # (223,8)
 # print(test_set) # (418,8)
 # print(test_set) # (418,8)
