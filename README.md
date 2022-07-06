@@ -278,3 +278,5 @@ a = train_set[['FareBand', 'Survived']].groupby(['FareBand'], as_index=False).me
 print(a)
 
 ![image](https://user-images.githubusercontent.com/107663853/177438677-79a83639-052e-45d3-a0f7-4568f469b249.png)
+
+![image](https://user-images.githubusercontent.com/107663853/177438840-c0cea00e-8cde-4478-bcf0-eeadeac5f1ef.png)
