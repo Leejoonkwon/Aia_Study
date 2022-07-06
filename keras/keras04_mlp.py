@@ -1,3 +1,4 @@
+'''
 import numpy as np  
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
@@ -55,3 +56,6 @@ df = pd.DataFrame({'hour': [hour], 'hour_bef_temperature': [hour_bef_temperature
        'hour_bef_ozone': [hour_bef_ozone], 'hour_bef_pm10': [hour_bef_pm10], 'hour_bef_pm2.5': [hour_bef_pm25]})
 df.fillna(method='pad')
 '''
+!pip uninstall tensorflow
+
+!pip install tensorflow
