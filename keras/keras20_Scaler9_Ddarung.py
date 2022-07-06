@@ -48,8 +48,14 @@ print(x.shape) #(1459, 9)
 
 y = train_set['count']
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size = 0.919, shuffle = True, random_state = 100
- )
+    x, y, train_size = 0.919, shuffle = True, random_state = 100)
+from sklearn.preprocessing import MinMaxScaler,StandardScaler
+# scaler = MinMaxScaler()
+scaler = StandardScaler()
+scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
+scaler.transform(x_train)
+x_train = scaler.transform(x_train)
+x_test = scaler.transform(x_test)
 print(y)
 print(y.shape) # (1459,)
 
@@ -64,13 +70,13 @@ model.summary()
 # Total params: 21,301
 # Trainable params: 21,301
 # Non-trainable params: 0
-'''
+
 #3. 컴파일,훈련
 earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
                               verbose=1,restore_best_weights=True)
 model.compile(loss='mae', optimizer='adam')
 
-hist = model.fit(x_train, y_train, epochs=1010, batch_size=25, 
+hist = model.fit(x_train, y_train, epochs=550, batch_size=120, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2
@@ -112,6 +118,17 @@ plt.show()
 # EarlyStopping  적용 및 활성화 함수
 # loss : 30.648914337158203
 # r2스코어 : 0.7276545891537277
+##################
+#1. 스케일러 하기전
+# loss : 30.648914337158203
+# r2스코어 : 0.7276545891537277
+##################
+#2. 민맥스
+#loss : 27.22348976135254
+# r2스코어 : 0.7050981220883921
+##################
+#3. 스탠다드
+# loss : 29.95738410949707
+# r2스코어 : 0.7031487397513843
 
-'''
 

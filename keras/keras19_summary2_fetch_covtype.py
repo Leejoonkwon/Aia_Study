@@ -1,3 +1,5 @@
+# keras18_)gpu_test3
+# 서머리와 시간
 # [과제] 맹그러서 속도 비교
 # gpu 와 cpu
 import numpy as np
@@ -18,7 +20,7 @@ if(gpus) :
     aaa = 'gpu'
 else:
     print("쥐피유 안도라")
-    bbb = 'cpu'
+    aaa = 'cpu'
 
 #1.데이터
 datasets = fetch_covtype()
@@ -124,10 +126,20 @@ print(y_predict) #(87152, )
 acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
 end_time = time.time()-start_time
-print(bbb,"걸린시간 :",end_time)
-
+print(aaa,"걸린시간 :",end_time)
+model.summary()
 # gpu 걸린시간 : 72.09812474250793
 # cpu 걸린시간 : 165.26057076454163
+############################
 
+# cpu 걸린시간 : 31.721821546554565
+# Total params: 429,207
+# Trainable params: 429,207
 
+############################
 
+# gpu 걸린시간 : 7.211615085601807
+# Total params: 429,207
+# Trainable params: 429,207
+
+############################

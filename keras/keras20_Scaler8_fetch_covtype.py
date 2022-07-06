@@ -59,6 +59,13 @@ print(y_class.shape) # (581012, 7)
 # print(x.shape, y.shape) #(581012, 54) (581012,)
 
 x_train, x_test, y_train, y_test = train_test_split(x,y_class, test_size=0.15,shuffle=True ,random_state=100)
+from sklearn.preprocessing import MinMaxScaler,StandardScaler
+# scaler = MinMaxScaler()
+# scaler = StandardScaler()
+# scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
+# scaler.transform(x_train)
+# x_train = scaler.transform(x_train)
+# x_test = scaler.transform(x_test)
 #셔플을 False 할 경우 순차적으로 스플릿하다보니 훈련에서는 나오지 않는 값이 생겨 정확도가 떨어진다.
 #디폴트 값인  shuffle=True 를 통해 정확도를 올린다.
 print(y_train,y_test)
@@ -124,10 +131,20 @@ print(y_predict) #(87152, )
 acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
 end_time = time.time()-start_time
-print(bbb,"걸린시간 :",end_time)
+print(aaa,"걸린시간 :",end_time)
 
 # gpu 걸린시간 : 72.09812474250793
 # cpu 걸린시간 : 165.26057076454163
+
+##################
+#1. 스케일러 하기전
+# acc 스코어 : 0.5015145951900128
+##################
+#2. 민맥스
+# acc 스코어 : 0.7641476959794382
+##################
+#3. 스탠다드
+# acc 스코어 : 0.8464751239214247
 
 
 

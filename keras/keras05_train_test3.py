@@ -28,8 +28,8 @@ model = Sequential()
 model.add(Dense(10, input_dim=1))
 model.add(Dense(3))
 model.add(Dense(1))
-
-
+model.summary()
+'''
 #3, 컴파일, 훈련
 
 model.compile(loss='mse', optimizer="adam")
@@ -45,3 +45,4 @@ print('[11]의 예측값 :',result)
 #loss : 1.1216201301067485e-06
 #[11]의 예측값 : [[10.998204]]
 
+'''

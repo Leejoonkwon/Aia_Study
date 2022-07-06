@@ -32,7 +32,11 @@ model.add(Dense(24))
 model.add(Dense(12))
 model.add(Dense(8))
 model.add(Dense(1))
-
+model.summary()
+# Total params: 9,453
+# Trainable params: 9,453
+# Non-trainable params: 0
+'''
 #3. 컴파일,훈련
 
 model.compile(loss='mse', optimizer='adam')
@@ -50,3 +54,5 @@ print('r2스코어 :', r2)
 
 # loss : 2155.687744140625
 # r2스코어 : 0.6430334416083464
+
+'''

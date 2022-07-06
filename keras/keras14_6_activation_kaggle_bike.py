@@ -63,7 +63,11 @@ model.add(Dense(100,input_dim=8))
 model.add(Dense(100, activation='relu'))
 model.add(Dense(100, activation='relu'))
 model.add(Dense(1))
-
+model.summary()
+# Total params: 21,201
+# Trainable params: 21,201
+# Non-trainable params: 0
+'''
 #3. 컴파일,훈련
 earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
                               verbose=1,restore_best_weights=True)
@@ -108,4 +112,4 @@ plt.show()
 # activation 및 EarlyStopping 으로 적용 후
 # loss : 97.43128967285156
 # r2스코어 : 0.3425327427467255
-
+'''

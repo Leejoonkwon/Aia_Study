@@ -44,7 +44,7 @@ ax[0].set_title('Survived vs Sex')
 sns.countplot('Sex', hue = 'Survived', data = train_set, ax = ax[1])
 ax[1].set_title('Sex:Survived vs Dead')
 plt.show()
-'''
+
 print(test_set) # [418 rows x 10 columns]
 print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
 # Survived      0
@@ -125,7 +125,7 @@ model.add(Dense(1, activation='sigmoid'))
 earlyStopping = EarlyStopping(monitor='loss', patience=200, mode='min', 
                               verbose=1,restore_best_weights=True)
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(x_train, y_train, epochs=5000, batch_size=20, 
+model.fit(x_train, y_train, epochs=10, batch_size=20, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2
@@ -148,12 +148,13 @@ model.fit(x_train, y_train, epochs=5000, batch_size=20,
 
 
 y_predict = model.predict(x_test)
+print(y_predict) 
 y_predict[(y_predict<0.5)] = 0  
 y_predict[(y_predict>=0.5)] = 1  
 print(y_predict) 
 print(y_test.shape) #(134,)
 
-
+'''
 # y_test = np.argmax(y_test,axis=1)
 # import tensorflow as tf
 # y_test = np.argmax(y_test,axis=1)

@@ -7,21 +7,27 @@
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense
 from sklearn.model_selection import train_test_split
-from sklearn.datasets import load_boston
+from sklearn.datasets import fetch_california_housing
 from tensorflow.python.keras.callbacks import EarlyStopping
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler,StandardScaler
 import matplotlib
 matplotlib.rcParams['font.family']='Malgun Gothic'
 matplotlib.rcParams['axes.unicode_minus']=False
 import time
 
 #1. 데이터
-datasets = load_boston()
+datasets = fetch_california_housing()
 x = datasets.data #데이터를 리스트 형태로 불러올 때 함
 y = datasets.target
 x_train, x_test ,y_train, y_test = train_test_split(
-          x, y, train_size=0.91,shuffle=True,random_state=100)
-
+          x, y, train_size=0.8,shuffle=True,random_state=100)
+# scaler = MinMaxScaler()
+scaler = StandardScaler()
+scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
+scaler.transform(x_train)
+x_train = scaler.transform(x_train)
+x_test = scaler.transform(x_test)
 # print(x.shape, y.shape) #(506, 13)-> 13개의 피쳐 (506,) 
 
 # print(datasets.feature_names)
@@ -30,23 +36,19 @@ x_train, x_test ,y_train, y_test = train_test_split(
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(100,input_dim=13))
+model.add(Dense(100,input_dim=8))
 model.add(Dense(100, activation='relu'))
 model.add(Dense(100, activation='relu'))
 model.add(Dense(1))
-model.summary()
-# Total params: 21,701
-# Trainable params: 21,701
-# Non-trainable params: 0
-'''
+
 #3. 컴파일,훈련
 earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
-                              verbose=2,restore_best_weights=True)
+                              verbose=1,restore_best_weights=True)
 model.compile(loss='mae', optimizer='adam')
 
 start_time = time.time()
 print(start_time)
-hist = model.fit(x_train, y_train, epochs=1010, batch_size=15, 
+hist = model.fit(x_train, y_train, epochs=150, batch_size=150, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2
@@ -76,29 +78,37 @@ print('r2스코어 :', r2)
 # print(hist.history['val_loss'])
 # print("걸린시간 :",end_time)
 # # y_predict = model.predict(x_test)
-plt.figure(figsize=(9,6))
-plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
-plt.plot(hist.history['val_loss'],marker='.',c='blue',label='val_loss')
-plt.grid()
-plt.title('영어싫어') #맥플러립 한글 깨짐 현상 알아서 해결해라 
-plt.ylabel('loss')
-plt.xlabel('epochs')
-# plt.legend(loc='upper right')
-plt.legend()
-plt.show()
-
-
-
+# plt.figure(figsize=(9,6))
+# plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
+# plt.plot(hist.history['val_loss'],marker='.',c='blue',label='val_loss')
+# plt.grid()
+# plt.title('영어싫어') #맥플러립 한글 깨짐 현상 알아서 해결해라 
+# plt.ylabel('loss')
+# plt.xlabel('epochs')
+# # plt.legend(loc='upper right')
+# plt.legend()
+# plt.show()
 # validation 적용 전
-# r2 스코어 "0.8이상"
-# loss : 3.1941933631896973
-# r2스코어 : 0.8146167932510104
+# [실습 시작!!] #0.54이상
+# loss : 0.5898192524909973
+# r2스코어 : 0.5617319420274233
 #################
 # validation 적용 후
-# loss : 2.74114727973938
-# r2스코어 : 0.8827299842129269
-#################
-# EarlyStopping 및 activation 적용 버전
-# loss : 3.5245087146759033
-# r2스코어 : 0.7557914895748932
-'''
+# loss : 0.5187357664108276
+# r2스코어 : 0.606785090759131
+##################
+# EarlyStopping 적용 및 활성화 함수 적용
+# loss : 0.5606501698493958
+# r2스코어 : 0.5248489028606996
+##################
+#1. 스케일러 하기전
+# loss : 3.1941933631896973
+# r2스코어 : 0.8146167932510104
+##################
+#2. 민맥스
+# loss : 0.3700266182422638
+# r2스코어 : 0.7486719942735911
+##################
+#3. 스탠다드
+# loss : 0.3460002839565277
+# r2스코어 : 0.8088948945752725
