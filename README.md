@@ -254,9 +254,27 @@ print(test_set.isnull().sum())
 
 ![image](https://user-images.githubusercontent.com/107663853/177437968-f2b6c736-4536-4165-9b76-a871ba0e1c83.png)
 
-Embarked 
+Embarked의 결측치는 valuse_counts를 통해 가장 많은 값인 'S'로 대치한다.
 
 print(train_set['Embarked'].value_counts())
 
 train_set['Embarked'].fillna('S', inplace=True)
+
 ![image](https://user-images.githubusercontent.com/107663853/177438050-c7d666d5-a88e-438d-91ba-1daf56259899.png)
+
+승선지(Ebmarked) 변수를 범주형 변수로 바꿔줌
+for dataset in combine:
+    dataset['Embarked'] = dataset['Embarked'].map( {'S': 0, 'C': 1, 'Q': 2} ).astype(int)
+
+a = train_set.head()
+print(a)
+
+![image](https://user-images.githubusercontent.com/107663853/177438520-a8dc8dc7-a14a-41d0-b234-3736ef8867a9.png)
+
+요금(Fare)을 숫자 범주형 변수로 바꿔줌
+
+train_set['FareBand'] = pd.qcut(train_set['Fare'], 4)
+a = train_set[['FareBand', 'Survived']].groupby(['FareBand'], as_index=False).mean().sort_values(by='FareBand', ascending=True)
+print(a)
+
+![image](https://user-images.githubusercontent.com/107663853/177438677-79a83639-052e-45d3-a0f7-4568f469b249.png)
