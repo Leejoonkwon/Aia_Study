@@ -141,7 +141,7 @@ start_time = time.time()
 earlyStopping = EarlyStopping(monitor='loss', patience=150, mode='min', 
                               verbose=1,restore_best_weights=True)
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(x_train, y_train, epochs=700, batch_size=20, 
+model.fit(x_train, y_train, epochs=100000, batch_size=20, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2
