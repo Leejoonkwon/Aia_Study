@@ -4,7 +4,7 @@
 # EarlyStopping  넣고
 # 성능비교
 # 감상문 2줄이상!
-from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.models import Sequential,load_model
 from tensorflow.python.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping
@@ -64,11 +64,11 @@ print(y.shape) # (1459,)
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(100,input_dim=9))
-model.add(Dense(100, activation='relu'))
-model.add(Dense(100, activation='relu'))
-model.add(Dense(1))
-model.summary()
+# model.add(Dense(100,input_dim=9))
+# model.add(Dense(100, activation='relu'))
+# model.add(Dense(100, activation='relu'))
+# model.add(Dense(1))
+# model.summary()
 # Total params: 21,301
 # Trainable params: 21,301
 # Non-trainable params: 0
@@ -80,12 +80,13 @@ earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min',
                               verbose=1,restore_best_weights=True)
 model.compile(loss='mae', optimizer='adam')
 
-hist = model.fit(x_train, y_train, epochs=550, batch_size=120, 
-                validation_split=0.3,
-                callbacks = [earlyStopping],
-                verbose=2
-                )
-
+# hist = model.fit(x_train, y_train, epochs=550, batch_size=120, 
+#                 validation_split=0.3,
+#                 callbacks = [earlyStopping],
+#                 verbose=2
+#                 )
+# model.save("./_save/keras23_9_save.model_Ddarung.h5")
+model = load_model("./_save/keras23_9_save.model_Ddarung.h5")
 
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
@@ -120,32 +121,13 @@ print("걸린시간 :",end_time)
 # RMSE : 40.51339291351674
 # train_size = 0.919, shuffle = True, random_state = 100
 # epochs =519, batch_size=62, verbose=2
-#####################################
-# EarlyStopping  적용 및 활성화 함수
-# loss : 30.648914337158203
-# r2스코어 : 0.7276545891537277
+
 ##################
-#1. 스케일러 하기전
-# loss : 27.578628540039062
-# r2스코어 : 0.7173052863676408
-# 걸린시간 : 28.428871393203735
-##################
-#2. MinMaxScaler
-# loss : 0.
-# acc 스코어 : 0.
-# 걸린시간 : 9.
-##################
-#3. StandardScaler
-# loss : 29.403167724609375
-# r2스코어 : 0.7250727048182912
-# 걸린시간 : 29.3307626247406
-##################
-#4. MaxAbsScaler
-# loss : 26.453327178955078
-# r2스코어 : 0.7227591835421086
-# 걸린시간 : 29.245761156082153
-##################
-#5. RobustScaler
-# loss : 30.07063865661621
-# r2스코어 : 0.6820518538222302
-# 걸린시간 : 28.84107208251953
+# save 전
+# loss : 28.46576690673828
+# r2스코어 : 0.7098614309217063
+# 걸린시간 : 27.543837308883667
+# save 후 load 시
+# oss : 28.46576690673828
+# r2스코어 : 0.7098614309217063
+# 걸린시간 : 0.8812735080718994

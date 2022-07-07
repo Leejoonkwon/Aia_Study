@@ -2,7 +2,7 @@
 # gpu 와 cpu
 import numpy as np
 from sklearn.datasets import fetch_covtype
-from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.models import Sequential,load_model
 from tensorflow.python.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping
@@ -79,12 +79,12 @@ print(y_train,y_test)
 #2. 모델 구성
 
 model = Sequential()
-model.add(Dense(500,input_dim=54))
-model.add(Dense(400, activation='relu'))
-model.add(Dense(300, activation='relu'))
-model.add(Dense(200, activation='relu'))
-model.add(Dense(100, activation='relu'))
-model.add(Dense(7, activation='softmax'))
+# model.add(Dense(500,input_dim=54))
+# model.add(Dense(400, activation='relu'))
+# model.add(Dense(300, activation='relu'))
+# model.add(Dense(200, activation='relu'))
+# model.add(Dense(100, activation='relu'))
+# model.add(Dense(7, activation='softmax'))
 #다중 분류로 나오는 아웃풋 노드의 개수는 y 값의 클래스의 수와 같다.활성화함수 'softmax'를 통해 
 # 아웃풋의 합은 1이 된다.
 
@@ -94,12 +94,15 @@ start_time = time.time()
 earlyStopping = EarlyStopping(monitor='loss', patience=250, mode='min', 
                               verbose=1,restore_best_weights=True)
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(x_train, y_train, epochs=10, batch_size=14000, 
-                validation_split=0.3,
-                callbacks = [earlyStopping],
-                verbose=2
-                )
+# model.fit(x_train, y_train, epochs=10, batch_size=14000, 
+#                 validation_split=0.3,
+#                 callbacks = [earlyStopping],
+#                 verbose=2
+#                 )
 #다중 분류 모델은 'categorical_crossentropy'만 사용한다 !!!!
+
+# model.save("./_save/keras23_8_save.model_fetch_covtype.h5")
+model = load_model("./_save/keras23_8_save.model_fetch_covtype.h5")
 
 #4.  평가,예측
 
@@ -140,27 +143,13 @@ print(aaa,"걸린시간 :",end_time)
 # cpu 걸린시간 : 165.26057076454163
 
 ##################
-#1. 스케일러 하기전
-# acc 스코어 : 0.5015145951900128
-##################
-#2. MinMaxScaler
-# loss : 0.5164511203765869
-# acc 스코어 : 0.7776757848356893
-# gpu 걸린시간 : 13.73131513595581
-##################
-#3. StandardScaler
-# loss : 0.3597228229045868
-# acc 스코어 : 0.8545300165228567
-# gpu 걸린시간 : 14.07124948501587
-##################
-#4. MaxAbsScaler
-# loss : 0.5727503895759583
-# acc 스코어 : 0.7530406645860106
-# gpu 걸린시간 : 13.901057958602905
-##################
-#5. RobustScaler
-# loss : 0.3719959855079651
-# acc 스코어 : 0.8467849274830181
-# gpu 걸린시간 : 13.62384843826294
+# save 전
+# loss : 0.42036399245262146
+# acc 스코어 : 0.8245134936662383
+# gpu 걸린시간 : 14.409757137298584
+# save 후 load 시
+# loss : 0.42036399245262146
+# acc 스코어 : 0.8245134936662383
+# gpu 걸린시간 : 9.752402305603027
 
 

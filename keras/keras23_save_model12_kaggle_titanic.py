@@ -9,7 +9,7 @@
 
 import numpy as np
 import pandas as pd 
-from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.models import Sequential,load_model
 from tensorflow.python.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping
@@ -126,12 +126,12 @@ x_test = scaler.transform(x_test)
 #2. 모델 구성
 
 model = Sequential()
-model.add(Dense(500,input_dim=9))
-model.add(Dense(400,activation='relu'))
-model.add(Dense(400,activation='relu'))
-model.add(Dense(300,activation='relu'))
-model.add(Dense(200, activation='relu'))
-model.add(Dense(1, activation='sigmoid'))
+# model.add(Dense(500,input_dim=9))
+# model.add(Dense(400,activation='relu'))
+# model.add(Dense(400,activation='relu'))
+# model.add(Dense(300,activation='relu'))
+# model.add(Dense(200, activation='relu'))
+# model.add(Dense(1, activation='sigmoid'))
 #다중 분류로 나오는 아웃풋 노드의 개수는 y 값의 클래스의 수와 같다.활성화함수 'softmax'를 통해 
 # 아웃풋의 합은 1이 된다.
 import time
@@ -141,12 +141,14 @@ start_time = time.time()
 earlyStopping = EarlyStopping(monitor='loss', patience=150, mode='min', 
                               verbose=1,restore_best_weights=True)
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(x_train, y_train, epochs=100000, batch_size=20, 
-                validation_split=0.3,
-                callbacks = [earlyStopping],
-                verbose=2
-                )
-#다중 분류 모델은 'categorical_crossentropy'만 사용한다 !!!!
+# model.fit(x_train, y_train, epochs=300, batch_size=20, 
+#                 validation_split=0.3,
+#                 callbacks = [earlyStopping],
+#                 verbose=2
+#                 )
+# 다중 분류 모델은 'categorical_crossentropy'만 사용한다 !!!!
+# model.save("./_save/keras23_12_save.model_kaggle_titanic.h5")
+model = load_model("./_save/keras23_12_save.model_kaggle_titanic.h5")
 
 #4.  평가,예측
 
@@ -216,27 +218,13 @@ submission.astype(int)
 submission.to_csv('test21.csv',index=True)
 
 
-#1. 스케일러 하기전
-# loss : 30.648914337158203
-# acc 스코어 : 0.7654320987654321
 ##################
-#2. MinMaxScaler
-# loss : 0.
-# acc 스코어 : 0.8282828282828283
-# 걸린시간 : 63.75999879837036
-##################
-#3. StandardScaler
-# loss : 0.9620940089225769
-# acc 스코어 : 0.8080808080808081
-# 걸린시간 : 62.55567169189453
-##################
-#4. MaxAbsScaler
-# loss : 0.6103704571723938
-# acc 스코어 : 0.7878787878787878
-# 걸린시간 : 61.82119369506836
-##################
-#5. RobustScaler
-# loss : 1.4106671810150146
-# acc 스코어 : 0.7474747474747475
-# 걸린시간 : 63.47385573387146
+# save 전
+# loss : 1.8488425016403198
+# acc 스코어 : 0.7541899441340782
+# 걸린시간 : 40.248865365982056
+# save 후 load 시
+# loss : 1.8488425016403198
+# acc 스코어 : 0.7541899441340782
+# 걸린시간 : 0.928015947341919
 

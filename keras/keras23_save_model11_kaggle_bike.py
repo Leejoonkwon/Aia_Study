@@ -7,7 +7,7 @@
 import matplotlib
 import pandas as pd
 import matplotlib.pyplot as plt
-from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.models import Sequential,load_model
 from tensorflow.python.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping
@@ -69,11 +69,11 @@ print(test_set)
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(100,input_dim=8))
-model.add(Dense(100, activation='relu'))
-model.add(Dense(100, activation='relu'))
-model.add(Dense(1))
-model.summary()
+# model.add(Dense(100,input_dim=8))
+# model.add(Dense(100, activation='relu'))
+# model.add(Dense(100, activation='relu'))
+# model.add(Dense(1))
+# model.summary()
 # Total params: 21,201
 # Trainable params: 21,201
 # Non-trainable params: 0
@@ -84,10 +84,12 @@ earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min',
                               verbose=1,restore_best_weights=True)
 model.compile(loss='mae', optimizer='adam')
 
-hist = model.fit(x_train, y_train, epochs=1010, batch_size=2500, 
-                validation_split=0.3,
-                callbacks = [earlyStopping],
-                verbose=2)
+# hist = model.fit(x_train, y_train, epochs=1010, batch_size=2500, 
+#                 validation_split=0.3,
+#                 callbacks = [earlyStopping],
+#                 verbose=2)
+# model.save("./_save/keras23_11_save.model_kaggle_bike.h5")
+model = load_model("./_save/keras23_11_save.model_kaggle_bike.h5")
 
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
@@ -125,31 +127,12 @@ print("걸린시간 :",end_time)
 # loss : 97.43128967285156
 # r2스코어 : 0.3425327427467255
 
-#####################################
-# EarlyStopping  적용 및 활성화 함수
-# loss : 30.648914337158203
-# r2스코어 : 0.7276545891537277
 ##################
-#1. 스케일러 하기전
-# loss : 97.43128967285156
-# r2스코어 : 0.3425327427467255
-##################
-#2. MinMaxScaler
-# loss : 94.7766342163086
-# r2스코어 : 0.3555606095041368
-# 걸린시간 : 36.777430057525635
-##################
-#3. StandardScaler
-# loss : 94.6276626586914
-# r2스코어 : 0.3632466637287737
-# 걸린시간 : 38.000826358795166
-##################
-#4. MaxAbsScaler
-# loss : 96.97545623779297
-# r2스코어 : 0.3390128944655548
-# 걸린시간 : 37.0623733997345
-##################
-#5. RobustScaler
-# loss : 95.10087585449219
-# r2스코어 : 0.3657807949740439
-# 걸린시간 : 37.770310163497925
+# save 전
+# loss : 94.94618225097656
+# r2스코어 : 0.3688581891987448
+# 걸린시간 : 36.45177721977234
+# save 후 load 시
+# loss : 94.94618225097656
+# r2스코어 : 0.3688581891987448
+# 걸린시간 : 0.9373319149017334

@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sqlalchemy import null
-from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.models import Sequential,load_model
 from tensorflow.python.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping
@@ -85,10 +85,10 @@ print(y.shape) # (1460,)
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(100,input_dim=75))
-model.add(Dense(100, activation='relu'))
-model.add(Dense(100, activation='relu'))
-model.add(Dense(1))
+# model.add(Dense(100,input_dim=75))
+# model.add(Dense(100, activation='relu'))
+# model.add(Dense(100, activation='relu'))
+# model.add(Dense(1))
 import time
 start_time = time.time()
 #3. 컴파일,훈련
@@ -96,16 +96,17 @@ earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min',
                               verbose=1,restore_best_weights=True)
 model.compile(loss='mae', optimizer='adam')
 
-hist = model.fit(x_train, y_train, epochs=1010, batch_size=100, 
-                validation_split=0.3,
-                callbacks = [earlyStopping],
-                verbose=2
-                )
+# hist = model.fit(x_train, y_train, epochs=1010, batch_size=100, 
+#                 validation_split=0.3,
+#                 callbacks = [earlyStopping],
+#                 verbose=2
+#                 )
 
 
 #verbose = 0으로 할 시 출력해야할 데이터가 없어 속도가 빨라진다.강제 지연 발생을 막는다.
 
-
+# model.save("./_save/keras23_10_save.model_kaggle_house.h5")
+model = load_model("./_save/keras23_10_save.model_kaggle_house.h5")
 
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
@@ -143,31 +144,12 @@ print("걸린시간 :",end_time)
 # loss : 97.37265014648438
 # r2스코어 : 0.36341653990677303
 
-#####################################
-# EarlyStopping  적용 및 활성화 함수
-# loss : 30.648914337158203
-# r2스코어 : 0.7276545891537277
 ##################
-#1. 스케일러 하기전
-# loss : 30.648914337158203
-# r2스코어 : 0.7276545891537277
-##################
-#2. MinMaxScaler
-# loss : 18206.8515625
-# r2스코어 : 0.8657327208251866
-# 걸린시간 : 55.83432698249817
-##################
-#3. StandardScaler
-# loss : 16617.701171875
-# r2스코어 : 0.8774402652077372
-# 걸린시간 : 58.85835576057434
-##################
-#4. MaxAbsScaler
-# loss : 18918.541015625
-# r2스코어 : 0.8604294545237556
-# 걸린시간 : 58.26255655288696
-##################
-#5. RobustScaler
-# loss : 18403.46875
-# r2스코어 : 0.8710011500655894
-# 걸린시간 : 41.32139444351196
+# save 전
+# loss : 22328.259765625
+# r2스코어 : 0.8378951980198694
+# 걸린시간 : 21.764403820037842
+# save 후 load 시
+# loss : 22328.259765625
+# r2스코어 : 0.8378951980198694
+# 걸린시간 : 0.8442895412445068
