@@ -33,6 +33,7 @@ test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
 plt.figure(figsize=(10, 10))
 sns.heatmap(train_set.corr(), linewidths=0.01, square=True,
             annot=True, cmap=plt.cm.viridis, linecolor="white")
+#숫자 표기 여부
 plt.title('Correlation between features')
 plt.show()
 
