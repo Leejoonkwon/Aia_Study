@@ -8,7 +8,7 @@ from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import fetch_california_housing
-from tensorflow.python.keras.callbacks import EarlyStopping
+from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 import matplotlib.pyplot as plt
 
 import matplotlib
@@ -45,10 +45,24 @@ model.add(Dense(100,input_dim=8))
 model.add(Dense(100, activation='relu'))
 model.add(Dense(100, activation='relu'))
 model.add(Dense(1))
+import datetime
+date = datetime.datetime.now()
+print(date)
 
-#3. 컴파일,훈련
-earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
+date = date.strftime("%m%d_%H%M") # 0707_1723
+print(date)
+
+
+# #3. 컴파일,훈련
+filepath = './_ModelCheckPoint/K24/'
+filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
+#04d :                  4f : 
+earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min', 
                               verbose=1,restore_best_weights=True)
+mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
+                      save_best_only=True, 
+                      filepath="".join([filepath,'k25_', date, '_', filename])
+                    )
 model.compile(loss='mae', optimizer='adam')
 
 start_time = time.time()

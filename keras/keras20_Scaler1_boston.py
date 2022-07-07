@@ -19,10 +19,12 @@ scaler = MinMaxScaler()
 # scaler = MaxAbsScaler()
 # scaler = RobustScaler()
 
-scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
-scaler.transform(x_train)
-x_train = scaler.transform(x_train)
+# scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
+# scaler.transform(x_train)
+x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
+#fit,transform,fit_transform으로 3가지 기능 중  train 데이터에는 3가지 방법 모두 적용할 수 있지만
+#test 데이터에는  fit 진행하면 안된다.
 
 print(np.min(x_train)) # 0.0
 print(np.max(x_train)) # 1.0
