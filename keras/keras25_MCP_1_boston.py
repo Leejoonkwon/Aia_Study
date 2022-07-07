@@ -48,6 +48,8 @@ date = datetime.datetime.now()
 print(date)
 
 date = date.strftime("%m%d_%H%M") # 0707_1723
+#strftime  str은  string으로 문자열  f 는  format  형식  time은 시간. 시간으로 되어 있는 데이터를 
+#문자열로 바꾸는 명령어이다.
 print(date)
 
 

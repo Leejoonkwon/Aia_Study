@@ -35,14 +35,13 @@ model.add(Dense(32, activation='relu'))
 model.add(Dense(16, activation='relu'))
 model.add(Dense(8, activation='relu'))
 model.add(Dense(1))
-model.summary()
+# model.summary()
 
 
 # model.save("./_save/keras23_1_save.model.h5")
 # model.save_weights("./_save/keras23_5_save_weights1.h5")
 
 # model = load_model("./_save/keras23_5_save_weights1.h5")
-model.load_weights("./_save/keras23_5_save_weights1.h5")
 
 model.load_weights("./_save/keras23_5_save_weights2.h5")
 

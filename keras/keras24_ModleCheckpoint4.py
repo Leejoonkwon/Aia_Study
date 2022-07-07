@@ -50,14 +50,14 @@ filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min', 
                               verbose=1,restore_best_weights=True)
 mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
-                      save_best_only=True, 
+                      save_best_only=False, 
                       filepath="".join([filepath,'k24_', date, '_', filename])
                     )
 # "".join은 " "사이에 있는 문자열을 합치겠다는 기능
 model.compile(loss='mae', optimizer='adam')
 
 
-model.fit(x_train, y_train, epochs=100, batch_size=50, 
+model.fit(x_train, y_train, epochs=10, batch_size=50, 
                 validation_split=0.2,
                 callbacks=[earlyStopping,mcp],
                 verbose=2  )

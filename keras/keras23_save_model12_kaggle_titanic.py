@@ -167,8 +167,8 @@ print('loss :',loss)
 
 y_predict = model.predict(x_test)
 print(y_predict) 
-y_predict[(y_predict<0.5)] = 0  
-y_predict[(y_predict>=0.5)] = 1  
+y_predict = np.round(y_predict,0)
+
 print(y_predict) 
 print(y_test.shape) #(134,)
 
@@ -190,7 +190,7 @@ print(y_test.shape) #(134,)
 # print(np.min(y_test)) # -0.73951
 # print(np.max(y_test)) # 1.3522468
 
-
+'''
 acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
 end_time = time.time()-start_time
@@ -228,3 +228,4 @@ submission.to_csv('test21.csv',index=True)
 # acc 스코어 : 0.7541899441340782
 # 걸린시간 : 0.928015947341919
 
+'''
