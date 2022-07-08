@@ -51,6 +51,8 @@ y_test = to_categorical(y_test)
 
 # y_train = pd.get_dummies((y_train)) 
 # y_test = pd.get_dummies((y_test))
+#get_dummies 사용 시 오류가 뜨는 이유는 get_dummies는 2차원 타입의 데이터까지만  인코딩 가능하기 때문이다.
+#3차원 이상의 데이터를 인코딩할 때는 원핫인코딩과 카테고리컬을 사용한다.
 print(y_train.shape) #(50000, 100)
 print(y_test.shape) #(10000, 100)
 
@@ -81,16 +83,29 @@ model.add(Dense(1000, activation='relu'))
 model.add(Dropout(0.3))
 model.add(Dense(100, activation='softmax'))
 model.summary()
+import datetime
+date = datetime.datetime.now()
+print(date)
+
+date = date.strftime("%m%d_%H%M") # 0707_1723
+print(date)
+
 
 #3. 컴파일 훈련
+filepath = './_ModelCheckPoint/K27/'
+filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 earlyStopping = EarlyStopping(monitor='loss', patience=150, mode='min', 
                               verbose=1,restore_best_weights=True)
-
+mcp = ModelCheckpoint(monitor='loss',mode='auto',verbose=1,
+                      save_best_only=True, 
+                      filepath="".join([filepath,'k27_', date, '_', filename])
+                    )
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=10000, batch_size=5000, 
-                callbacks = [earlyStopping],
+model.fit(x_train, y_train, epochs=1000, batch_size=500, 
+                callbacks = [earlyStopping,mcp],
+                validation_split=0.2,
                 verbose=2
                 )
 model.save_weights("./_save/keras23_5_cifar10_2.h5")

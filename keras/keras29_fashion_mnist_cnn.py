@@ -1,7 +1,3 @@
-#칼라 
-#분류 100
-# 32
-# 컴불루션 3개 이상 
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Conv2D, Flatten, MaxPooling2D ,Dropout
 from keras.datasets import mnist,cifar10,cifar100,fashion_mnist
@@ -24,6 +20,9 @@ scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 scaler.transform(x_train)
 x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
+#이전에 스케일링에서 dimension 오류가 뜨던 이유는 스케일링 작업은 1차원 타입의 데이터만 수정할 수 있기 때문이다.
+#해결법은 스케일링 하기전 reshape로 (N,X)의 shape로 만들어 스케일링 후 다시 reshape를 통해 
+#input_shape로 쓸 수 있게 만들면 가능하며 성능도 당연히 좋아진다.
 print(x_train.shape) #(60000, 28, 28, 1)
 print(x_test.shape) #(10000, 28, 28, 1)
 print(np.unique(y_train,return_counts=True))
@@ -36,6 +35,7 @@ y_test = to_categorical(y_test)
 
 # y_train = pd.get_dummies((y_train)) 
 # y_test = pd.get_dummies((y_test))
+
 print(y_train.shape) #(50000, 10)
 print(y_test.shape) #(10000, 10)
 
@@ -65,14 +65,17 @@ model.add(Dense(1000, activation='relu'))
 model.add(Dropout(0.3))
 model.add(Dense(10, activation='softmax'))
 model.summary()
+filepath = './_ModelCheckPoint/K24/'
+filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 #3. 컴파일 훈련
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 earlyStopping = EarlyStopping(monitor='loss', patience=50, mode='min', 
                               verbose=1,restore_best_weights=True)
+
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 model.fit(x_train, y_train, epochs=350, batch_size=5000, 
-                callbacks = [earlyStopping],
+                callbacks = [earlyStopping,mcp],
                 verbose=2
                 )
 
