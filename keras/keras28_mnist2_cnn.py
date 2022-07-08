@@ -1,6 +1,6 @@
 from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense, Conv2D, Flatten, MaxPooling2D #Flatten평평하게해라.  # 이미지 작업 conv2D 
-from keras.datasets import mnist
+from tensorflow.python.keras.layers import Dense, Conv2D, Flatten, MaxPooling2D,Dropout 
+from keras.datasets import mnist,cifar10
 import pandas as pd
 import numpy as np
 
@@ -45,19 +45,21 @@ model.add(Conv2D(32, (2,2),
                  padding = 'valid',         # 디폴트값(안준것과 같다.) 
                  activation= 'relu'))    # 출력(3,3,7)                                                     
 model.add(Flatten()) # (N, 63)
-model.add(Dense(32, activation= 'relu'))
-model.add(Dense(32, activation= 'relu'))
-model.add(Dense(10, activation= 'softmax'))
+model.add(Dense(100,activation='swish'))
+model.add(Dropout(0.3))
+model.add(Dense(100, activation='relu'))
+model.add(Dropout(0.3))
+model.add(Dense(10, activation='sigmoid'))
 model.summary()
 
 #3. 컴파일 훈련
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
-earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
+earlyStopping = EarlyStopping(monitor='loss', patience=5, mode='min', 
                               verbose=1,restore_best_weights=True)
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=1000, batch_size=10000, 
+model.fit(x_train, y_train, epochs=1, batch_size=5000, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2
@@ -67,9 +69,20 @@ model.fit(x_train, y_train, epochs=1000, batch_size=10000,
 loss = model.evaluate(x_test, y_test)
 print('loss :', loss)
 y_predict = model.predict(x_test)
-from sklearn.metrics import r2_score
-r2 = r2_score(y_test, y_predict)
-print('r2스코어 :', r2)
+from sklearn.metrics import r2_score,accuracy_score
+# print(y_test.shape)
+print(y_test)
 
+y_test = np.argmax(y_test,axis=1)
+print(y_test)
+'''
+# y_predict = np.argmax(y_predict,axis=1)
+# y_test와 y_predict의  shape가 일치해야한다.
+print(y_predict)
+
+
+acc = accuracy_score(y_test, y_predict)
+print('acc 스코어 :', acc)
+'''
 # loss : [0.23423144221305847, 0.978600025177002]
 # r2스코어 : 0.9565073802008651
