@@ -56,4 +56,4 @@ model.add(Conv2D(7,(2,2),activation='relu')) #input_shape(9,9,10)
 
 # N-D tensor with shape: (batch_size, ..., input_dim).
 #  The most common situation would be a 2D input with shape (batch_size, input_dim).
-#
+#########3
