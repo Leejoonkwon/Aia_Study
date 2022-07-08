@@ -12,10 +12,16 @@ import numpy as np
 print(x_train.shape,y_train.shape) #(50000, 32, 32, 3) (50000, 1)
 print(x_test.shape,y_test.shape) #(10000, 32, 32, 3) (10000, 1)
 
-x_train = x_train.reshape(50000, 32, 32, 3)
-x_test = x_test.reshape(10000, 32, 32, 3)
+x_train = x_train.reshape(50000, 32*32* 3)
+x_test = x_test.reshape(10000, 32*32* 3)
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer
 scaler = StandardScaler()
+scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
+scaler.transform(x_train)
+x_train = scaler.transform(x_train)
+x_test = scaler.transform(x_test)
+x_train = x_train.reshape(50000, 32,32, 3)
+x_test = x_test.reshape(10000, 32,32,3)
 print(x_train.shape) #(50000, 32, 32, 3, 1)
 print(x_test.shape) #(10000, 32, 32, 3, 1)
 print(np.unique(y_train,return_counts=True))
@@ -63,7 +69,7 @@ earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min',
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=2, batch_size=4500, 
+model.fit(x_train, y_train, epochs=500, batch_size=4500, 
                 callbacks = [earlyStopping],
                 verbose=2
                 )
@@ -85,3 +91,7 @@ print(y_predict)
 acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
 
+
+# loss : [2.9135234355926514, 0.6779000163078308]
+# r2스코어 : -1.844786723836507
+# acc 스코어 : 0.6779
