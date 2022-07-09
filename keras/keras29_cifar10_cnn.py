@@ -15,7 +15,9 @@ print(x_test.shape,y_test.shape) #(10000, 32, 32, 3) (10000, 1)
 x_train = x_train.reshape(50000, 32*32* 3)
 x_test = x_test.reshape(10000, 32*32* 3)
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer
-scaler = StandardScaler()
+# scaler = StandardScaler()
+# scaler = MinMaxScaler()
+scaler = MaxAbsScaler()
 scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 scaler.transform(x_train)
 x_train = scaler.transform(x_train)
@@ -89,7 +91,17 @@ print(y_predict)
 acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
 
-
+# StandardScaler 시
 # loss : [2.9135234355926514, 0.6779000163078308]
 # r2스코어 : -1.844786723836507
 # acc 스코어 : 0.6908
+
+# MinMaxScaler 시
+# loss : [4.197653770446777, 0.6668000221252441]
+# r2스코어 : -1.7121904232828808
+# acc 스코어 : 0.5816
+
+# MaxAbsScaler 시
+# loss : [4.466394424438477, 0.6656000018119812]
+# r2스코어 : -1.8811170396280275
+# acc 스코어 : 0.5721
