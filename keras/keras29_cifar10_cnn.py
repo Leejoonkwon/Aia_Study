@@ -15,9 +15,9 @@ print(x_test.shape,y_test.shape) #(10000, 32, 32, 3) (10000, 1)
 x_train = x_train.reshape(50000, 32*32* 3)
 x_test = x_test.reshape(10000, 32*32* 3)
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer
-# scaler = StandardScaler()
+scaler = StandardScaler()
 # scaler = MinMaxScaler()
-scaler = MaxAbsScaler()
+# scaler = MaxAbsScaler()
 scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 scaler.transform(x_train)
 x_train = scaler.transform(x_train)
