@@ -1,17 +1,23 @@
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Conv2D, Flatten, MaxPooling2D,Dropout 
+from sklearn.model_selection import train_test_split
 from keras.datasets import mnist,cifar10
 import pandas as pd
 import numpy as np
 
 
 #1. 데이터 전처리
-
+# datasets = mnist.load_data()
+# x = datasets.data #데이터를 리스트 형태로 불러올 때 함
+# y = datasets.target
+# x_train, x_test, y_train, y_test = train_test_split(x,y, test_size=0.25,shuffle=True ,random_state=100)
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
 print(x_train.shape,y_train.shape) #(60000, 28, 28) (60000,)
-print(y_train.shape,y_test.shape) #(60000,) (10000,)
+print(x_test.shape,y_test.shape) #(60000,) (10000,)
 
+# x_train = x_train.reshape(60000, 28*28*1)
+# x_test = x_test.reshape(10000, 28*28*1)
 x_train = x_train.reshape(60000, 28*28*1)
 x_test = x_test.reshape(10000, 28*28*1)
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer
@@ -42,12 +48,17 @@ model.add(MaxPooling2D())
 
  #    (kernel_size * channls) * filters = summary Param 개수(CNN모델)  
 model.add(Conv2D(32, (2,2), 
-                 padding = 'valid',         # 디폴트값(안준것과 같다.) 
-                 activation= 'relu'))    # 출력(3,3,7)                                                     
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)       
+model.add(MaxPooling2D())
+model.add(Conv2D(100, (2,2), 
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)      
+                                              
 model.add(Flatten()) # (N, 63)
 model.add(Dense(100,activation='swish'))
 model.add(Dropout(0.3))
-model.add(Dense(100, activation='relu'))
+model.add(Dense(100, activation='swish'))
 model.add(Dropout(0.3))
 model.add(Dense(10, activation='sigmoid'))
 model.summary()
@@ -59,8 +70,8 @@ earlyStopping = EarlyStopping(monitor='loss', patience=5, mode='min',
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=1, batch_size=5000, 
-                validation_split=0.3,
+model.fit(x_train, y_train, epochs=100000, batch_size=3500, 
+                validation_split=0.33,
                 callbacks = [earlyStopping],
                 verbose=2
                 )
@@ -71,18 +82,18 @@ print('loss :', loss)
 y_predict = model.predict(x_test)
 from sklearn.metrics import r2_score,accuracy_score
 # print(y_test.shape)
-print(y_test)
 
-y_test = np.argmax(y_test,axis=1)
-print(y_test)
-'''
-# y_predict = np.argmax(y_predict,axis=1)
-# y_test와 y_predict의  shape가 일치해야한다.
+# y_test = np.argmax(y_test,axis=1)
 print(y_predict)
+
+y_predict = np.argmax(y_predict,axis=1)
+# y_test와 y_predict의  shape가 일치해야한다.
+print(y_test) #[10000 rows x 10 columns]
+y_predict = pd.get_dummies((y_predict))
 
 
 acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
-'''
-# loss : [0.23423144221305847, 0.978600025177002]
-# r2스코어 : 0.9565073802008651
+
+# loss : [0.07173743844032288, 0.986299991607666]
+# acc 스코어 : 0.9889
