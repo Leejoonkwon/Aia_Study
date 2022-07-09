@@ -42,10 +42,8 @@ print(y_test.shape) #(10000, 10)
 
 #2. 모델 구성
 model = Sequential()
-model.add(Conv2D(filters=64, kernel_size=(5, 5),   # 출력(4,4,10)                                       # 자르는 사이즈 (행,렬 규격.) 10= 다음레이어에 주는 데이터
-                 padding='same',
-                 input_shape=(32, 32, 3)))    #(batch_size, row, column, channels)       # N(장수) 이미지 5,5 짜리 1 흑백 3 칼라 
-                                                                                           # kernel_size(2*2) * 바이어스(3) + 10(output)
+model.add(Conv2D(filters=64, kernel_size=(5, 5), 
+                 input_shape=(32, 32, 3)))   
 model.add(MaxPooling2D())
 
  #    (kernel_size * channls) * filters = summary Param 개수(CNN모델)  
@@ -64,12 +62,12 @@ model.summary()
 
 #3. 컴파일 훈련
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
-earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
+earlyStopping = EarlyStopping(monitor='loss', patience=150, mode='min', 
                               verbose=1,restore_best_weights=True)
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=500, batch_size=4500, 
+model.fit(x_train, y_train, epochs=1000, batch_size=4500, 
                 callbacks = [earlyStopping],
                 verbose=2
                 )
@@ -94,4 +92,4 @@ print('acc 스코어 :', acc)
 
 # loss : [2.9135234355926514, 0.6779000163078308]
 # r2스코어 : -1.844786723836507
-# acc 스코어 : 0.6779
+# acc 스코어 : 0.6908

@@ -62,17 +62,28 @@ model.add(Dense(100, activation='swish'))
 model.add(Dropout(0.3))
 model.add(Dense(10, activation='sigmoid'))
 model.summary()
+import datetime
+date = datetime.datetime.now()
+print(date)
+
+date = date.strftime("%m%d_%H%M") # 0707_1723
+print(date)
 
 #3. 컴파일 훈련
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
+filepath = './_ModelCheckPoint/K24/'
+filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 earlyStopping = EarlyStopping(monitor='loss', patience=5, mode='min', 
                               verbose=1,restore_best_weights=True)
-
+mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
+                      save_best_only=True, 
+                      filepath="".join([filepath,'k25_', date, '_mnist2_', filename])
+                    )
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 model.fit(x_train, y_train, epochs=100000, batch_size=3500, 
                 validation_split=0.33,
-                callbacks = [earlyStopping],
+                callbacks = [earlyStopping,mcp],
                 verbose=2
                 )
 
@@ -95,5 +106,5 @@ y_predict = pd.get_dummies((y_predict))
 acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
 
-# loss : [0.07173743844032288, 0.986299991607666]
-# acc 스코어 : 0.9889
+# loss : [0.03594522178173065, 0.9915000200271606]
+# acc 스코어 : 0.9915
