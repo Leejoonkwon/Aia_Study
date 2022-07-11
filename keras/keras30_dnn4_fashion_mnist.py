@@ -41,32 +41,19 @@ y_test = to_categorical(y_test)
 print(y_train.shape) #(50000, 10)
 print(y_test.shape) #(10000, 10)
 
-
+#2. 모델 구성
 #2. 모델 구성
 model = Sequential()
-model.add(Conv2D(filters=64, kernel_size=(5, 5),   # 출력(4,4,10)                                     
-                 padding='same',
-                 input_shape=(28, 28, 1)))    #(batch_size, row, column, channels)      
-model.add(MaxPooling2D())
-
- #    (kernel_size * channls) * filters = summary Param 개수(CNN모델)  
-model.add(Conv2D(32, (2,2), 
-                 padding = 'valid',         # 디폴트값(안준것과 같다.) 
-                 activation= 'relu'))    # 출력(3,3,7)       
-model.add(MaxPooling2D())                                              
-model.add(Flatten()) # (N, 63)
-model.add(Dense(100,activation='swish'))
+# model.add(Flatten()) #  해도 돌아감
+model.add(Dense(1000,input_shape=(784,),activation='swish'))
 model.add(Dropout(0.3))
-model.add(Dense(100,activation='swish'))
+model.add(Dense(1000,activation='swish'))
 model.add(Dropout(0.3))
-model.add(Dense(100,activation='swish'))
+model.add(Dense(1000, activation='relu'))
 model.add(Dropout(0.3))
-model.add(Dense(100,activation='swish'))
-model.add(Dropout(0.3))
-model.add(Dense(100, activation='relu'))
-model.add(Dropout(0.3))
-model.add(Dense(10, activation='softmax'))
+model.add(Dense(10, activation='sigmoid'))
 model.summary()
+
 filepath = './_ModelCheckPoint/K24/'
 filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 #3. 컴파일 훈련

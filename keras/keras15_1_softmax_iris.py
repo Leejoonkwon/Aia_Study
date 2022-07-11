@@ -82,6 +82,10 @@ hist = model.fit(x_train, y_train, epochs=1000, batch_size=40,
 
 #4.  평가,예측
 
+# import matplotlib
+# import matplotlib.pyplot as plt
+# matplotlib.rcParams['font.family']='Malgun Gothic'
+# matplotlib.rcParams['axes.unicode_minus']=False
 # loss,acc = model.evaluate(x_test,y_test)
 # print('loss :',loss)
 # print('accuracy :',acc)
