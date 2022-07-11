@@ -122,6 +122,12 @@ x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 #셔플을 False 할 경우 순차적으로 스플릿하다보니 훈련에서는 나오지 않는 값이 생겨 정확도가 떨어진다.
 #디폴트 값인  shuffle=True 를 통해 정확도를 올린다.
+print(x_train.shape) #(712, 9)
+print(x_test.shape) #(179, 9)
+'''
+x_train = x_train.reshape(712, 9)
+x_test = x_test.reshape(179, 9)
+
 
 #2. 모델 구성
 
@@ -204,4 +210,4 @@ y_summit = model.predict(test_set)
 # drop 아웃 후
 # loss : 0.593296468257904
 # acc 스코어 : 0.8268156424581006
-
+'''
