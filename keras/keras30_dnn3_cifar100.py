@@ -67,7 +67,7 @@ model.add(Dense(1000,activation='swish'))
 model.add(Dropout(0.3))
 model.add(Dense(1000, activation='relu'))
 model.add(Dropout(0.3))
-model.add(Dense(10, activation='sigmoid'))
+model.add(Dense(100, activation='sigmoid'))
 model.summary()
 
 
@@ -77,14 +77,14 @@ filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
                               verbose=1,restore_best_weights=True)
-mcp = ModelCheckpoint(monitor='loss',mode='auto',verbose=1,
-                      save_best_only=True, 
-                      filepath="".join([filepath,'k27_', date, '_', filename])
-                    )
+# mcp = ModelCheckpoint(monitor='loss',mode='auto',verbose=1,
+#                       save_best_only=True, 
+#                       filepath="".join([filepath,'k27_', date, '_', filename])
+#                     )
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=500, batch_size=350, 
-                callbacks = [earlyStopping,mcp],
+model.fit(x_train, y_train, epochs=500, batch_size=1080, 
+                callbacks = [earlyStopping],
                 validation_split=0.25,
                 verbose=2
                 )
@@ -111,3 +111,13 @@ print('acc 스코어 :', acc)
 # r2스코어 : 0.1313088401031084
 # acc 스코어 : 0.4508
 
+#conv2d 포함
+# loss : [2.9135234355926514, 0.6779000163078308]
+# r2스코어 : -1.844786723836507
+# acc 스코어 : 0.6908
+
+
+#conv2d 미포함 reshape 바로 Dense
+# loss : [2.2696797847747803, 0.590399980545044]
+# r2스코어 : -4.116410039075688
+# acc 스코어 : 0.5442

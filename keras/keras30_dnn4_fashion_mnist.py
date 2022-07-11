@@ -20,8 +20,6 @@ scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 scaler.transform(x_train)
 x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
-x_train = x_train.reshape(60000, 28, 28, 1)
-x_test = x_test.reshape(10000, 28, 28, 1)
 #이전에 스케일링에서 dimension 오류가 뜨던 이유는 스케일링 작업은 1차원 타입의 데이터만 수정할 수 있기 때문이다.
 #해결법은 스케일링 하기전 reshape로 (N,X)의 shape로 만들어 스케일링 후 다시 reshape를 통해 
 #input_shape로 쓸 수 있게 만들면 가능하며 성능도 당연히 좋아진다.
@@ -42,14 +40,17 @@ print(y_train.shape) #(50000, 10)
 print(y_test.shape) #(10000, 10)
 
 #2. 모델 구성
-#2. 모델 구성
 model = Sequential()
 # model.add(Flatten()) #  해도 돌아감
-model.add(Dense(1000,input_shape=(784,),activation='swish'))
+model.add(Dense(60,input_shape=(784,),activation='swish'))
 model.add(Dropout(0.3))
-model.add(Dense(1000,activation='swish'))
+model.add(Dense(60,activation='swish'))
 model.add(Dropout(0.3))
-model.add(Dense(1000, activation='relu'))
+model.add(Dense(60,activation='swish'))
+model.add(Dropout(0.3))
+model.add(Dense(60, activation='relu'))
+model.add(Dropout(0.3))
+model.add(Dense(60, activation='relu'))
 model.add(Dropout(0.3))
 model.add(Dense(10, activation='sigmoid'))
 model.summary()
@@ -63,9 +64,9 @@ earlyStopping = EarlyStopping(monitor='loss', patience=50, mode='min',
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-hist = model.fit(x_train, y_train, epochs=50, batch_size=2500, 
+hist = model.fit(x_train, y_train, epochs=300, batch_size=2500, 
                 callbacks = [earlyStopping],
-                validation_split=0.25,
+                validation_split=0.3,
                 verbose=2
                 )
 
@@ -100,7 +101,14 @@ plt.show()
 # loss : [0.7810052037239075, 0.89410001039505] 
 # r2스코어 : 0.7887108142215705
 # acc 스코어 : 0.8941
- 
+
+ # CNN
 # loss : [0.28547945618629456, 0.9129999876022339]
 # r2스코어 : 0.8546087436662431
 # acc 스코어 : 0.913
+
+
+# DNN
+# loss : [0.5197012424468994, 0.8980000019073486]
+# r2스코어 : -0.46911744131063154
+# acc 스코어 : 0.8983
