@@ -43,13 +43,13 @@ print(y_test.shape) #(10000, 10)
 #2. 모델 구성
 model = Sequential()
 # model.add(Flatten()) #  해도 돌아감
-model.add(Dense(1000,input_shape=(3072,),activation='swish'))
+model.add(Dense(100,input_shape=(3072,),activation='swish'))
 model.add(Dropout(0.3))
-model.add(Dense(1000,activation='swish'))
+model.add(Dense(100,activation='swish'))
 model.add(Dropout(0.3))
-model.add(Dense(1000, activation='relu'))
+model.add(Dense(100, activation='relu'))
 model.add(Dropout(0.3))
-model.add(Dense(10, activation='sigmoid'))
+model.add(Dense(10, activation='softmax'))
 model.summary()
 
 #3. 컴파일 훈련

@@ -67,7 +67,8 @@ model.add(Dense(1000,activation='swish'))
 model.add(Dropout(0.3))
 model.add(Dense(1000, activation='relu'))
 model.add(Dropout(0.3))
-model.add(Dense(100, activation='sigmoid'))
+
+model.add(Dense(100, activation='softmax'))
 model.summary()
 
 

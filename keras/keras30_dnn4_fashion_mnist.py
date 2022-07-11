@@ -52,7 +52,7 @@ model.add(Dense(60, activation='relu'))
 model.add(Dropout(0.3))
 model.add(Dense(60, activation='relu'))
 model.add(Dropout(0.3))
-model.add(Dense(10, activation='sigmoid'))
+model.add(Dense(10, activation='softmax'))
 model.summary()
 
 filepath = './_ModelCheckPoint/K24/'
@@ -64,7 +64,7 @@ earlyStopping = EarlyStopping(monitor='loss', patience=50, mode='min',
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-hist = model.fit(x_train, y_train, epochs=300, batch_size=2500, 
+hist = model.fit(x_train, y_train, epochs=250, batch_size=2500, 
                 callbacks = [earlyStopping],
                 validation_split=0.3,
                 verbose=2
@@ -102,7 +102,7 @@ plt.show()
 # r2스코어 : 0.7887108142215705
 # acc 스코어 : 0.8941
 
- # CNN
+# CNN
 # loss : [0.28547945618629456, 0.9129999876022339]
 # r2스코어 : 0.8546087436662431
 # acc 스코어 : 0.913

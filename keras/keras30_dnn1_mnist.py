@@ -33,7 +33,7 @@ model.add(Dense(100,activation='relu'))
 model.add(Dropout(0.25))
 model.add(Dense(100,activation='relu'))
 model.add(Dropout(0.3))
-model.add(Dense(10,activation='sigmoid'))
+model.add(Dense(10,activation='softmax'))
 
 #3. 컴파일 훈련
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
@@ -47,7 +47,7 @@ earlyStopping = EarlyStopping(monitor='loss', patience=20, mode='min',
 #                     )
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=300, batch_size=500, 
+model.fit(x_train, y_train, epochs=300, batch_size=350, 
                 validation_split=0.33,
                 callbacks = [earlyStopping],
                 verbose=2
@@ -77,5 +77,5 @@ print('acc 스코어 :', acc)
 
 #conv2d 미포함 reshape 바로 Dense
 # loss : [0.19243909418582916, 0.972000002861023]
-# acc 스코어 : 0.972
+# acc 스코어 : 0.9721
 
