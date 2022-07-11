@@ -27,18 +27,7 @@ test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
                        index_col=0)
 submission = pd.read_csv(path + 'sample_submission.csv',#예측에서 쓸거야!!
                        index_col=0)
-print(train_set['Date'])
-train_set['Datetime'] = pd.to_datetime(train_set['Date'])
-print(train_set['Datetime'])     
-
-train_set['Year'] = train_set['Datetime'].train_set.
-print(train_set['Year'])     
-
-'''   
-train_set['Month'] = train_set['Datetime'].train_set.month
-train_set['day'] = train_set['Datetime'].train_set.day
-
-             
+                       
 print(test_set)
 print(test_set.shape) #(180,11) #train_set과 열 값이 '1'차이 나는 건 count를 제외했기 때문이다.예측 단계에서 값을 대입
 
@@ -91,8 +80,6 @@ test_set = train_set.fillna(test_set.mean())
 print(test_set.isnull().sum())
 # train_set = pd.get_dummies((train_set['IsHoliday'])) 
 # test_set = pd.get_dummies((test_set['IsHoliday']))
-
-
 x = train_set.drop(['Weekly_Sales','Date'], axis=1) #axis는 컬럼 
 
 
@@ -179,4 +166,4 @@ plt.xlabel('epochs')
 # plt.legend(loc='upper right')
 plt.legend()
 plt.show()
-'''
+

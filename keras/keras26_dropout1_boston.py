@@ -47,7 +47,7 @@ model.add(Dense(1))
 model.summary()
 # drop 아웃 적용시 Total params: 11,651
 # drop 아웃 미적용시 Total params: 11,651
-'''
+
 # input1 = Input(shape=(13,))
 # dense1 = Dense(100)(input1)
 # dense2 = Dense(100,activation='relu')(dense1)
@@ -77,7 +77,7 @@ mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
                     )
 model.compile(loss='mae', optimizer='adam')
 # "".join은 " "사이에 있는 문자열을 합치겠다는 기능
-hist = model.fit(x_train, y_train, epochs=300, batch_size=15, 
+hist = model.fit(x_train, y_train, epochs=30, batch_size=15, 
                 validation_split=0.2,
                 verbose=2,callbacks = [earlyStopping,mcp]
                 )
@@ -95,6 +95,8 @@ print('loss :', loss)
 # print("============")
 # print(hist.history['val_loss'])
 y_predict = model.predict(x_test)
+print(y_test.shape) #(152,)
+print(y_predict.shape) #(152, 1)
 from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print('r2스코어 :', r2)
@@ -103,4 +105,3 @@ print('r2스코어 :', r2)
 # loss : 2.2761423587799072
 # r2스코어 : 0.8636196826801059
 
-'''

@@ -18,22 +18,41 @@ scaler = MinMaxScaler()
 # scaler = StandardScaler()
 # scaler = MaxAbsScaler()
 # scaler = RobustScaler()
+print(x_train.shape) #(354, 13)
+print(x_test.shape) #(152, 13)
 
 scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 scaler.transform(x_train)
 x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
+x_train = x_train.reshape(354, 13,1,1)
+x_test = x_test.reshape(152, 13,1,1)
+print(np.unique(y_train,return_counts=True))
 
-print(np.min(x_train)) # 0.0
-print(np.max(x_train)) # 1.0
-print(np.min(x_test)) # -0.06141956477526944  train 범위에서 없는 데이터가 test에 있는 걸 확인할 수 있다.
-print(np.max(x_test)) # 1.1478180091225068
+
+# print(np.min(x_train)) # 0.0
+# print(np.max(x_train)) # 1.0
+# print(np.min(x_test)) # -0.06141956477526944  train 범위에서 없는 데이터가 test에 있는 걸 확인할 수 있다.
+# print(np.max(x_test)) # 1.1478180091225068
 from tensorflow.python.keras.models import Sequential,Model
-from tensorflow.python.keras.layers import Dense,Dropout
+from tensorflow.python.keras.layers import Dense,Dropout,Conv2D,Flatten
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(100,input_dim=13))
+model.add(Conv2D(filters=64, kernel_size=(1, 1),   # 출력(4,4,10)                                    
+                 padding='same',
+                 input_shape=(13, 1, 1)))    #(batch_size, row, column, channels)     
+                                                                                           
+
+ #    (kernel_size * channls) * filters = summary Param 개수(CNN모델)  
+model.add(Conv2D(32, (1,1),  #인풋쉐이프에 행값은 디폴트는 32
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)       
+model.add(Conv2D(100, (1,1), 
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)      
+                                              
+model.add(Flatten()) # (N, 63) 위치와 순서는 바뀌지 않아야한다.transpose와 전혀 다르다.
 # model.add(Dropout(0.3))
 # Dropout 공부해라잉
 # 드롭아웃은 신경망 학습 시에만 사용하고, 예측 시에는 사용하지 않는 것이 일반적입니다. 
@@ -43,43 +62,25 @@ model.add(Dense(100,input_dim=13))
 model.add(Dense(50, activation='relu'))
 # model.add(Dropout(0.2))
 model.add(Dense(100, activation='relu'))
-model.add(Dense(1))
+model.add(Dense(1,activation='softmax'))
 model.summary()
-# drop 아웃 적용시 Total params: 11,651
-# drop 아웃 미적용시 Total params: 11,651
-'''
-# input1 = Input(shape=(13,))
-# dense1 = Dense(100)(input1)
-# dense2 = Dense(100,activation='relu')(dense1)
-# dense3 = Dense(100,activation='relu')(dense2)
-# output1 = Dense(1)(dense3)
-# model = Model(inputs=input1, outputs=output1)
 
 import datetime
-date = datetime.datetime.now()
-print(date)
-
-date = date.strftime("%m%d_%H%M") # 0707_1723
-#strftime  str은  string으로 문자열  f 는  format  형식  time은 시간. 시간으로 되어 있는 데이터를 
-#문자열로 바꾸는 명령어이다.
-print(date)
-
-
 # #3. 컴파일,훈련
 filepath = './_ModelCheckPoint/K24/'
 filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 #04d :                  4f : 
 earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min', 
                               verbose=1,restore_best_weights=True)
-mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
-                      save_best_only=True, 
-                      filepath="".join([filepath,'k24_', date, '_', filename])
-                    )
-model.compile(loss='mae', optimizer='adam')
+# mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
+#                       save_best_only=True, 
+#                       filepath="".join([filepath,'k24_', date, '_', filename])
+#                     )
+model.compile(loss='categorical_crossentropy', optimizer='adam')
 # "".join은 " "사이에 있는 문자열을 합치겠다는 기능
-hist = model.fit(x_train, y_train, epochs=300, batch_size=15, 
+hist = model.fit(x_train, y_train, epochs=10, batch_size=15, 
                 validation_split=0.2,
-                verbose=2,callbacks = [earlyStopping,mcp]
+                verbose=2,callbacks = [earlyStopping]
                 )
 
 #4. 평가,예측
@@ -94,8 +95,19 @@ print('loss :', loss)
 # print(hist.history['loss'])
 # print("============")
 # print(hist.history['val_loss'])
+
+
+
 y_predict = model.predict(x_test)
-from sklearn.metrics import r2_score
+print(y_test.shape) #(152,)
+print(y_predict.shape) #(152, 13, 1)
+
+# y_test= y_test.reshape(152, 13)
+# y_predict = y_predict.reshape(152, 13)
+# print(y_test.shape) #(152,)
+# print(y_predict.shape) #(152, 13, 1)
+
+from sklearn.metrics import accuracy_score, r2_score,accuracy_score
 r2 = r2_score(y_test, y_predict)
 print('r2스코어 :', r2)
 
@@ -103,4 +115,3 @@ print('r2스코어 :', r2)
 # loss : 2.2761423587799072
 # r2스코어 : 0.8636196826801059
 
-'''

@@ -4,8 +4,8 @@
 # EarlyStopping  넣고
 # 성능비교
 # 감상문 2줄이상!
-from tensorflow.python.keras.models import Sequential,load_model
-from tensorflow.python.keras.layers import Dense,Dropout
+from tensorflow.python.keras.models import Sequential,Model
+from tensorflow.python.keras.layers import Dense,Dropout,Conv2D,Flatten
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import fetch_california_housing
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
@@ -34,20 +34,35 @@ scaler.transform(x_train)
 x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 # print(x.shape, y.shape) #(506, 13)-> 13개의 피쳐 (506,) 
+print(x_train.shape) #(16512, 8)
+print(x_test.shape) #(16512, 8)
 
+x_train = x_train.reshape(16512, 4,2,1)
+x_test = x_test.reshape(4128, 4,2,1)
 # print(datasets.feature_names)
 # print(datasets.DESCR)
 
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(100,input_dim=8))
-# model.add(Dropout(0.25))
+model.add(Conv2D(filters=64, kernel_size=(1, 1),   # 출력(4,4,10)                                    
+                 padding='same',
+                 input_shape=(4, 2,1)))    #(batch_size, row, column, channels)     
+                                                                                           
+
+ #    (kernel_size * channls) * filters = summary Param 개수(CNN모델)  
+model.add(Conv2D(32, (1,1),  #인풋쉐이프에 행값은 디폴트는 32
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)       
+model.add(Conv2D(64, (1,1), 
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)      
+model.add(Flatten())               
 model.add(Dense(100, activation='relu'))
-# model.add(Dropout(0.25))
+model.add(Dropout(0.25))
 model.add(Dense(100, activation='relu'))
-# model.add(Dropout(0.25))
-model.add(Dense(1))
+model.add(Dropout(0.25))
+model.add(Dense(1,activation='softmax'))
 import datetime
 date = datetime.datetime.now()
 print(date)
@@ -66,7 +81,7 @@ earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min',
 #                       save_best_only=True, 
                       # filepath="".join([filepath,'k25_', date, '_california_', filename])
                     # )
-model.compile(loss='mae', optimizer='adam')
+model.compile(loss='categorical_crossentropy', optimizer='adam')
 
 hist = model.fit(x_train, y_train, epochs=150, batch_size=150, 
                 validation_split=0.3,
