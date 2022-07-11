@@ -8,7 +8,7 @@ import matplotlib
 import pandas as pd
 import matplotlib.pyplot as plt
 from tensorflow.python.keras.models import Sequential,load_model
-from tensorflow.python.keras.layers import Dense,Dropout
+from tensorflow.python.keras.layers import Dense,Dropout,Conv2D,Flatten
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 matplotlib.rcParams['font.family']='Malgun Gothic'
@@ -65,10 +65,29 @@ x_test = scaler.transform(x_test)
 print(test_set)
 # print(y)
 # print(y.shape) # (10886,)
+print(x_train.shape) #(10330, 8)
+print(x_test.shape) #(556, 8)
+
+x_train = x_train.reshape(10330, 4,2,1)
+x_test = x_test.reshape(556, 4,2,1)
+
 
 
 #2. 모델구성
 model = Sequential()
+model.add(Conv2D(filters=64, kernel_size=(1, 1),   # 출력(4,4,10)                                    
+                 padding='same',
+                 input_shape=(4, 2,1)))    #(batch_size, row, column, channels)     
+                                                                                           
+
+ #    (kernel_size * channls) * filters = summary Param 개수(CNN모델)  
+model.add(Conv2D(32, (1,1),  #인풋쉐이프에 행값은 디폴트는 32
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)       
+model.add(Conv2D(64, (1,1), 
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)      
+model.add(Flatten())  
 model.add(Dense(100,input_dim=8))
 # model.add(Dropout(0.3))
 model.add(Dense(100, activation='relu'))
@@ -116,3 +135,17 @@ print('r2스코어 :', r2)
 # drop 아웃 후
 # oss : 100.87238311767578
 # r2스코어 : 0.286859120683037
+
+
+# drop 아웃 전 
+# loss : 23656.802734375
+# r2스코어 : 0.8237623045901245
+# drop 아웃 후
+# loss : 30579.8984375
+# r2스코어 : 0.739841873958865
+
+#cnn dnn 후
+# loss : 94.66157531738281
+# r2스코어 : 0.3554885409570203
+
+

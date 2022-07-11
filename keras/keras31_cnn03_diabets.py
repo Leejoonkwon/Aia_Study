@@ -5,7 +5,7 @@
 # 성능비교
 # 감상문 2줄이상!
 from tensorflow.python.keras.models import Sequential,load_model
-from tensorflow.python.keras.layers import Dense, Dropout
+from tensorflow.python.keras.layers import Dense, Dropout, Conv2D,Flatten
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_diabetes
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
@@ -36,10 +36,27 @@ x_test = scaler.transform(x_test)
 
 # print(datasets.feature_names)
 # print(datasets.DESCR)
+print(x_train.shape) #(397, 10)
+print(x_test.shape) #(45, 10)
 
+x_train = x_train.reshape(455, 6,5,1)
+x_test = x_test.reshape(114, 6,5,1)
 
 #2. 모델구성
 model = Sequential()
+model.add(Conv2D(filters=64, kernel_size=(1, 1),   # 출력(4,4,10)                                    
+                 padding='same',
+                 input_shape=(5, 2,1)))    #(batch_size, row, column, channels)     
+                                                                                           
+
+ #    (kernel_size * channls) * filters = summary Param 개수(CNN모델)  
+model.add(Conv2D(32, (1,1),  #인풋쉐이프에 행값은 디폴트는 32
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)       
+model.add(Conv2D(64, (1,1), 
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)      
+model.add(Flatten())  
 model.add(Dense(100,input_dim=10))
 # model.add(Dropout(0.3))
 model.add(Dense(100, activation='relu'))
@@ -90,4 +107,6 @@ print('r2스코어 :', r2)
 # drop 아웃 후
 # loss : 41.99888610839844
 # r2스코어 : 0.493409441129779
-
+# conv2d
+# loss : 49.70637512207031
+# r2스코어 : 0.27672623282979936

@@ -62,7 +62,7 @@ model.add(Dense(100, activation='relu'))
 model.add(Dropout(0.25))
 model.add(Dense(100, activation='relu'))
 model.add(Dropout(0.25))
-model.add(Dense(1,activation='softmax'))
+model.add(Dense(1))
 import datetime
 date = datetime.datetime.now()
 print(date)
@@ -81,7 +81,7 @@ earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min',
 #                       save_best_only=True, 
                       # filepath="".join([filepath,'k25_', date, '_california_', filename])
                     # )
-model.compile(loss='categorical_crossentropy', optimizer='adam')
+model.compile(loss='mae', optimizer='adam')
 
 hist = model.fit(x_train, y_train, epochs=150, batch_size=150, 
                 validation_split=0.3,
@@ -104,5 +104,10 @@ print('r2스코어 :', r2)
 # drop 아웃 후
 # oss : 0.34795650839805603
 # r2스코어 : 0.7869890552305074
+
+#CNN 
+
+# loss : 0.3301199674606323
+# r2스코어 : 0.8126296639125675
 
 

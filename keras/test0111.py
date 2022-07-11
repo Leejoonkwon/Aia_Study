@@ -14,7 +14,8 @@ import matplotlib
 matplotlib.rcParams['font.family']='Malgun Gothic'
 matplotlib.rcParams['axes.unicode_minus']=False
 import pandas as pd
-
+import datetime
+import numpy as np
 #1. 데이터
 path = './_data/kaggle_shopping/' # ".은 현재 폴더"
 train_set = pd.read_csv(path + 'train.csv',
@@ -28,17 +29,30 @@ test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
 submission = pd.read_csv(path + 'sample_submission.csv',#예측에서 쓸거야!!
                        index_col=0)
 print(train_set['Date'])
-train_set['Datetime'] = pd.to_datetime(train_set['Date'])
-print(train_set['Datetime'])     
+train_set['Date'] = pd.to_datetime(train_set['Date'])
 
-train_set['Year'] = train_set['Datetime'].train_set.
-print(train_set['Year'])     
+train_set['year'] = train_set['Date'].dt.strftime('%Y')
+train_set['month'] = train_set['Date'].dt.strftime('%m')
+train_set['day'] = train_set['Date'].dt.strftime('%d')
 
-'''   
-train_set['Month'] = train_set['Datetime'].train_set.month
-train_set['day'] = train_set['Datetime'].train_set.day
+test_set['Date'] = pd.to_datetime(test_set['Date'])
 
-             
+test_set['year'] = test_set['Date'].dt.strftime('%Y')
+test_set['month'] = test_set['Date'].dt.strftime('%m')
+test_set['day'] = test_set['Date'].dt.strftime('%d')
+train_set['Storeband'] = pd.cut(train_set['Store'], 5)
+print(train_set['Storeband'])     
+'''
+
+combine = [train_set, test_set]
+for dataset in combine:
+  dataset.loc[ dataset['Age'] <= 16, 'Age'] = 0
+  dataset.loc[(dataset['Age'] > 16) & (dataset['Age'] <= 32), 'Age'] = 1
+  dataset.loc[(dataset['Age'] > 32) & (dataset['Age'] <= 48), 'Age'] = 2
+  dataset.loc[(dataset['Age'] > 48) & (dataset['Age'] <= 64), 'Age'] = 3
+  dataset.loc[ dataset['Age'] > 64, 'Age'] = 4
+  train_set = train_set.drop(['AgeBand'], axis=1) 
+  
 print(test_set)
 print(test_set.shape) #(180,11) #train_set과 열 값이 '1'차이 나는 건 count를 제외했기 때문이다.예측 단계에서 값을 대입
 
@@ -84,11 +98,17 @@ for col in cols:
     le = LabelEncoder()
     train_set[col]=le.fit_transform(train_set[col])
     test_set[col]=le.fit_transform(test_set[col])
-train_set = train_set.fillna(train_set.mean())
+train_set = train_set.fillna(train_set.median())
 print(train_set.isnull().sum())
 print(train_set.shape)
-test_set = train_set.fillna(test_set.mean())
+
+
+
+print(test_set.shape) #180, 14)
+test_set = test_set.fillna(train_set.median())
+print(test_set.shape) #180, 14)
 print(test_set.isnull().sum())
+
 # train_set = pd.get_dummies((train_set['IsHoliday'])) 
 # test_set = pd.get_dummies((test_set['IsHoliday']))
 
@@ -96,15 +116,15 @@ print(test_set.isnull().sum())
 x = train_set.drop(['Weekly_Sales','Date'], axis=1) #axis는 컬럼 
 
 
-print(x.shape) #(6255, 11)
-print(train_set)
-
+print(x.shape) #(6255, 13)
 
 y = train_set['Weekly_Sales']
-print(y.shape) 
+test_set = test_set.drop(['Date'], axis=1)
+
+print(y.shape) # (6255,)
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size = 0.919, shuffle = True, random_state = 100)
+    x, y, train_size = 0.89, shuffle = True, random_state = 100)
 from sklearn.preprocessing import MaxAbsScaler,RobustScaler 
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
 # scaler = MinMaxScaler()
@@ -118,17 +138,11 @@ x_test = scaler.transform(x_test)
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(100,input_dim=10))
-model.add(Dense(60,input_shape=(784,),activation='swish'))
-model.add(Dropout(0.3))
+model.add(Dense(100,input_dim=13,activation='swish'))
 model.add(Dense(60,activation='swish'))
-model.add(Dropout(0.3))
 model.add(Dense(60,activation='swish'))
-model.add(Dropout(0.3))
+model.add(Dense(60, activation='swish'))
 model.add(Dense(60, activation='relu'))
-model.add(Dropout(0.3))
-model.add(Dense(60, activation='relu'))
-model.add(Dropout(0.3))
 model.add(Dense(1))
 import datetime
 date = datetime.datetime.now()
@@ -142,7 +156,7 @@ print(date)
 filepath = './_ModelCheckPoint/K24/'
 filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 #04d :                  4f : 
-earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min', 
+earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
                               verbose=1,restore_best_weights=True)
 mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
                       save_best_only=True, 
@@ -150,19 +164,19 @@ mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
                     )
 model.compile(loss='mae', optimizer='adam')
 
-hist = model.fit(x_train, y_train, epochs=550, batch_size=20, 
+hist = model.fit(x_train, y_train, epochs=1000, batch_size=100, 
                 validation_split=0.3,
                 callbacks = [earlyStopping,mcp],
                 verbose=2
                 )
+print(test_set.shape)
 
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
 print('loss :', loss)
 y_predict = model.predict(x_test)
-from sklearn.metrics import r2_score
-r2 = r2_score(y_test, y_predict)
-print('r2스코어 :', r2)
+from sklearn.metrics import r2_score,mean_squared_error
+from math import sqrt
 
 import matplotlib
 matplotlib.rcParams['font.family']='Malgun Gothic'
@@ -179,4 +193,30 @@ plt.xlabel('epochs')
 # plt.legend(loc='upper right')
 plt.legend()
 plt.show()
+
+def RMSE(y_test, y_predict):
+     return np.sqrt(mean_squared_error(y_test, y_predict))
+rmse = RMSE(y_test, y_predict)
+print("RMSE :",rmse)  
+# print(test_set.info())
+# print(test_set.shape)
+
+test_set['year'] = test_set['year'].astype(np.float64)
+test_set['month'] = test_set['month'].astype(np.float64)
+test_set['day'] = test_set['day'].astype(np.float64)
+
+
+# print(test_set.shape) # (6255, 13)
+
+y_summit = model.predict(test_set)
+# print(y_summit.shape)# (6255, 1)
+
+# print(submission)# [180 rows x 1 columns]
+
+submission['Weekly_Sales'] = y_summit
+
+submission.to_csv('test21.csv',index=True)
+
+# loss : 278570.1875
+# RMSE : 383168.8405276792
 '''

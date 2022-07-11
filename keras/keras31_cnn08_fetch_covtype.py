@@ -3,7 +3,7 @@
 import numpy as np
 from sklearn.datasets import fetch_covtype
 from tensorflow.python.keras.models import Sequential,load_model
-from tensorflow.python.keras.layers import Dense,Dropout
+from tensorflow.python.keras.layers import Dense,Dropout,Conv2D,Flatten
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 from sklearn.metrics import accuracy_score
@@ -73,12 +73,30 @@ x_test = scaler.transform(x_test)
 #디폴트 값인  shuffle=True 를 통해 정확도를 올린다.
 print(y_train,y_test)
 
+print(x_train.shape) #(493860, 54)
+print(x_test.shape) #(87152, 54)
+
+x_train = x_train.reshape(493860, 9,6,1)
+x_test = x_test.reshape(87152, 9,6,1)
 
 
 
 #2. 모델 구성
 
 model = Sequential()
+model.add(Conv2D(filters=64, kernel_size=(1, 1),   # 출력(4,4,10)                                    
+                 padding='same',
+                 input_shape=(9, 6,1)))    #(batch_size, row, column, channels)     
+                                                                                           
+
+ #    (kernel_size * channls) * filters = summary Param 개수(CNN모델)  
+model.add(Conv2D(32, (1,1),  #인풋쉐이프에 행값은 디폴트는 32
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)       
+model.add(Conv2D(64, (1,1), 
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)      
+model.add(Flatten())  
 model.add(Dense(500,input_dim=54))
 # model.add(Dropout(0.3))
 model.add(Dense(400, activation='relu'))
@@ -111,7 +129,7 @@ earlyStopping = EarlyStopping(monitor='loss', patience=30, mode='min',
 #                       filepath="".join([filepath,'k25_', date, '_fetcg_covtype_', filename])
 #                     )
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(x_train, y_train, epochs=200, batch_size=14000, 
+model.fit(x_train, y_train, epochs=50, batch_size=14000, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2
@@ -149,4 +167,8 @@ print('acc 스코어 :', acc)
 # drop 아웃 후
 # loss : 0.17082029581069946
 # acc 스코어 : 0.9304777859372132
+
+#cnn dnn 후
+# loss : 0.157871812582016
+# acc 스코어 : 0.9382458233890215
 

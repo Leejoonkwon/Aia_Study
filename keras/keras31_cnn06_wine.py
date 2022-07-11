@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.datasets import load_wine
 from tensorflow.python.keras.models import Sequential,load_model
-from tensorflow.python.keras.layers import Dense,Dropout
+from tensorflow.python.keras.layers import Dense,Dropout,Conv2D,Flatten
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 from sklearn.metrics import accuracy_score
@@ -66,12 +66,30 @@ scaler = RobustScaler()
 #디폴트 값인  shuffle=True 를 통해 정확도를 올린다.
 print(y_train,y_test)
 
+print(x_train.shape) #(151, 13)
+print(x_test.shape) #27, 13)
+
+x_train = x_train.reshape(151, 13,1,1)
+x_test = x_test.reshape(27, 13,1,1)
 
 
 
 #2. 모델 구성
 
 model = Sequential()
+model.add(Conv2D(filters=64, kernel_size=(1, 1),   # 출력(4,4,10)                                    
+                 padding='same',
+                 input_shape=(13, 1,1)))    #(batch_size, row, column, channels)     
+                                                                                           
+
+ #    (kernel_size * channls) * filters = summary Param 개수(CNN모델)  
+model.add(Conv2D(32, (1,1),  #인풋쉐이프에 행값은 디폴트는 32
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)       
+model.add(Conv2D(64, (1,1), 
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)      
+model.add(Flatten())  
 model.add(Dense(100,input_dim=13))
 # model.add(Dropout(0.3))
 model.add(Dense(100, activation='relu'))
@@ -130,3 +148,6 @@ print('acc 스코어 :', acc)
 # drop 아웃 후
 # loss : 0.3554897904396057
 # r2스코어 : 0.7876406039148734
+#cnn dnn 후
+# loss : 0.2589413821697235
+# acc 스코어 : 0.8888888888888888

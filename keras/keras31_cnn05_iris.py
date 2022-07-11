@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.datasets import load_iris
 from tensorflow.python.keras.models import Sequential,load_model
-from tensorflow.python.keras.layers import Dense,Dropout
+from tensorflow.python.keras.layers import Dense,Dropout,Conv2D,Flatten
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 from sklearn.metrics import accuracy_score
@@ -67,11 +67,28 @@ scaler = MinMaxScaler()
 print(y_train,y_test)
 
 
+print(x_train.shape) #(112, 4)
+print(x_test.shape) #38, 4)
 
+x_train = x_train.reshape(112, 2,2,1)
+x_test = x_test.reshape(38, 2,2,1)
 
 #2. 모델 구성
 
 model = Sequential()
+model.add(Conv2D(filters=64, kernel_size=(1, 1),   # 출력(4,4,10)                                    
+                 padding='same',
+                 input_shape=(2, 2,1)))    #(batch_size, row, column, channels)     
+                                                                                           
+
+ #    (kernel_size * channls) * filters = summary Param 개수(CNN모델)  
+model.add(Conv2D(32, (1,1),  #인풋쉐이프에 행값은 디폴트는 32
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)       
+model.add(Conv2D(64, (1,1), 
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)      
+model.add(Flatten())  
 model.add(Dense(100,input_dim=4))
 model.add(Dropout(0.3))
 model.add(Dense(100, activation='relu'))
@@ -128,4 +145,7 @@ print('acc 스코어 :', acc)
 # acc 스코어 : 1.0
 # drop 아웃 후
 # loss : 0.1917484700679779
+# acc 스코어 : 0.9736842105263158
+
+# # conv2d
 # acc 스코어 : 0.9736842105263158
