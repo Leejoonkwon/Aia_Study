@@ -95,7 +95,7 @@ print(date)
 filepath = './_ModelCheckPoint/K27/'
 filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
-earlyStopping = EarlyStopping(monitor='loss', patience=150, mode='min', 
+earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
                               verbose=1,restore_best_weights=True)
 mcp = ModelCheckpoint(monitor='loss',mode='auto',verbose=1,
                       save_best_only=True, 
@@ -103,9 +103,9 @@ mcp = ModelCheckpoint(monitor='loss',mode='auto',verbose=1,
                     )
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=1000, batch_size=500, 
+model.fit(x_train, y_train, epochs=500, batch_size=350, 
                 callbacks = [earlyStopping,mcp],
-                validation_split=0.2,
+                validation_split=0.25,
                 verbose=2
                 )
 model.save_weights("./_save/keras23_5_cifar10_2.h5")

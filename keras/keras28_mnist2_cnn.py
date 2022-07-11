@@ -40,14 +40,14 @@ y_test = pd.get_dummies((y_test))
 
 #2. 모델 구성
 model = Sequential()
-model.add(Conv2D(filters=64, kernel_size=(3, 3),   # 출력(4,4,10)                                       # 자르는 사이즈 (행,렬 규격.) 10= 다음레이어에 주는 데이터
+model.add(Conv2D(filters=64, kernel_size=(3, 3),   # 출력(4,4,10)                                    
                  padding='same',
-                 input_shape=(28, 28, 1)))    #(batch_size, row, column, channels)       # N(장수) 이미지 5,5 짜리 1 흑백 3 칼라 
-                                                                                           # kernel_size(2*2) * 바이어스(3) + 10(output)
+                 input_shape=(28, 28, 1)))    #(batch_size, row, column, channels)     
+                                                                                           
 model.add(MaxPooling2D())
 
  #    (kernel_size * channls) * filters = summary Param 개수(CNN모델)  
-model.add(Conv2D(32, (2,2), 
+model.add(Conv2D(32, (2,2),  #인풋쉐이프에 행값은 디폴트는 32
                  padding = 'same',         # 디폴트값(안준것과 같다.) 
                  activation= 'swish'))    # 출력(3,3,7)       
 model.add(MaxPooling2D())
@@ -55,7 +55,7 @@ model.add(Conv2D(100, (2,2),
                  padding = 'same',         # 디폴트값(안준것과 같다.) 
                  activation= 'swish'))    # 출력(3,3,7)      
                                               
-model.add(Flatten()) # (N, 63)
+model.add(Flatten()) # (N, 63) 위치와 순서는 바뀌지 않아야한다.transpose와 전혀 다르다.
 model.add(Dense(100,activation='swish'))
 model.add(Dropout(0.3))
 model.add(Dense(100, activation='swish'))
