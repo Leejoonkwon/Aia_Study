@@ -1,7 +1,3 @@
-#칼라 
-#분류 100
-# 32
-# 컴불루션 3개 이상 
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Conv2D, Flatten, MaxPooling2D,Dropout
 from keras.datasets import mnist,cifar10,cifar100
@@ -16,7 +12,7 @@ import numpy as np
 print(x_train.shape,y_train.shape) #(50000, 32, 32, 3) (50000, 1)
 print(x_test.shape,y_test.shape) #(10000, 32, 32, 3) (10000, 1)
 
-x_train = x_train.reshape(50000, 32*32* 3)
+x_train = x_train.reshape(50000, 32*32* 3) #
 x_test = x_test.reshape(10000, 32*32*3)
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer
 scaler = StandardScaler()
@@ -67,7 +63,6 @@ model.add(Dense(1000,activation='swish'))
 model.add(Dropout(0.3))
 model.add(Dense(1000, activation='relu'))
 model.add(Dropout(0.3))
-
 model.add(Dense(100, activation='softmax'))
 model.summary()
 
@@ -76,7 +71,7 @@ model.summary()
 filepath = './_ModelCheckPoint/K27/'
 filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
-earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
+earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min', 
                               verbose=1,restore_best_weights=True)
 # mcp = ModelCheckpoint(monitor='loss',mode='auto',verbose=1,
 #                       save_best_only=True, 
@@ -84,7 +79,7 @@ earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min',
 #                     )
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=500, batch_size=1080, 
+model.fit(x_train, y_train, epochs=100, batch_size=580, 
                 callbacks = [earlyStopping],
                 validation_split=0.25,
                 verbose=2
@@ -122,3 +117,5 @@ print('acc 스코어 :', acc)
 # loss : [2.2696797847747803, 0.590399980545044]
 # r2스코어 : -4.116410039075688
 # acc 스코어 : 0.5442
+
+# acc 스코어 : 0.2701
