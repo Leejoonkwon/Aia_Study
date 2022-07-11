@@ -30,6 +30,7 @@ print(np.unique(y_train,return_counts=True))
 #       dtype=int64))
 print(y_train.shape) #(50000, 1)
 print(y_test.shape) #(10000, 1)
+
 from tensorflow.keras.utils import to_categorical 
 y_train = to_categorical(y_train) 
 y_test = to_categorical(y_test) 
