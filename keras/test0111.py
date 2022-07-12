@@ -40,11 +40,15 @@ test_set['Date'] = pd.to_datetime(test_set['Date'])
 test_set['year'] = test_set['Date'].dt.strftime('%Y')
 test_set['month'] = test_set['Date'].dt.strftime('%m')
 test_set['day'] = test_set['Date'].dt.strftime('%d')
-train_set['Storeband'] = pd.cut(train_set['Store'], 5)
-print(train_set['Storeband'])     
-'''
+train_set['tempband'] = pd.cut(train_set['Temperature'], 5)
+print(train_set['tempband'])     
+ [(-2.162, 18.38] < 
+  (18.38, 38.82]
+  < (38.82, 59.26] <
+  (59.26, 79.7] < (79.7, 100.14]]
 
-combine = [train_set, test_set]
+
+combine = ([train_set, test_set])
 for dataset in combine:
   dataset.loc[ dataset['Age'] <= 16, 'Age'] = 0
   dataset.loc[(dataset['Age'] > 16) & (dataset['Age'] <= 32), 'Age'] = 1
