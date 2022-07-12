@@ -39,15 +39,31 @@ submission = pd.read_csv(path + 'sample_submission.csv',#예측에서 쓸거야!
 data = pd.concat([train_set,test_set])
 data['Date'] = pd.to_datetime(data['Date'])
 
-# data['year'] = train_set['Date'].dt.strftime('%Y')
+data['year'] = data['Date'].dt.strftime('%Y')
 data['month'] = data['Date'].dt.strftime('%m')
+data['day'] = data['Date'].dt.strftime('%d')
 print(data)
 print(data.shape)
 print('=================')
-data = pd.get_dummies(data, columns = ['month'])
-print(data)
-print(data.shape)
-'''
+
+data = data.drop(['Date'], axis=1)
+data = data.fillna(0)
+print(data)  #[6435 rows x 57 columns]
+train_set = data[0:len(train_set)]
+test_set = data[len(train_set):]
+print(train_set) #[6255 rows x 57 columns]
+print(test_set) #[180 rows x 57 columns]
+
+cols = ['IsHoliday','year','month','day']
+for col in cols:
+    le = LabelEncoder()
+    train_set[col]=le.fit_transform(train_set[col])
+    test_set[col]=le.fit_transform(test_set[col])
+print(train_set.isnull().sum())
+print(train_set.shape) #(6255, 14)
+print(test_set.shape) #(180, 14)
+
+
 # test_set['Store_prom2']    = test_set.groupby(['Store'])['Promotion2'].transform('mean')
 # test_set['Store_prom3']    = test_set.groupby(['Store'])['Promotion3'].transform('mean')
 # test_set['Store_prom4']    = test_set.groupby(['Store'])['Promotion4'].transform('mean')
@@ -64,33 +80,33 @@ print(data.shape)
 # train_set[(train_set['Temperatureband']>38.82) & (train_set['Temperatureband']<=59.26)] = 2
 # train_set[(train_set['Temperatureband']>59.26) & (train_set['Temperatureband']<=79.7)] = 3
 # train_set[(train_set['Temperatureband']>79.7) & (train_set['Temperatureband']<=100.14)] = 4
-# print(train_set['Temperatureband'])   
-train_set = train_set.fillna(0)
-test_set = test_set.fillna(test_set.mean())
+# # print(train_set['Temperatureband'])   
+# train_set = train_set.fillna(0)
+# test_set = test_set.fillna(test_set.mean())
 
-print(train_set.info())
-train_set['Date'] = pd.to_datetime(train_set['Date'])
+# print(train_set.info())
+# train_set['Date'] = pd.to_datetime(train_set['Date'])
 
-# data['year'] = train_set['Date'].dt.strftime('%Y')
-train_set['month'] = train_set['Date'].dt.strftime('%m')
-# train_set['day'] = train_set['Date'].dt.strftime('%d')
-print(train_set['month'])
-# data = pd.get_dummies(data, columns = ['month'])
+# # data['year'] = train_set['Date'].dt.strftime('%Y')
+# train_set['month'] = train_set['Date'].dt.strftime('%m')
+# # train_set['day'] = train_set['Date'].dt.strftime('%d')
+# print(train_set['month'])
+# # data = pd.get_dummies(data, columns = ['month'])
 
-test_set['Date'] = pd.to_datetime(test_set['Date'])
+# test_set['Date'] = pd.to_datetime(test_set['Date'])
 
-# # test_set['year'] = test_set['Date'].dt.strftime('%Y')
-test_set['month'] = test_set['Date'].dt.strftime('%m')
-# # test_set['day'] = test_set['Date'].dt.strftime('%d')
-# print(train_set.shape) #(6255, 17)
-print(train_set.isnull().sum())
-# numpy 에서는 np.unique(y,return_counts=True)
+# # # test_set['year'] = test_set['Date'].dt.strftime('%Y')
+# test_set['month'] = test_set['Date'].dt.strftime('%m')
+# # # test_set['day'] = test_set['Date'].dt.strftime('%d')
+# # print(train_set.shape) #(6255, 17)
+# print(train_set.isnull().sum())
+# # numpy 에서는 np.unique(y,return_counts=True)
 
 # train_set = pd.get_dummies(train_set, columns = ['month'])
 # test_set = pd.get_dummies(test_set, columns = ['month'])
-print(train_set)
-# print(np.unique(test_set['month'],return_counts=True))
-print(test_set)
+# print(train_set)
+# # print(np.unique(test_set['month'],return_counts=True))
+# print(test_set)
 
 # (array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
 #        18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
@@ -140,13 +156,6 @@ print(test_set.isnull().sum()) #각 컬럼당 결측치의 합계
 # Unemployment      0
 # IsHoliday         0
 
-cols = ['IsHoliday']
-for col in cols:
-    le = LabelEncoder()
-    train_set[col]=le.fit_transform(train_set[col])
-    test_set[col]=le.fit_transform(test_set[col])
-print(train_set.isnull().sum())
-print(train_set.shape)
 
 
 
@@ -157,9 +166,9 @@ print(train_set) #[6435 rows x 24 columns]
 
 # train_set = pd.get_dummies(train_set, columns = ['month'])
 # test_set = pd.get_dummies(test_set, columns = ['month'])
-test_set = test_set.drop(['Date'], axis=1)
+# test_set = test_set.drop(['Date'], axis=1)
 
-x = train_set.drop(['Weekly_Sales','Date',], axis=1) #axis는 컬럼 
+x = train_set.drop(['Weekly_Sales'], axis=1) #axis는 컬럼 
 
 print(x) #(6435, 22)
 
@@ -168,7 +177,7 @@ print(x.shape) #
 y = train_set['Weekly_Sales']
 
 print(y.shape) # (6255,)
-print(test_set) # [180 rows x 11 columns]
+print(test_set) # [180 rows x 14 columns]
 
 # skf = StratifiedKFold(n_splits=2)
 # print(skf)
@@ -185,8 +194,8 @@ print(x_test.shape)
 
 from sklearn.preprocessing import MaxAbsScaler,RobustScaler 
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
-scaler = MinMaxScaler()
-# scaler = StandardScaler()
+# scaler = MinMaxScaler()
+scaler = StandardScaler()
 # scaler = MaxAbsScaler()
 # scaler = RobustScaler()
 scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
@@ -195,30 +204,16 @@ x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 
 
-print(x_train.shape) # (5566, 11)
-print(x_test.shape) # (689, 11)
+print(x_train.shape) # (5566, 13)
+print(x_test.shape) # (689, 13)
 
-print(test_set.shape) # (180, 11)
-
-# x_train = x_train.reshape(5727, 11,2,1)
-# x_test = x_test.reshape(708, 11,2,1)
+print(test_set.shape) # (180, 14)
+print(test_set) # (180, 14)
+test_set = test_set.drop(['Weekly_Sales'], axis=1)
 
 #2. 모델구성
 model = Sequential()
-# model.add(Conv2D(filters=64, kernel_size=(1, 1),   # 출력(4,4,10)                                    
-#                  padding='same',
-#                  input_shape=(11, 2,1)))    #(batch_size, row, column, channels)     
-                                                                                           
-
-#  #    (kernel_size * channls) * filters = summary Param 개수(CNN모델)  
-# model.add(Conv2D(32, (1,1),  #인풋쉐이프에 행값은 디폴트는 32
-#                  padding = 'same',         # 디폴트값(안준것과 같다.) 
-#                  activation= 'swish'))    # 출력(3,3,7)       
-# model.add(Conv2D(64, (1,1), 
-#                  padding = 'same',         # 디폴트값(안준것과 같다.) 
-#                  activation= 'swish'))    # 출력(3,3,7)      
-# model.add(Flatten())  
-model.add(Dense(100, activation='swish',input_dim=11))
+model.add(Dense(100, activation='swish',input_dim=13))
 model.add(Dropout(0.2))
 model.add(Dense(100, activation='swish'))
 model.add(Dropout(0.2))
@@ -246,9 +241,9 @@ mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
                     )
 model.compile(loss='mae', optimizer='adam')
 
-hist = model.fit(x_train, y_train, epochs=100, batch_size=35, 
+hist = model.fit(x_train, y_train, epochs=250, batch_size=60, 
                 validation_split=0.25,
-                callbacks = [earlyStopping,mcp],
+                callbacks = [earlyStopping],
                 verbose=2
                 )
 print(test_set.shape)
@@ -286,7 +281,7 @@ print("RMSE :",rmse)
 # print(y_test)
 # print(test_set) #( 180, 13)
 # print(test_set.info()) #
-test_set = test_set.astype({'month':'float64'})
+# test_set = test_set.astype({'month':'float64'})
 # print(test_set.shape) #(180, 11)
 # x_test = x_test.reshape(689, 11)
 # print(x_train.shape) #(5566, 11, 1, 1)
@@ -311,4 +306,6 @@ submission.to_csv('test21.csv',index=True)
 
 # loss : 163955.578125
 # RMSE : 261464.49096885187
-'''
+
+
+

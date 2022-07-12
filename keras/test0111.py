@@ -42,24 +42,24 @@ test_set['month'] = test_set['Date'].dt.strftime('%m')
 test_set['day'] = test_set['Date'].dt.strftime('%d')
 train_set['tempband'] = pd.cut(train_set['Temperature'], 5)
 print(train_set['tempband'])     
- [(-2.162, 18.38] < 
-  (18.38, 38.82]
-  < (38.82, 59.26] <
-  (59.26, 79.7] < (79.7, 100.14]]
+#  [(-2.162, 18.38] < 
+#   (18.38, 38.82]
+#   < (38.82, 59.26] <
+#   (59.26, 79.7] < (79.7, 100.14]]
 
+combine = [train_set, test_set]
 
-combine = ([train_set, test_set])
 for dataset in combine:
-  dataset.loc[ dataset['Age'] <= 16, 'Age'] = 0
-  dataset.loc[(dataset['Age'] > 16) & (dataset['Age'] <= 32), 'Age'] = 1
-  dataset.loc[(dataset['Age'] > 32) & (dataset['Age'] <= 48), 'Age'] = 2
-  dataset.loc[(dataset['Age'] > 48) & (dataset['Age'] <= 64), 'Age'] = 3
-  dataset.loc[ dataset['Age'] > 64, 'Age'] = 4
-  train_set = train_set.drop(['AgeBand'], axis=1) 
-  
-print(test_set)
+  dataset.loc[ dataset['Temperature'] <= 18.38, 'Temperature'] = 0
+  dataset.loc[(dataset['Temperature'] > 18.38) & (dataset['Temperature'] <= 38.82), 'Temperature'] = 1
+  dataset.loc[(dataset['Temperature'] > 38.82) & (dataset['Temperature'] <= 59.26), 'Temperature'] = 2
+  dataset.loc[(dataset['Temperature'] > 59.26) & (dataset['Temperature'] <= 79.7), 'Temperature'] = 3
+  dataset.loc[ dataset['Temperature'] > 79.7, 'Temperature'] = 4
+  # train_set = train_set.drop(['tempband'], axis=1) 
+ 
+print(test_set['Temperature'])
 print(test_set.shape) #(180,11) #train_set과 열 값이 '1'차이 나는 건 count를 제외했기 때문이다.예측 단계에서 값을 대입
-
+'''
 print(train_set.columns)
 # 'Store', 'Date', 'Temperature', 'Fuel_Price', 'Promotion1',
 #        'Promotion2', 'Promotion3', 'Promotion4', 'Promotion5', 'Unemployment',
