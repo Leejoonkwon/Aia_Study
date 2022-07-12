@@ -75,7 +75,7 @@ model.add(Dense(1))
 
 #3. 컴파일, 훈련
 model.compile(loss='mae', optimizer='adam')
-history = model.fit(x_train, y_train , epochs =11250,validation_split=0.2, batch_size=64, verbose=2)
+history = model.fit(x_train, y_train , epochs =10,validation_split=0.2, batch_size=64, verbose=2)
 #validation은 검증의 수단으로 전체 데이터 중 train 데이터를 분할하여 검증하여 test에 대입한다.
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -87,11 +87,13 @@ def RMSE(y_test, y_predict):
      return np.sqrt(mean_squared_error(y_test, y_predict))
 rmse = RMSE(y_test, y_predict)
 print("RMSE :",rmse)  
+print(y_test)
+print(test_set)# [1459 rows x 75 columns]
 y_summit = model.predict(test_set)
 # print(y_summit)
 # print(y_summit.shape)
 
-
+'''
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
 plt.title('Model accuracy')
@@ -110,3 +112,4 @@ submission['SalePrice'] = y_summit
 submission = submission.fillna(submission.mean())
 submission.to_csv('test20.csv',index=True)
 
+'''

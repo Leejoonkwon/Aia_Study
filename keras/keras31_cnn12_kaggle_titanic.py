@@ -10,7 +10,7 @@
 import numpy as np
 import pandas as pd 
 from tensorflow.python.keras.models import Sequential,load_model
-from tensorflow.python.keras.layers import Dense,Dropout
+from tensorflow.python.keras.layers import Dense,Dropout,Conv2D,Flatten
 from sklearn.model_selection import train_test_split
 
 from sklearn.metrics import accuracy_score
@@ -124,16 +124,28 @@ x_test = scaler.transform(x_test)
 #디폴트 값인  shuffle=True 를 통해 정확도를 올린다.
 print(x_train.shape) #(712, 9)
 print(x_test.shape) #(179, 9)
-'''
-x_train = x_train.reshape(712, 9)
-x_test = x_test.reshape(179, 9)
 
+x_train = x_train.reshape(712, 3,3,1)
+x_test = x_test.reshape(179, 3,3,1)
+y_train = pd.get_dummies((y_train)) 
+y_test = pd.get_dummies((y_test))
 
 #2. 모델 구성
 
 model = Sequential()
-model.add(Dense(1000,input_dim=9))
-# model.add(Dropout(0.3))
+model.add(Conv2D(filters=64, kernel_size=(1, 1),   # 출력(4,4,10)                                    
+                 padding='same',
+                 input_shape=(3, 3,1)))    #(batch_size, row, column, channels)     
+                                                                                           
+
+ #    (kernel_size * channls) * filters = summary Param 개수(CNN모델)  
+model.add(Conv2D(32, (1,1),  #인풋쉐이프에 행값은 디폴트는 32
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)       
+model.add(Conv2D(64, (1,1), 
+                 padding = 'same',         # 디폴트값(안준것과 같다.) 
+                 activation= 'swish'))    # 출력(3,3,7)      
+model.add(Flatten())  
 model.add(Dense(1000,activation='swish'))
 # model.add(Dropout(0.3))
 model.add(Dense(1000,activation='swish'))
@@ -169,7 +181,7 @@ mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
                       filepath="".join([filepath,'k25_', date, '_kaggle_titanic_', filename])
                     )
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(x_train, y_train, epochs=600, batch_size=30, 
+model.fit(x_train, y_train, epochs=10, batch_size=30, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2
@@ -192,8 +204,7 @@ acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
 
 
-test_set = scaler.transform(test_set)
-y_summit = model.predict(test_set)
+# y_summit = model.predict(test_set)
 
 
 # gender_submission['Survived'] = y_summit
@@ -210,4 +221,7 @@ y_summit = model.predict(test_set)
 # drop 아웃 후
 # loss : 0.593296468257904
 # acc 스코어 : 0.8268156424581006
-'''
+
+#cnn dnn 후
+# loss : 0.5045608282089233
+# racc 스코어 : 0.7877094972067039
