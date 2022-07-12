@@ -44,146 +44,55 @@ print('=================')
 data = data.drop(['Date'], axis=1)
 data = data.fillna(0)
 print(data)  #[6435 rows x 57 columns]
+
 cols = ['IsHoliday','year','month','day']
 for col in cols:
     le = LabelEncoder()
     data[col]=le.fit_transform(data[col])
-train_set = data[0:len(train_set)]
+
+train_set = data[0:len(train_set)] # train과 test 분리
 test_set = data[len(train_set):]
-train_set['Store_prom1']    = train_set.groupby(['Store'])['Promotion1'].transform('mean')
-train_set['Store_prom2']    = train_set.groupby(['Store'])['Promotion2'].transform('mean')
-train_set['Store_prom3']    = train_set.groupby(['Store'])['Promotion3'].transform('mean')
-train_set['Store_prom4']    = train_set.groupby(['Store'])['Promotion4'].transform('mean')
-train_set['Store_prom5']    = train_set.groupby(['Store'])['Promotion5'].transform('mean')
-train_set = train_set.drop(['Promotion1','Promotion2','Promotion3',
-                            'Promotion4','Promotion5'], axis=1)
 
-train_set['tempband'] = pd.cut(train_set['Temperature'], 5)
-combine = [train_set, test_set]
-print(train_set['tempband']) 
+combine = (train_set,test_set)
+# data['tempband'] = pd.cut(data['Temperature'], 3)
+# print(data['tempband'])
+# Categories (3, interval[float64, right]): [(-2.162, 32.007] < (32.007, 66.073] < (66.073, 100.14]]
 for dataset in combine:
-  dataset.loc[ dataset['Temperature'] <= 18.38, 'Temperature'] = 0
-  dataset.loc[(dataset['Temperature'] > 18.38) & (dataset['Temperature'] <= 38.82), 'Temperature'] = 1
-  dataset.loc[(dataset['Temperature'] > 38.82) & (dataset['Temperature'] <= 59.26), 'Temperature'] = 2
-  dataset.loc[(dataset['Temperature'] > 59.26) & (dataset['Temperature'] <= 79.7), 'Temperature'] = 3
-  dataset.loc[ dataset['Temperature'] > 79.7, 'Temperature'] = 4
-train_set = train_set.drop(['tempband'], axis=1) 
-test_set = test_set.drop(['tempband'], axis=1) 
+  dataset.loc[ dataset['Temperature'] <= 32.007, 'Temperature'] = 0
+  dataset.loc[(dataset['Temperature'] > 32.007) & (dataset['Temperature'] <=66.073), 'Temperature'] = 1
+  dataset.loc[(dataset['Temperature'] > 66.073) & (dataset['Temperature'] <= 100.14), 'Temperature'] = 2
+ 
+# data['Unemplband'] = pd.cut(data['Unemployment'], 3)
+# print(data['Unemplband'])
+# Categories (3, interval[float64, right]): [(3.869, 7.357] < (7.357, 10.835] < (10.835, 14.313]]
   
-print(train_set) #[6255 rows x 14 columns]
-print(test_set) #[180 rows x 14 columns]
+for dataset in combine:
+  dataset.loc[ dataset['Unemployment'] <= 7.357, 'Unemployment'] = 0
+  dataset.loc[(dataset['Unemployment'] > 7.357) & (dataset['Unemployment'] <= 10.835), 'Unemployment'] = 1
+  dataset.loc[(dataset['Unemployment'] > 10.835) & (dataset['Unemployment'] <= 14.313), 'Unemployment'] = 2
+  
+# data['Fuelband'] = pd.cut(data['Fuel_Price'], 3)
+# print(data['Fuelband'])
+# Categories (3, interval[float64, right]): [(2.47, 3.137] < (3.137, 3.803] < (3.803, 4.468]]
 
-'''
-print(train_set.isnull().sum())
-print(train_set.shape) #(6255, 14)
-print(test_set.shape) #(180, 14)
 
+for dataset in combine:
+  dataset.loc[ dataset['Fuel_Price'] <= 3.137, 'Fuel_Price'] = 0
+  dataset.loc[(dataset['Fuel_Price'] > 3.137) & (dataset['Fuel_Price'] <= 3.803), 'Fuel_Price'] = 1
+  dataset.loc[(dataset['Fuel_Price'] > 3.803) & (dataset['Fuel_Price'] <=4.468), 'Fuel_Price'] = 2
 
-# test_set['Store_prom2']    = test_set.groupby(['Store'])['Promotion2'].transform('mean')
-# test_set['Store_prom3']    = test_set.groupby(['Store'])['Promotion3'].transform('mean')
-# test_set['Store_prom4']    = test_set.groupby(['Store'])['Promotion4'].transform('mean')
-# train_set['Temperatureband'] = pd.cut(train_set['Temperature'], 5)
-# print(train_set['Temperatureband'])   
-# # 5, interval[float64, right]):
-# #     [(-2.162, 18.38] < 
-# #      (18.38, 38.82] < 
-# #      (38.82, 59.26] <
-# #     (59.26, 79.7] < 
-# #     (79.7, 100.14]]
-# train_set[(train_set['Temperatureband']>-2.162) & (train_set['Temperatureband']<=18.38)] = 0     # 추가 부분
-# train_set[(train_set['Temperatureband']>18.38) & (train_set['Temperatureband']<=38.82)] = 1
-# train_set[(train_set['Temperatureband']>38.82) & (train_set['Temperatureband']<=59.26)] = 2
-# train_set[(train_set['Temperatureband']>59.26) & (train_set['Temperatureband']<=79.7)] = 3
-# train_set[(train_set['Temperatureband']>79.7) & (train_set['Temperatureband']<=100.14)] = 4
-# # print(train_set['Temperatureband'])   
-# train_set = train_set.fillna(0)
-# test_set = test_set.fillna(test_set.mean())
-
-# print(train_set.info())
-# train_set['Date'] = pd.to_datetime(train_set['Date'])
-
-# # data['year'] = train_set['Date'].dt.strftime('%Y')
-# train_set['month'] = train_set['Date'].dt.strftime('%m')
-# # train_set['day'] = train_set['Date'].dt.strftime('%d')
-# print(train_set['month'])
-# # data = pd.get_dummies(data, columns = ['month'])
-
-# test_set['Date'] = pd.to_datetime(test_set['Date'])
-
-# # # test_set['year'] = test_set['Date'].dt.strftime('%Y')
-# test_set['month'] = test_set['Date'].dt.strftime('%m')
-# # # test_set['day'] = test_set['Date'].dt.strftime('%d')
-# # print(train_set.shape) #(6255, 17)
-# print(train_set.isnull().sum())
-# # numpy 에서는 np.unique(y,return_counts=True)
-
-# train_set = pd.get_dummies(train_set, columns = ['month'])
-# test_set = pd.get_dummies(test_set, columns = ['month'])
-# print(train_set)
-# # print(np.unique(test_set['month'],return_counts=True))
-# print(test_set)
-
-# (array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-#        18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
-#        35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45], dtype=int64), array([139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139,
-#        139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139,
-#        139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139,
-#        139, 139, 139, 139, 139, 139], dtype=int64))
-
+# print(train_set[['Fuel_Price', 'Weekly_Sales']].groupby(['Fuel_Price'], as_index=False).mean().sort_values(by='Weekly_Sales', ascending=False))
+# # 기름값이 4.069보다 클 때 매출이 가장 낮음 
+# print(train_set[['Unemployment', 'Weekly_Sales']].groupby(['Unemployment'], as_index=False).mean().sort_values(by='Weekly_Sales', ascending=False))
+# # 실업율이 5.966%이하일 때 매출 가장 높음 
+# print(train_set[['IsHoliday', 'Weekly_Sales']].groupby(['IsHoliday'], as_index=False).mean().sort_values(by='Weekly_Sales', ascending=False))
+# # 공휴일에 따라 매출 영향 약 7%로 크진 않다.
+# print(train_set[['year', 'Weekly_Sales']].groupby(['year'], as_index=False).mean().sort_values(by='Weekly_Sales', ascending=False))
+# # year의 평균값은 큰 차이가 없음 
 
 print(test_set.shape) #(180,11) #train_set과 열 값이 '1'차이 나는 건 count를 제외했기 때문이다.예측 단계에서 값을 대입
 
-print(train_set.columns)
-# 'Store', 'Date', 'Temperature', 'Fuel_Price', 'Promotion1',
-#        'Promotion2', 'Promotion3', 'Promotion4', 'Promotion5', 'Unemployment',
-#        'IsHoliday', 'Weekly_Sales'
-# print(train_set.info()) #null은 누락된 값이라고 하고 "결측치"라고도 한다.
-# print(train_set.describe()) 
-print(test_set.columns)
-# 'Store', 'Date', 'Temperature', 'Fuel_Price', 'Promotion1',
-#        'Promotion2', 'Promotion3', 'Promotion4', 'Promotion5', 'Unemployment',
-#        'IsHoliday'
-
-###### 결측치 처리 1.제거##### dropna 사용
-print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
-# Store              0
-# Date               0
-# Temperature        0
-# Fuel_Price         0
-# Promotion1      4153 
-# Promotion2      4663
-# Promotion3      4370
-# Promotion4      4436
-# Promotion5      4140
-# Unemployment       0
-# IsHoliday          0
-# Weekly_Sales       0
-print(test_set.isnull().sum()) #각 컬럼당 결측치의 합계
-# Store             0
-# Date              0
-# Temperature       0
-# Fuel_Price        0
-# Promotion1        2
-# Promotion2      135
-# Promotion3       19
-# Promotion4       34
-# Promotion5        0
-# Unemployment      0
-# IsHoliday         0
-
-
-
-
-# print(test_set.shape) #180, 14)
-# print(test_set.shape) #180, 14)
-# print(test_set.isnull().sum())
-print(train_set) #[6435 rows x 24 columns]
-
-# train_set = pd.get_dummies(train_set, columns = ['month'])
-# test_set = pd.get_dummies(test_set, columns = ['month'])
-# test_set = test_set.drop(['Date'], axis=1)
-
-x = train_set.drop(['Weekly_Sales'], axis=1) #axis는 컬럼 
+x = train_set.drop(['Weekly_Sales','year','day'], axis=1) #axis는 컬럼 
 
 print(x) #(6435, 22)
 
@@ -194,14 +103,6 @@ y = train_set['Weekly_Sales']
 print(y.shape) # (6255,)
 print(test_set) # [180 rows x 14 columns]
 
-# skf = StratifiedKFold(n_splits=2)
-# print(skf)
-# skf.get_n_splits(x ,y)
-
-# for train_index, test_index in skf.split(x, y):
-#     print("TRAIN:", train_index, "TEST:", test_index)
-#     x_train, x_test = x[train_index], x[test_index]
-#     y_train, y_test = y[train_index], y[test_index]
 
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, train_size = 0.91, shuffle = True, random_state =100)
@@ -219,17 +120,17 @@ x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 
 
-print(x_train.shape) # (5566, 13)
-print(x_test.shape) # (689, 13)
+# print(x_train.shape) # (5566, 13)
+# print(x_test.shape) # (689, 13)
 
-print(test_set.shape) # (180, 14)
-print(test_set) # (180, 14)
-test_set = test_set.drop(['Weekly_Sales'], axis=1)
+# print(test_set.shape) # (180, 14)
+# print(test_set) # (180, 14)
+test_set = test_set.drop(['Weekly_Sales','year','day'], axis=1)
 print(test_set) # (180, 13)
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(100, activation='swish',input_dim=13))
+model.add(Dense(100, activation='swish',input_dim=11))
 model.add(Dropout(0.2))
 model.add(Dense(100, activation='swish'))
 model.add(Dropout(0.2))
@@ -257,7 +158,7 @@ mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
                     )
 model.compile(loss='mae', optimizer='adam')
 
-hist = model.fit(x_train, y_train, epochs=250, batch_size=60, 
+hist = model.fit(x_train, y_train, epochs=850, batch_size=500, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2
@@ -275,56 +176,39 @@ import matplotlib
 matplotlib.rcParams['font.family']='Malgun Gothic'
 matplotlib.rcParams['axes.unicode_minus']=False
 import time
-# y_predict = model.predict(x_test)
-# plt.figure(figsize=(9,6))
-# plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
-# plt.plot(hist.history['val_loss'],marker='.',c='blue',label='val_loss')
-# plt.grid()
-# plt.title('영어싫어') #맥플러립 한글 깨짐 현상 알아서 해결해라 
-# plt.ylabel('loss')
-# plt.xlabel('epochs')
-# # plt.legend(loc='upper right')
-# plt.legend()
-# plt.show()
+y_predict = model.predict(x_test)
+plt.figure(figsize=(9,6))
+plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
+plt.plot(hist.history['val_loss'],marker='.',c='blue',label='val_loss')
+plt.grid()
+plt.title('영어싫어') #맥플러립 한글 깨짐 현상 알아서 해결해라 
+plt.ylabel('loss')
+plt.xlabel('epochs')
+# plt.legend(loc='upper right')
+plt.legend()
+plt.show()
 
 def RMSE(y_test, y_predict):
      return np.sqrt(mean_squared_error(y_test, y_predict))
 rmse = RMSE(y_test, y_predict)
 print("RMSE :",rmse)  
-# print(test_set.info())
-# print(test_set.shape)
-
-# print(y_test)
-# print(test_set) #( 180, 13)
-# print(test_set.info()) #
-# test_set = test_set.astype({'month':'float64'})
-# print(test_set.shape) #(180, 11)
-# x_test = x_test.reshape(689, 11)
-# print(x_train.shape) #(5566, 11, 1, 1)
-
 
 
 y_summit = model.predict(test_set)
 submission['Weekly_Sales'] = y_summit
-submission.to_csv('test21.csv',index=True)
+submission.to_csv('test25.csv',index=True)
 
-# MinMaxScaler()
-# loss : 126330.3828125
-# RMSE : 193888.8899267907
 
-# StandardScaler()
-# loss : 99122.25
-# RMSE : 180036.57792436687
+# scaler = MinMaxScaler()
+
 
 # scaler = StandardScaler()
-# loss : 107203.8984375
-# RMSE : 173036.29777622773
-
-# loss : 163955.578125
-# RMSE : 261464.49096885187
 
 
+# scaler = MaxAbsScaler()
 
-# loss : 129799.515625
-# RMSE : 188107.95603869157
-'''
+
+# scaler = RobustScaler()
+# loss : 107808.859375
+# RMSE : 180006.59736279314
+
