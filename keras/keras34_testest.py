@@ -81,6 +81,12 @@ for dataset in combine:
   dataset.loc[(dataset['Fuel_Price'] > 3.137) & (dataset['Fuel_Price'] <= 3.803), 'Fuel_Price'] = 1
   dataset.loc[(dataset['Fuel_Price'] > 3.803) & (dataset['Fuel_Price'] <=4.468), 'Fuel_Price'] = 2
 
+train_set['Store_prom1']    = train_set.groupby(['Store'])['Promotion1'].transform('mean')
+train_set['Store_prom2']    = train_set.groupby(['Store'])['Promotion2'].transform('mean')
+train_set['Store_prom3']    = train_set.groupby(['Store'])['Promotion3'].transform('mean')
+train_set['Store_prom4']    = train_set.groupby(['Store'])['Promotion4'].transform('mean')
+train_set['Store_prom5']    = train_set.groupby(['Store'])['Promotion5'].transform('mean')
+
 # print(train_set[['Fuel_Price', 'Weekly_Sales']].groupby(['Fuel_Price'], as_index=False).mean().sort_values(by='Weekly_Sales', ascending=False))
 # # 기름값이 4.069보다 클 때 매출이 가장 낮음 
 # print(train_set[['Unemployment', 'Weekly_Sales']].groupby(['Unemployment'], as_index=False).mean().sort_values(by='Weekly_Sales', ascending=False))
@@ -92,7 +98,7 @@ for dataset in combine:
 
 print(test_set.shape) #(180,11) #train_set과 열 값이 '1'차이 나는 건 count를 제외했기 때문이다.예측 단계에서 값을 대입
 
-x = train_set.drop(['Weekly_Sales','year','day'], axis=1) #axis는 컬럼 
+x = train_set.drop(['Weekly_Sales','year','day','Promotion1','Promotion2','Promotion3','Promotion4','Promotion5'], axis=1) #axis는 컬럼 
 
 print(x) #(6435, 22)
 
@@ -105,8 +111,8 @@ print(test_set) # [180 rows x 14 columns]
 
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size = 0.91, shuffle = True, random_state =100)
-print(x_test.shape)
+    x, y, train_size = 0.75, shuffle = True, random_state =100)
+
 
 from sklearn.preprocessing import MaxAbsScaler,RobustScaler 
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
@@ -126,17 +132,24 @@ x_test = scaler.transform(x_test)
 # print(test_set.shape) # (180, 14)
 # print(test_set) # (180, 14)
 test_set = test_set.drop(['Weekly_Sales','year','day'], axis=1)
-print(test_set) # (180, 13)
+print(x_test.shape)# (1564, 11)
+print(test_set) # (180, 11)
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(100, activation='swish',input_dim=11))
+model.add(Dense(128, activation='swish',input_dim=11))
+model.add(Dropout(0.4))
+model.add(Dense(128, activation='swish'))
+model.add(Dropout(0.4))
+model.add(Dense(64, activation='swish'))
+model.add(Dropout(0.3))
+model.add(Dense(64, activation='swish'))
+model.add(Dropout(0.3))
+model.add(Dense(32, activation='swish'))
 model.add(Dropout(0.2))
-model.add(Dense(100, activation='swish'))
+model.add(Dense(32, activation='swish'))
 model.add(Dropout(0.2))
-model.add(Dense(100, activation='swish'))
-model.add(Dropout(0.2))
-model.add(Dense(100, activation='swish'))
+model.add(Dense(16, activation='swish'))
 model.add(Dense(1, activation='swish'))
 import datetime
 date = datetime.datetime.now()
@@ -150,7 +163,7 @@ print(date)
 filepath = './_ModelCheckPoint/K24/'
 filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 #04d :                  4f : 
-earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
+earlyStopping = EarlyStopping(monitor='loss', patience=1000, mode='min', 
                               verbose=1,restore_best_weights=True)
 mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
                       save_best_only=True, 
@@ -158,7 +171,7 @@ mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
                     )
 model.compile(loss='mae', optimizer='adam')
 
-hist = model.fit(x_train, y_train, epochs=850, batch_size=500, 
+hist = model.fit(x_train, y_train, epochs=5000, batch_size=256, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2
@@ -177,16 +190,16 @@ matplotlib.rcParams['font.family']='Malgun Gothic'
 matplotlib.rcParams['axes.unicode_minus']=False
 import time
 y_predict = model.predict(x_test)
-plt.figure(figsize=(9,6))
-plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
-plt.plot(hist.history['val_loss'],marker='.',c='blue',label='val_loss')
-plt.grid()
-plt.title('영어싫어') #맥플러립 한글 깨짐 현상 알아서 해결해라 
-plt.ylabel('loss')
-plt.xlabel('epochs')
-# plt.legend(loc='upper right')
-plt.legend()
-plt.show()
+# plt.figure(figsize=(9,6))
+# plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
+# plt.plot(hist.history['val_loss'],marker='.',c='blue',label='val_loss')
+# plt.grid()
+# plt.title('영어싫어') #맥플러립 한글 깨짐 현상 알아서 해결해라 
+# plt.ylabel('loss')
+# plt.xlabel('epochs')
+# # plt.legend(loc='upper right')
+# plt.legend()
+# plt.show()
 
 def RMSE(y_test, y_predict):
      return np.sqrt(mean_squared_error(y_test, y_predict))
@@ -209,6 +222,8 @@ submission.to_csv('test25.csv',index=True)
 
 
 # scaler = RobustScaler()
-# loss : 107808.859375
-# RMSE : 180006.59736279314
+# loss : 357690.65625
+# RMSE : 457635.68435814924
 
+# loss : 329997.6875
+# RMSE : 461233.8643448758

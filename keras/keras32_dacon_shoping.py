@@ -49,74 +49,19 @@ print('=================')
 data = data.drop(['Date'], axis=1)
 data = data.fillna(0)
 print(data)  #[6435 rows x 57 columns]
-train_set = data[0:len(train_set)]
-test_set = data[len(train_set):]
-print(train_set) #[6255 rows x 57 columns]
-print(test_set) #[180 rows x 57 columns]
 
 cols = ['IsHoliday','year','month','day']
 for col in cols:
     le = LabelEncoder()
-    train_set[col]=le.fit_transform(train_set[col])
-    test_set[col]=le.fit_transform(test_set[col])
+    data[col]=le.fit_transform(data[col])
+
+train_set = data[0:len(train_set)] # train과 test 분리
+test_set = data[len(train_set):]
+
 print(train_set.isnull().sum())
 print(train_set.shape) #(6255, 14)
 print(test_set.shape) #(180, 14)
 
-
-# test_set['Store_prom2']    = test_set.groupby(['Store'])['Promotion2'].transform('mean')
-# test_set['Store_prom3']    = test_set.groupby(['Store'])['Promotion3'].transform('mean')
-# test_set['Store_prom4']    = test_set.groupby(['Store'])['Promotion4'].transform('mean')
-# train_set['Temperatureband'] = pd.cut(train_set['Temperature'], 5)
-# print(train_set['Temperatureband'])   
-# # 5, interval[float64, right]):
-# #     [(-2.162, 18.38] < 
-# #      (18.38, 38.82] < 
-# #      (38.82, 59.26] <
-# #     (59.26, 79.7] < 
-# #     (79.7, 100.14]]
-# train_set[(train_set['Temperatureband']>-2.162) & (train_set['Temperatureband']<=18.38)] = 0     # 추가 부분
-# train_set[(train_set['Temperatureband']>18.38) & (train_set['Temperatureband']<=38.82)] = 1
-# train_set[(train_set['Temperatureband']>38.82) & (train_set['Temperatureband']<=59.26)] = 2
-# train_set[(train_set['Temperatureband']>59.26) & (train_set['Temperatureband']<=79.7)] = 3
-# train_set[(train_set['Temperatureband']>79.7) & (train_set['Temperatureband']<=100.14)] = 4
-# # print(train_set['Temperatureband'])   
-# train_set = train_set.fillna(0)
-# test_set = test_set.fillna(test_set.mean())
-
-# print(train_set.info())
-# train_set['Date'] = pd.to_datetime(train_set['Date'])
-
-# # data['year'] = train_set['Date'].dt.strftime('%Y')
-# train_set['month'] = train_set['Date'].dt.strftime('%m')
-# # train_set['day'] = train_set['Date'].dt.strftime('%d')
-# print(train_set['month'])
-# # data = pd.get_dummies(data, columns = ['month'])
-
-# test_set['Date'] = pd.to_datetime(test_set['Date'])
-
-# # # test_set['year'] = test_set['Date'].dt.strftime('%Y')
-# test_set['month'] = test_set['Date'].dt.strftime('%m')
-# # # test_set['day'] = test_set['Date'].dt.strftime('%d')
-# # print(train_set.shape) #(6255, 17)
-# print(train_set.isnull().sum())
-# # numpy 에서는 np.unique(y,return_counts=True)
-
-# train_set = pd.get_dummies(train_set, columns = ['month'])
-# test_set = pd.get_dummies(test_set, columns = ['month'])
-# print(train_set)
-# # print(np.unique(test_set['month'],return_counts=True))
-# print(test_set)
-
-# (array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,
-#        18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
-#        35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45], dtype=int64), array([139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139,
-#        139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139,
-#        139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139,
-#        139, 139, 139, 139, 139, 139], dtype=int64))
-
-
-print(test_set.shape) #(180,11) #train_set과 열 값이 '1'차이 나는 건 count를 제외했기 때문이다.예측 단계에서 값을 대입
 
 print(train_set.columns)
 # 'Store', 'Date', 'Temperature', 'Fuel_Price', 'Promotion1',
