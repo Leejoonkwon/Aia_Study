@@ -1,6 +1,6 @@
 import numpy as np
 from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense,SimpleRNN,Dropout,LSTM#이름부터 간단?
+from tensorflow.python.keras.layers import Dense,SimpleRNN,Dropout,LSTM,GRU #이름부터 간단?
 
 #1. 데이터
 datasets = np.array([1,2,3,4,5,6,7,8,9,10])
@@ -19,21 +19,10 @@ print(x.shape,y.shape) #(7, 3, 1) (7,)
 #2. 모델구성
 model = Sequential()
 # model.add(SimpleRNN(100, input_shape=(3,1)))
-model.add(LSTM(units=200, input_length=3,input_dim=1,activation='relu')) #위와 같은 개념
-# 4*units*(dim+bias+units)
-# Layer (type)                 Output Shape              Param #
-# =================================================================
-# lstm (LSTM)                  (None, 10)                480
-# model.add(SimpleRNN(10))
-#ValueError :expected ndim=3, found ndim=2 3차원으로 이어져야 하지만 2차원으로 나와서 진행 불가 RNN은 연속레이어 사용 불가 
+model.add(GRU(units=10, input_length=3,input_dim=1,activation='relu')) #위와 같은 개념
 
-# [SimpleRNN] units : 10 -> 10* (1 + 1 +10) = 120
-# [LSTM] units : 10 -> 4*10* (1 + 1 +10) = 480
-# 4를 곱하는 이유는 연산이 4번 되어지기 때문이다. Cell State,input gate,output gate, forget gate
-# [GRU]  units : 10 -> 3*10* (1 + 1 +10) = 360
-# 3을 곱하는 이유는 연산이 3번 되어지기 때문이다.hidden state,reset gate,update gate
-model.add(Dense(100,activation='swish')) 
-model.add(Dense(100,activation='swish')) 
+# model.add(Dense(100,activation='swish')) 
+# model.add(Dense(100,activation='swish')) 
 model.add(Dense(1,activation='swish'))
 model.summary()
 
