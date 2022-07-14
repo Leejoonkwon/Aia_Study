@@ -5,7 +5,7 @@
 # 성능비교
 # 감상문 2줄이상!
 from tensorflow.python.keras.models import Sequential,load_model
-from tensorflow.python.keras.layers import Dense,Dropout,LSTM
+from tensorflow.python.keras.layers import Dense,Dropout,LSTM,Conv1D,Flatten
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 import matplotlib.pyplot as plt
@@ -143,13 +143,15 @@ print(test_set) # (180,13)
 
 #2. 모델구성
 model = Sequential()
-model.add(LSTM(units=100, input_length=13,input_dim=1)) #위와 같은 개념
+# model.add(LSTM(units=100, input_length=13,input_dim=1)) #위와 같은 개념
+model.add(Conv1D(100,2,input_shape=(13,1)))
+model.add(Flatten())
 model.add(Dense(100, activation='swish'))
-model.add(Dropout(0.2))
+# model.add(Dropout(0.2))
 model.add(Dense(100, activation='swish'))
-model.add(Dropout(0.2))
+# model.add(Dropout(0.2))
 model.add(Dense(100, activation='swish'))
-model.add(Dropout(0.2))
+# model.add(Dropout(0.2))
 model.add(Dense(100, activation='swish'))
 model.add(Dense(1))
 import datetime
@@ -172,12 +174,12 @@ mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
                     )
 model.compile(loss='mae', optimizer='adam')
 
-hist = model.fit(x_train, y_train, epochs=150, batch_size=512, 
+hist = model.fit(x_train, y_train, epochs=450, batch_size=256, 
                 validation_split=0.25,
-                callbacks = [earlyStopping],
+                callbacks = [earlyStopping,mcp],
                 verbose=2
                 )
-print(test_set.shape)
+print(test_set)
 
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
@@ -217,11 +219,11 @@ print("RMSE :",rmse)
 # x_test = x_test.reshape(689, 11)
 # print(x_train.shape) #(5566, 11, 1, 1)
 
-
+test_set = np.array(test_set)
 test_set = test_set.reshape(180,13,1)
 y_summit = model.predict(test_set)
 submission['Weekly_Sales'] = y_summit
-submission.to_csv('test21.csv',index=True)
+submission.to_csv('test19.csv',index=True)
 
 # MinMaxScaler()
 # loss : 126330.3828125
@@ -237,5 +239,4 @@ submission.to_csv('test21.csv',index=True)
 
 # loss : 163955.578125
 # RMSE : 261464.49096885187
-
 

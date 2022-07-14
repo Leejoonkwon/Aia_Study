@@ -20,8 +20,8 @@ scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 scaler.transform(x_train)
 x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
-x_train = x_train.reshape(60000, 28, 28, 1)
-x_test = x_test.reshape(10000, 28, 28, 1)
+x_train = x_train.reshape(60000, 28, 28)
+x_test = x_test.reshape(10000, 28, 28)
 #이전에 스케일링에서 dimension 오류가 뜨던 이유는 스케일링 작업은 1차원 타입의 데이터만 수정할 수 있기 때문이다.
 #해결법은 스케일링 하기전 reshape로 (N,X)의 shape로 만들어 스케일링 후 다시 reshape를 통해 
 #input_shape로 쓸 수 있게 만들면 가능하며 성능도 당연히 좋아진다.
@@ -120,7 +120,10 @@ print("걸린 시간 :",end_time)
 # acc 스코어 : 0.032
 
 # Conv1d
-
+# loss : [0.3516494333744049, 0.8787999749183655]
+# r2스코어 : 0.8048326591649472
+# acc 스코어 : 0.8788
+# 걸린 시간 : 12.694036483764648
 
 
 
