@@ -71,7 +71,7 @@ x_test = x_test.reshape(119, 9,1)
 
 #2. 모델구성
 model = Sequential()
-model.add(LSTM(10,input_shape=(9,1)))
+model.add(LSTM(100,input_shape=(9,1)))
 model.add(Dense(32,activation='relu'))
 # model.add(Dropout(0.3))
 model.add(Dense(32, activation='relu'))
@@ -91,7 +91,7 @@ print(date)
 filepath = './_ModelCheckPoint/K24/'
 filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 #04d :                  4f : 
-earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min', 
+earlyStopping = EarlyStopping(monitor='loss', patience=50, mode='min', 
                               verbose=1,restore_best_weights=True)
 mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
                       save_best_only=True, 
@@ -99,7 +99,7 @@ mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
                     )
 model.compile(loss='mae', optimizer='adam')
 
-hist = model.fit(x_train, y_train, epochs=250, batch_size=120, 
+hist = model.fit(x_train, y_train, epochs=550, batch_size=64, 
                 validation_split=0.3,
                 callbacks = [earlyStopping],
                 verbose=2

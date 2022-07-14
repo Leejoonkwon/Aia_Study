@@ -15,14 +15,7 @@ x_train, x_test, y_train, y_test = train_test_split(x,y, train_size=0.8,shuffle=
 print(x_train.shape,x_test.shape) #(10, 3) (3, 3)
 
 
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer
-scaler = StandardScaler()
-# scaler = MinMaxScaler()
-# scaler = MaxAbsScaler()
-scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
-scaler.transform(x_train)
-x_train = scaler.transform(x_train)
-x_test = scaler.transform(x_test)
+
 print(x_train.shape,x_test.shape) #(10, 3) (3, 3)
 x_train = x_train.reshape(10,3,1) 
 x_test = x_test.reshape(3,3,1)

@@ -65,9 +65,9 @@ x_test = scaler.transform(x_test)
 print(test_set)
 # print(y)
 # print(y.shape) # (10886,)
-print(x_train.shape) #(10330, 8)
-print(x_test.shape) #(556, 8)
-
+print(x_train) #(10330, 8)
+print(x_test) #(556, 8)
+'''
 x_train = x_train.reshape(10330, 8,1)
 x_test = x_test.reshape(556, 8,1)
 
@@ -139,3 +139,4 @@ print('r2스코어 :', r2)
 #######LSTM
 # loss : 125.75883483886719
 # r2스코어 : 0.0633013409788773
+'''
