@@ -5,7 +5,7 @@
 # 성능비교
 # 감상문 2줄이상!
 from tensorflow.python.keras.models import Sequential,load_model
-from tensorflow.python.keras.layers import Dense,Dropout,Conv2D,Flatten
+from tensorflow.python.keras.layers import Dense,Dropout,LSTM
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 import matplotlib.pyplot as plt
@@ -101,14 +101,7 @@ print(test_set.isnull().sum()) #각 컬럼당 결측치의 합계
 # Unemployment      0
 # IsHoliday         0
 
-
-
-
-# print(test_set.shape) #180, 14)
-# print(test_set.shape) #180, 14)
-# print(test_set.isnull().sum())
 print(train_set) #[6435 rows x 24 columns]
-
 # train_set = pd.get_dummies(train_set, columns = ['month'])
 # test_set = pd.get_dummies(test_set, columns = ['month'])
 # test_set = test_set.drop(['Date'], axis=1)
@@ -123,15 +116,6 @@ y = train_set['Weekly_Sales']
 
 print(y.shape) # (6255,)
 print(test_set) # [180 rows x 14 columns]
-
-# skf = StratifiedKFold(n_splits=2)
-# print(skf)
-# skf.get_n_splits(x ,y)
-
-# for train_index, test_index in skf.split(x, y):
-#     print("TRAIN:", train_index, "TEST:", test_index)
-#     x_train, x_test = x[train_index], x[test_index]
-#     y_train, y_test = y[train_index], y[test_index]
 
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, train_size = 0.89, shuffle = True, random_state =100)
@@ -151,21 +135,23 @@ x_test = scaler.transform(x_test)
 
 print(x_train.shape) # (5566, 13)
 print(x_test.shape) # (689, 13)
+x_train = x_train.reshape(5566,13,1)
+x_test = x_test.reshape(689,13,1)
 
-print(test_set.shape) # (180, 14)
-print(test_set) # (180, 14)
 test_set = test_set.drop(['Weekly_Sales'], axis=1)
+print(test_set) # (180,13)
 
 #2. 모델구성
 model = Sequential()
-model.add(Dense(100, activation='swish',input_dim=13))
-model.add(Dropout(0.2))
+model.add(LSTM(units=100, input_length=13,input_dim=1)) #위와 같은 개념
 model.add(Dense(100, activation='swish'))
 model.add(Dropout(0.2))
 model.add(Dense(100, activation='swish'))
 model.add(Dropout(0.2))
 model.add(Dense(100, activation='swish'))
-model.add(Dense(1, activation='swish'))
+model.add(Dropout(0.2))
+model.add(Dense(100, activation='swish'))
+model.add(Dense(1))
 import datetime
 date = datetime.datetime.now()
 print(date)
@@ -186,7 +172,7 @@ mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
                     )
 model.compile(loss='mae', optimizer='adam')
 
-hist = model.fit(x_train, y_train, epochs=250, batch_size=60, 
+hist = model.fit(x_train, y_train, epochs=150, batch_size=512, 
                 validation_split=0.25,
                 callbacks = [earlyStopping],
                 verbose=2
@@ -232,7 +218,7 @@ print("RMSE :",rmse)
 # print(x_train.shape) #(5566, 11, 1, 1)
 
 
-
+test_set = test_set.reshape(180,13,1)
 y_summit = model.predict(test_set)
 submission['Weekly_Sales'] = y_summit
 submission.to_csv('test21.csv',index=True)
@@ -251,6 +237,5 @@ submission.to_csv('test21.csv',index=True)
 
 # loss : 163955.578125
 # RMSE : 261464.49096885187
-
 
 
