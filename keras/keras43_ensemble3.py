@@ -24,8 +24,9 @@ print(y2,y2.shape) #환율 (100,)
 
 
 #2. 모델구성
-
-x1_train,x1_test,x2_train,x2_test,x3_train,x3_test,y1_train,y1_test,y2_train,y2_test=train_test_split(x1,x2,x3,y1,y2,
+ # \ 이표시는 ()로 묶지 않아도 다음 줄의 문장이 윗 줄과 이어지게 해주는 약속어
+x1_train,x1_test,x2_train,x2_test,x3_train,x3_test,\
+y1_train,y1_test,y2_train,y2_test=train_test_split(x1,x2,x3,y1,y2,
                                                                   train_size=0.7,random_state=100)
 
 print(x1_train.shape,x2_train.shape)    #(70, 2) (70, 3)
@@ -68,15 +69,18 @@ dense26 = Dense(64,activation='relu',name='jk33')(dense25)
 dense27 = Dense(32,activation='relu',name='jk34')(dense26)
 output3 = Dense(10,activation='relu',name='out_ys3')(dense27)
 
-
+# Concatenate 모델 분기!
 from tensorflow.python.keras.layers import concatenate,Concatenate
-merge1 = concatenate([output1,output2,output3],name= 'mg1')
+# merge1 = concatenate([output1,output2,output3],name= 'mg1')
+merge1 = Concatenate(axis=1)([output1,output2,output3])
 
+
+#2-4. output모델1
 merge2 = Dense(32,activation='relu',name='mg2')(merge1)
 merge3 = Dense(16,activation='relu',name='mg3')(merge2)
 merge4 = Dense(16,activation='relu',name='mg4')(merge3)
 last_output1 = Dense(1,name='last1')(merge4)
-
+#2-5. output모델2
 merge5 = Dense(32,activation='relu',name='mg5')(merge1)
 merge6 = Dense(16,activation='relu',name='mg6')(merge5)
 merge7 = Dense(16,activation='relu',name='mg7')(merge6)
@@ -85,40 +89,43 @@ last_output2 = Dense(1,name='last2')(merge7)
 
 
 
-
+# 두개 이상의 데이터는 리스트 받아야한다 []
 model = Model(inputs=[input1,input2,input3], outputs=[last_output1,last_output2])
 model.summary()
+
 import time
 start_time = time.time()
 #3. 컴파일, 훈련
 model.compile(loss='mae', optimizer='adam')
 
-hist = model.fit([x1_train,x2_train,x3_train], [y1_train,y2_train], epochs=355, 
-                batch_size=512,
+hist = model.fit([x1_train,x2_train,x3_train], [y1_train,y2_train], 
+                epochs=3, 
+                batch_size=56,
                 validation_split=0.33,
                 verbose=2
                 )
 
 end_time= time.time()-start_time
 #4. 평가, 예측
-loss1 = model.evaluate([x1_test,x2_test,x3_test], y1_test)
-loss2 = model.evaluate([x1_test,x2_test,x3_test], y2_test)
+loss = model.evaluate([x1_test,x2_test,x3_test], [y1_test,y2_test])
+# loss2 = model.evaluate([x1_test,x2_test,x3_test], y2_test)
 
-print('loss :', loss1)
-print('loss :', loss2)
+print('loss :', loss)
+# print('loss :', loss2)
 
 print('걸린 시간 :', end_time)
-y_predict1,y_predict2 = model.predict([x1_test,x2_test,x3_test])
+y_predict = model.predict([x1_test,x2_test,x3_test])
+print(y_predict)
 
-# print(y_predict)
+
 from sklearn.metrics import r2_score
-# print(y1_test.shape) #(30,)
-# y1_test = y1_test.reshape(30,1,1)
-# print(y1_test.shape)
 
-r1 = r2_score(y1_test, y_predict1)
-r2 = r2_score(y2_test, y_predict2)
+r2 = r2_score(y1_test,y_predict[0])
 
-print('r2스코어 :', r1)
+
 print('r2스코어 :', r2)
 
+# loss : [2195.65478515625, 1959.9598388671875, 235.69483947753906]
+# 1번째는 last1과 last2의 합계
+# 2번째는 last1의 loss
+# 3번째는 last2의 loss
