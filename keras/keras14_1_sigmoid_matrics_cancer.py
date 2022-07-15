@@ -26,7 +26,7 @@ y = datasets['target']
 print(x.shape,y.shape) #(569, 30) (569,)
 
 print(y)
-
+'''
 x_train, x_test ,y_train, y_test = train_test_split(
           x, y, train_size=0.8,shuffle=True,random_state=100)
 print(x_test.shape)
@@ -104,3 +104,4 @@ plt.xlabel('epochs')
 plt.legend()
 plt.show()
 #cc 스코어 : acc 스코어 : 0.9130434782608695
+'''

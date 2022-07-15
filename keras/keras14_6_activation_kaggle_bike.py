@@ -53,10 +53,10 @@ x_train, x_test, y_train, y_test = train_test_split(
     x, y, train_size = 0.949, shuffle = True, random_state = 100
  )
 print(test_set)
-# print(y)
-# print(y.shape) # (10886,)
+print(y)
+print(y.shape) # (10886,)
 
-
+'''
 #2. 모델구성
 model = Sequential()
 model.add(Dense(100,input_dim=8))
@@ -67,7 +67,7 @@ model.summary()
 # Total params: 21,201
 # Trainable params: 21,201
 # Non-trainable params: 0
-'''
+
 #3. 컴파일,훈련
 earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
                               verbose=1,restore_best_weights=True)
