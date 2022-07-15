@@ -26,20 +26,22 @@ data = pd.read_csv(path + 'jena_climate_2009_2016.csv' )
 # max. wv (m/s)     -0.002871
 # wd (deg)           0.038732
 
-# data['T (degC)'].plot(figsize=(12,6)) # 'T (degC)'열의 전체 데이터 시각화
-# plt.show() 
+data['T (degC)'].plot(figsize=(12,6)) # 'T (degC)'열의 전체 데이터 시각화
+plt.show() 
 
-# plt.figure(figsize=(20,10),dpi=120)
-# plt.plot(data['T (degC)'][0:6*24*365],color="black",linewidth=0.2)
-# plt.show()
+plt.figure(figsize=(20,10),dpi=120)
+plt.plot(data['T (degC)'][0:6*24*365],color="black",linewidth=0.2)
+plt.show()
 
-# data.index = pd.to_datetime(data['Date Time'], format = "%d.%m.%Y %H:%M:%S") # europeean format
+data.index = pd.to_datetime(data['Date Time'],
+                            format = "%d.%m.%Y %H:%M:%S") # europeean format
 hourly = data[5::6]
 hourly=hourly.drop_duplicates()
-# hourly.duplicated().sum()
-# daily = data['T (degC)'].resample('1D').mean().interpolate('linear')
-# daily[0:365].plot()
-# plt.show() # 월별 온도 확인
+hourly.duplicated().sum()
+daily = data['T (degC)'].resample('1D').mean().interpolate('linear')
+#resample은 본인이 가진 데이터 중 원하는 값만 뽑아냄 시계열 데이터에서 자주 활용 '1D'는 단위 구간을 1일로 설정
+daily[0:365].plot()
+plt.show() # 월별 온도 확인
 hourly_temp = hourly['T (degC)']
 len(hourly_temp)
 def generator(data, window, offset):
@@ -58,6 +60,8 @@ X, y = generator(hourly_temp, WINDOW, OFFSET)
 X_train, y_train = X[:60000], y[:60000]
 X_val, y_val = X[60000:65000], y[60000:65000]
 X_test, y_test = X[65000:], y[65000:]
+#시계열 데이터의 특성 상 연속성을 위해서 train_test_split에 셔플을 배제하기 위해
+#위 명령어로 정의한다.suffle을 False로 놓고 해도 될지는 모르겠다.
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import *
 from keras.callbacks import ModelCheckpoint
@@ -91,4 +95,4 @@ result['Predicted'] = result['Predicted'].shift(-OFFSET)
 result.drop(result.tail(OFFSET).index,inplace = True)
 print(result)
 
-#loss : [9.149602890014648, 3.0248310565948486]
+#loss : 2.3984692096710205
