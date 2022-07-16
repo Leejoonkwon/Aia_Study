@@ -1,4 +1,4 @@
-'''
+
 import numpy as np  
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
@@ -14,7 +14,7 @@ print(x)
 print('y의 라벨값 :', np.unique(y,return_counts=True))
 y = to_categorical(y) 
 print(y)
-'''
+
 y['bb'] = x['bb']
 
 print(y)
@@ -55,7 +55,3 @@ df = pd.DataFrame({'hour': [hour], 'hour_bef_temperature': [hour_bef_temperature
        'hour_bef_windspeed': [hour_bef_windspeed], 'hour_bef_humidity': [hour_bef_humidity], 'hour_bef_visibility': [hour_bef_visibility],
        'hour_bef_ozone': [hour_bef_ozone], 'hour_bef_pm10': [hour_bef_pm10], 'hour_bef_pm2.5': [hour_bef_pm25]})
 df.fillna(method='pad')
-'''
-!pip uninstall tensorflow
-
-!pip install tensorflow
