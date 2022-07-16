@@ -79,10 +79,15 @@ dense4 = Dense(32,activation='relu',name='jk4')(dense3)
 output1 = Dense(1,activation='relu',name='out_jk1')(dense4)
 model = Model(inputs=input1, outputs=output1)
 model.summary()
-
+from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
+earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min', 
+                              verbose=1,restore_best_weights=True)
 #3. 컴파일,훈련
 model.compile(loss='mae', optimizer='Adam')
-model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=10,batch_size=4096)
+model.fit(X_train, y_train, validation_data=(X_val, y_val),
+          epochs=100,batch_size=4096,
+          callbacks=[earlyStopping]
+          ,verbose=2)
 
 #4. 평가,예측
 loss = model.evaluate(X_test, y_test)
