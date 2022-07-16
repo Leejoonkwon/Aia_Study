@@ -79,7 +79,7 @@ label = gen[0+WINDOW+OFFSET-1]
 #2.75 1316.25 0.37 0.75 125.8] (15,)
 print(label,label.shape)# (15,)
 
-'''
+
 X_train, y_train = X[:60000], y[:60000]
 X_val, y_val = X[60000:65000], y[60000:65000]
 X_test, y_test = X[65000:], y[65000:]
@@ -112,4 +112,3 @@ model1.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=10)
 #4. 평가,예측
 
 #loss : 2.3984692096710205
-'''
