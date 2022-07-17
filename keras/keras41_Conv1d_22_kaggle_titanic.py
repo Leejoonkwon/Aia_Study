@@ -116,8 +116,8 @@ from sklearn.preprocessing import MinMaxScaler,StandardScaler
 # scaler = StandardScaler()
 scaler = MaxAbsScaler()
 # scaler = RobustScaler()
-scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
-scaler.transform(x_train)
+# scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
+# scaler.transform(x_train)
 x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 #셔플을 False 할 경우 순차적으로 스플릿하다보니 훈련에서는 나오지 않는 값이 생겨 정확도가 떨어진다.

@@ -65,14 +65,26 @@ WINDOW = 5
 OFFSET = 24
 x, y = generator(hourly_temp, WINDOW, OFFSET)
 from sklearn.model_selection import train_test_split
-x_train,x_test,y_train,y_test = train_test_split(x,y,shuffle=False,train_size=0.85)
+x_train,x_test,y_train,y_test = train_test_split(x,y,shuffle=False,train_size=0.91)
+from sklearn.preprocessing import MaxAbsScaler,RobustScaler 
+from sklearn.preprocessing import MinMaxScaler,StandardScaler
+# scaler = MinMaxScaler()
+# scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+scaler = RobustScaler()
+# scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
+# scaler.transform(x_train)
+x_train = x_train.reshape(63734,5)
+x_test = x_test.reshape(6304,5)
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
 # X_train, y_train = X[:60000], y[:60000]
 # X_val, y_val = X[60000:65000], y[60000:65000]
 # X_test, y_test = X[65000:], y[65000:]
-print(x_train.shape,x_test.shape) #(49026, 5, 1) (21012, 5, 1)
-print(y_train.shape,y_test.shape) #(49026, 5, 1) (21012, 5, 1)
-'''
-
+print(x_train.shape,x_test.shape) #(63734, 5, 1) (6304, 5, 1)
+print(y_train.shape,y_test.shape) #(63734,) (6304,)
+x_train = x_train.reshape(63734,5,1)
+x_test = x_test.reshape(6304,5,1)
 #시계열 데이터의 특성 상 연속성을 위해서 train_test_split에 셔플을 배제하기 위해
 #위 명령어로 정의한다.suffle을 False로 놓고 해도 될지는 모르겠다.
 
@@ -85,29 +97,32 @@ from keras.metrics import RootMeanSquaredError
 from keras.callbacks import ModelCheckpoint
 #2. 모델구성
 input1 = Input(shape=(WINDOW,1),name='input1') #(N,2)
-dense1 = LSTM(100,activation='relu',name='jk1')(input1)
-dense2 = Dense(64,activation='relu',name='jk2')(dense1)
+dense1 = Conv1D(64,2,activation='relu',name='jk1')(input1)
+dense2 = LSTM(100,activation='relu',name='jk2')(dense1)
 dense3 = Dense(64,activation='relu',name='jk3')(dense2)
-dense4 = Dense(32,activation='relu',name='jk4')(dense3)
-output1 = Dense(1,activation='relu',name='out_jk1')(dense4)
+dense4 = Dense(64,activation='relu',name='jk4')(dense3)
+dense5 = Dense(32,activation='relu',name='jk5')(dense4)
+dense6 = Dense(32,activation='relu',name='jk6')(dense5)
+dense7 = Dense(32,activation='relu',name='jk7')(dense6)
+output1 = Dense(1,activation='relu',name='out_jk1')(dense7)
 model = Model(inputs=input1, outputs=output1)
 model.summary()
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
-earlyStopping = EarlyStopping(monitor='loss', patience=100, mode='min', 
+earlyStopping = EarlyStopping(monitor='loss', patience=50, mode='min', 
                               verbose=1,restore_best_weights=True)
 #3. 컴파일,훈련
 model.compile(loss='mae', optimizer='Adam')
-model.fit(X_train, y_train, validation_data=(X_val, y_val),
-          epochs=1000,batch_size=4096,
+model.fit(x_train, y_train, validation_split=0.25,
+          epochs=1000,batch_size=8192,
           callbacks=[earlyStopping]
           ,verbose=2)
 
 #4. 평가,예측
-loss = model.evaluate(X_test, y_test)
+loss = model.evaluate(x_test, y_test)
 print("loss :",loss)
 # loss : 2.3783624172210693
 
-test_predictions = model1.predict(X_test).flatten()
+test_predictions = model.predict(x_test).flatten()
 
 result = pd.DataFrame(data={'Predicted': test_predictions, 'Real':y_test})
 plt.figure(figsize=(20,7.5),dpi=120)
@@ -119,4 +134,3 @@ result.drop(result.tail(OFFSET).index,inplace = True)
 print(result)
 
 #loss : 2.3984692096710205
-'''
