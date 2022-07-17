@@ -69,20 +69,20 @@ x_train,x_test,y_train,y_test = train_test_split(x,y,shuffle=False,train_size=0.
 from sklearn.preprocessing import MaxAbsScaler,RobustScaler 
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
 # scaler = MinMaxScaler()
-# scaler = StandardScaler()
+scaler = StandardScaler()
 # scaler = MaxAbsScaler()
-scaler = RobustScaler()
+# scaler = RobustScaler()
 # scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 # scaler.transform(x_train)
 x_train = x_train.reshape(63734,5)
 x_test = x_test.reshape(6304,5)
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
-# X_train, y_train = X[:60000], y[:60000]
-# X_val, y_val = X[60000:65000], y[60000:65000]
-# X_test, y_test = X[65000:], y[65000:]
-print(x_train.shape,x_test.shape) #(63734, 5, 1) (6304, 5, 1)
-print(y_train.shape,y_test.shape) #(63734,) (6304,)
+# # X_train, y_train = X[:60000], y[:60000]
+# # X_val, y_val = X[60000:65000], y[60000:65000]
+# # X_test, y_test = X[65000:], y[65000:]
+# print(x_train.shape,x_test.shape) #(63734, 5, 1) (6304, 5, 1)
+# print(y_train.shape,y_test.shape) #(63734,) (6304,)
 x_train = x_train.reshape(63734,5,1)
 x_test = x_test.reshape(6304,5,1)
 #시계열 데이터의 특성 상 연속성을 위해서 train_test_split에 셔플을 배제하기 위해
@@ -108,12 +108,12 @@ output1 = Dense(1,activation='relu',name='out_jk1')(dense7)
 model = Model(inputs=input1, outputs=output1)
 model.summary()
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
-earlyStopping = EarlyStopping(monitor='loss', patience=50, mode='min', 
+earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min', 
                               verbose=1,restore_best_weights=True)
 #3. 컴파일,훈련
 model.compile(loss='mae', optimizer='Adam')
 model.fit(x_train, y_train, validation_split=0.25,
-          epochs=1000,batch_size=8192,
+          epochs=50,batch_size=8192,
           callbacks=[earlyStopping]
           ,verbose=2)
 
@@ -134,3 +134,6 @@ result.drop(result.tail(OFFSET).index,inplace = True)
 print(result)
 
 #loss : 2.3984692096710205
+
+####LSTM
+# loss : 2.3855671882629395
