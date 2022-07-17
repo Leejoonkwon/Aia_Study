@@ -9,6 +9,15 @@ import os
 path = './_data/kaggle_jena/' # ".은 현재 폴더"
 data = pd.read_csv(path + 'jena_climate_2009_2016.csv' )
 # print(data) #[420551 rows x 15 columns]
+print(data.describe().transpose())
+wv = data['wv (m/s)']
+bad_wv = wv == -9999.0
+wv[bad_wv] = 0.0
+
+max_wv = data['max. wv (m/s)']
+bad_max_wv = max_wv == -9999.0
+max_wv[bad_max_wv] = 0.0
+print(data['wv (m/s)'].min())
 
 # print(data.corr()['T (degC)']) # 상관 계수 확인
 # p (mbar)          -0.045375
