@@ -111,5 +111,16 @@ model1.compile(loss='mae', optimizer='Adam')
 model1.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=10)
 
 #4. 평가,예측
+loss = model1.evaluate(X_test, y_test)
+print("loss :",loss)
+test_predictions = model1.predict(X_test).flatten()
 
+result = pd.DataFrame(data={'Predicted': test_predictions, 'Real':y_test})
+plt.figure(figsize=(20,7.5),dpi=120)
+plt.plot(result['Predicted'][:300], "-g", label="Predicted")
+plt.plot(result['Real'][:300], "-r", label="Real")
+plt.legend(loc='best')
+result['Predicted'] = result['Predicted'].shift(-OFFSET)
+result.drop(result.tail(OFFSET).index,inplace = True)
+print(result)
 #loss : 2.3984692096710205
