@@ -11,9 +11,9 @@ matplotlib.rcParams['axes.unicode_minus']=False
 
 path = './_data/test_amore_0718/' # ".은 현재 폴더"
 # Amo1 = pd.read_csv(path + '아모레220718.csv' ,sep='\t',engine='python',encoding='CP949')
-Amo = pd.read_csv(path + '아모레220718.csv')
+Amo = pd.read_csv(path + '아모레220718.csv',thousands=',')
 
-Sam = pd.read_csv(path + '삼성전자220718.csv')
+Sam = pd.read_csv(path + '삼성전자220718.csv',thousands=',')
 
 # print(Amo) #[3180 rows x 17 columns]
 # print(Sam) #[3040 rows x 17 columns]
@@ -32,33 +32,37 @@ Sam = pd.read_csv(path + '삼성전자220718.csv')
 print(Sam.info()) #(3040 rows x 17 columns] objetct 14
 
 
-Amo = Amo.drop([1773,1774,1775,1776,1777,1778,1779,1780,1781,1782,1783], axis=0)
-Sam = Sam.drop([1037,1038,1039], axis=0)
+# Amo = Amo.drop([1773,1774,1775,1776,1777,1778,1779,1780,1781,1782,1783], axis=0)
 
-Sam=(Sam.at[:1036, '시가'])*50
-print(Sam['시가'])
+print(Sam.shape) #3037,17
+
+# Sam.at[:1036, '시가'] =1
+# print(Sam['시가'])
+print(Amo) #2018/05/04
+Amo.at[1035:,'시가'] = 0
+print(Amo) #2018/05/04
+
 
 Amo.index = pd.to_datetime(Amo['일자'],
                             format = "%Y/%m/%d") 
 Sam.index = pd.to_datetime(Sam['일자'],
                             format = "%Y/%m/%d") 
+Sam = Sam[Sam['시가'] < 100000] #[1035 rows x 17 columns]
+print(Sam.shape)
+print(Sam)
+Amo = Amo[Amo['시가'] > 100] #[1035 rows x 17 columns]
+print(Amo.shape)
+print(Amo) #2018/05/04
 
-print(Amo,Amo.shape)
-'''
 # data에 index 열을 Date Time에 연,월,일,시간,분,초를 각각 문자열로 인식해 대체합니다.
-print(Amo.info()) #(420551, 15) DatetimeIndex: 3180 entries, 2022-07-18 to 2009-09-01
-cols = ['시가','고가','저가','종가','전일비','Unnamed: 6','거래량','금액(백만)','개인','기관','외인(수량)','외국계','프로그램']
-for col in cols:
-    le = LabelEncoder()
-    Amo[col]=le.fit_transform(Amo[col])
-    Sam[col]=le.fit_transform(Sam[col])
-print(Amo) 
-print(Amo.info())
-   
-Amo = Amo.drop_duplicates()
-print(Amo) #[70067 rows x 15 columns] 중복되는 값은 제거한다 행이 70091->에서 70067로 줄어든 것을 확인
-Amo.duplicated().sum() 
-
+# print(Amo.info()) #(420551, 15) DatetimeIndex: 3180 entries, 2022-07-18 to 2009-09-01
+# cols = ['시가','고가','저가','종가','전일비','Unnamed: 6','거래량','금액(백만)','개인','기관','외인(수량)','외국계','프로그램']
+# for col in cols:
+#     le = LabelEncoder()
+#     Amo[col]=le.fit_transform(Amo[col])
+#     Sam[col]=le.fit_transform(Sam[col])
+# print(Amo) 
+# print(Amo.info())
 
 Amo = Amo.rename(columns={'Unnamed: 6':'증감량'})
 Sam = Sam.rename(columns={'Unnamed: 6':'증감량'})
