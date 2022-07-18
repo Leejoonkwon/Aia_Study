@@ -88,6 +88,8 @@ print(Amo) #[70067 rows x 15 columns] 중복되는 값은 제거한다 행이 70
 
 Amo1 = Amo.drop([ '전일비', '금액(백만)','신용비','개인','기관','외인(수량)','외국계','프로그램','외인비'],axis=1) #axis는 컬럼 
 Sam1 = Sam.drop([ '전일비', '금액(백만)','신용비','개인','기관','외인(수량)','외국계','프로그램','외인비'],axis=1) #axis는 컬럼 
+# Amo1 = Amo.drop([ '외인비'],axis=1) #axis는 컬럼 
+# Sam1 = Sam.drop([ '외인비'],axis=1) #axis는 컬럼 
 # Sam1 = Sam['시가','고가','저가','종가','증감량','등락률','거래량']
 # 삼성전자 2018 05 04부터 액면 분할 시가 저가 고가 종가 *50배 필요
 print('=================')
@@ -118,7 +120,6 @@ print(y2,y2.shape) #(1010, 8)
 
 
 
-
 #시계열 데이터의 특성 상 연속성을 위해서 train_test_split에 셔플을 배제하기 위해
 #위 명령어로 정의한다.suffle을 False로 놓고 해도 될지는 모르겠다.
 from tensorflow.python.keras.models import Sequential,Model
@@ -128,41 +129,40 @@ from keras.callbacks import ModelCheckpoint,EarlyStopping
 from sklearn.model_selection import train_test_split
 x1_train,x1_test,x2_train,x2_test,y1_train,y1_test,y2_train,y2_test =train_test_split(x1,x2,y1,y2,shuffle=False,train_size=0.89)
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer
-# scaler = StandardScaler()
-scaler = MinMaxScaler()
-x1_train = x1_train.reshape(898,50)
-x1_test = x1_test.reshape(112,50)
-x2_train = x2_train.reshape(898,50)
-x2_test = x2_test.reshape(112,50)
+scaler = StandardScaler()
+# scaler = MinMaxScaler()
+x1_train = x1_train.reshape(898,90)
+x1_test = x1_test.reshape(112,90)
+x2_train = x2_train.reshape(898,90)
+x2_test = x2_test.reshape(112,90)
 x1_train = scaler.fit_transform(x1_train)
 x2_train = scaler.fit_transform(x2_train)
 x1_test = scaler.transform(x1_test)
 x2_test = scaler.transform(x2_test)
-x1_train = x1_train.reshape(898,5,10)
-x1_test = x1_test.reshape(112,5,10)
-x2_train = x2_train.reshape(898,5,10)
-x2_test = x2_test.reshape(112,5,10)
-print(x1_train,x1_train.shape) #(898, 5, 1, 10)
-print(x1_test,x1_test.shape) #(112, 5, 1, 10)
-print(x2_train,x2_train.shape) #(898, 5, 1, 10)
-print(x2_test,x2_test.shape) #(112, 5, 1, 10)
+x1_train = x1_train.reshape(898,5,18)
+x1_test = x1_test.reshape(112,5,18)
+x2_train = x2_train.reshape(898,5,18)
+x2_test = x2_test.reshape(112,5,18)
+print(x1_train,x1_train.shape) #(898, 5, 1, 18)
+print(x1_test,x1_test.shape) #(112, 5, 1, 18)
+print(x2_train,x2_train.shape) # (898, 5, 1, 18)
+print(x2_test,x2_test.shape) # (112, 5, 1, 18)
 
-print(y1_test.shape) #(112, 10)
-print(y2_test.shape) #(112, 10)
-
-
+print(y1_test.shape) #(112, 18)
+print(y2_test.shape) #(112, 18)
+'''
 #2-1. 모델구성1
-input1 = Input(shape=(5,10)) #(N,2)
+input1 = Input(shape=(5,18)) #(N,2)
 dense1 = LSTM(100,activation='relu',name='jk1')(input1)
-dense2 = Dense(32,activation='relu',name='jk2')(dense1) # (N,64)
-dense3 = Dense(32,activation='relu',name='jk3')(dense2) # (N,64)
+dense2 = Dense(64,activation='relu',name='jk2')(dense1) # (N,64)
+dense3 = Dense(64,activation='relu',name='jk3')(dense2) # (N,64)
 output1 = Dense(10,activation='relu',name='out_jk1')(dense3)
 
 #2-2. 모델구성2
-input2 = Input(shape=(5,10)) #(N,2)
+input2 = Input(shape=(5,18)) #(N,2)
 dense4 = LSTM(100,activation='relu',name='jk101')(input2)
-dense5 = Dense(32,activation='relu',name='jk102')(dense4) # (N,64)
-dense6 = Dense(32,activation='relu',name='jk103')(dense5) # (N,64)
+dense5 = Dense(64,activation='relu',name='jk102')(dense4) # (N,64)
+dense6 = Dense(64,activation='relu',name='jk103')(dense5) # (N,64)
 output2 = Dense(10,activation='relu',name='out_jk2')(dense6)
 
 from tensorflow.python.keras.layers import concatenate,Concatenate
@@ -194,7 +194,7 @@ model.compile(loss='mae', optimizer='Adam')
 model.fit([x1_train,x2_train], y1_train, 
           validation_split=0.25, 
           epochs=100,verbose=2
-          ,batch_size=256
+          ,batch_size=128
           ,callbacks=[earlyStopping])
 # model.save_weights("./_save/keras46_1_save_weights2.h5")
 
@@ -204,3 +204,4 @@ print("loss :",loss)
 y_predict = model.predict([x1_test,x2_test])
 print(y_predict,y_predict.shape)
 # loss : 130847.375
+'''
