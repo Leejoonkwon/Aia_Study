@@ -1,170 +1,228 @@
-# lstm으로 잘라서 conv1d 깃허브에 올릴 것
-# evlauate까지만 제출
-
-# column을 뭉치로 잘라야 함
-# 앞에 시간을 빼고(시간은 인덱스니까) 11개.
-
-
-
-import numpy as np
 import pandas as pd
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense, LSTM, Dropout, MaxPooling1D, Conv1D, Flatten
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
-import math
+import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.utils import shuffle
+from tensorflow.keras import utils
+import os
+import matplotlib
+from sklearn.preprocessing import LabelEncoder
+matplotlib.rcParams['font.family']='Malgun Gothic'
+matplotlib.rcParams['axes.unicode_minus']=False
+
+path = './_data/test_amore_0718/' # ".은 현재 폴더"
+# Amo1 = pd.read_csv(path + '아모레220718.csv' ,sep='\t',engine='python',encoding='CP949')
+Amo = pd.read_csv(path + '아모레220718.csv',thousands=',')
+
+Sam = pd.read_csv(path + '삼성전자220718.csv',thousands=',')
+
+# print(Amo) #[3180 rows x 17 columns]
+# print(Sam) #[3040 rows x 17 columns]
+# print(Amo.head())
+# print(Amo.describe().transpose())
+# print(Amo['시가'].corr()) # 상관 계수 확인
+
+# Amo["시가"].plot(figsize=(12,6)) 
+# plt.show() # 'T (degC)'열의 전체 데이터 시각화
+
+# plt.figure(figsize=(20,10),dpi=120)
+# plt.plot(Amo['시가'][0:6*24*365],color="black",linewidth=0.2)
+# plt.show() # 'T (degC)'열의 1년간 데이터 추이 시각화
+
+# print(Amo.info()) #[3180 rows x 17 columns] objetct 14
+print(Sam.info()) #(3040 rows x 17 columns] objetct 14
+
+
+# Amo = Amo.drop([1773,1774,1775,1776,1777,1778,1779,1780,1781,1782,1783], axis=0)
+
+print(Sam.shape) #3037,17
+
+# Sam.at[:1036, '시가'] =1
+# print(Sam['시가'])
+print(Amo) #2018/05/04
+Amo.at[1035:,'시가'] = 0
+print(Amo) #2018/05/04
+
+
+# Amo.index = pd.to_datetime(Amo['일자'],
+#                             format = "%Y/%m/%d") 
+# Sam.index = pd.to_datetime(Sam['일자'],
+#                             format = "%Y/%m/%d") 
+Amo['Date'] = pd.to_datetime(Amo['일자'])
+
+Amo['year'] = Amo['Date'].dt.strftime('%Y')
+Amo['month'] = Amo['Date'].dt.strftime('%m')
+Amo['day'] = Amo['Date'].dt.strftime('%d')
+print(Amo)
+print(Amo.shape)
+Sam['Date'] = pd.to_datetime(Sam['일자'])
+
+Sam['year'] = Sam['Date'].dt.strftime('%Y')
+Sam['month'] = Sam['Date'].dt.strftime('%m')
+Sam['day'] = Sam['Date'].dt.strftime('%d')
 
 
 
-###########################폴더 생성시 현재 파일명으로 자동생성###########################################
-import inspect, os
-a = inspect.getfile(inspect.currentframe()) #현재 파일이 위치한 경로 + 현재 파일 명
-print(a)
-print(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))) #현재 파일이 위치한 경로
-print(a.split("\\")[-1]) #현재 파일 명
-current_name = a.split("\\")[-1]
-##########################밑에 filepath경로에 추가로  + current_name + '/' 삽입해야 돌아감###################
+Sam = Sam[Sam['시가'] < 100000] #[1035 rows x 17 columns]
+print(Sam.shape)
+print(Sam)
+Amo = Amo[Amo['시가'] > 100] #[1035 rows x 17 columns]
+print(Amo.shape)
+print(Amo) #2018/05/04
+
+
+# data에 index 열을 Date Time에 연,월,일,시간,분,초를 각각 문자열로 인식해 대체합니다.
+# print(Amo.info()) #(420551, 15) DatetimeIndex: 3180 entries, 2022-07-18 to 2009-09-01
+cols = ['year','month','day']
+for col in cols:
+    le = LabelEncoder()
+    Amo[col]=le.fit_transform(Amo[col])
+    Sam[col]=le.fit_transform(Sam[col])
+print(Amo) 
+print(Amo.info())
+
+Amo = Amo.rename(columns={'Unnamed: 6':'증감량'})
+Sam = Sam.rename(columns={'Unnamed: 6':'증감량'})
+
+
+Amo = Amo.sort_values(by=['일자'],axis=0,ascending=True)
+Sam = Sam.sort_values(by=['일자'],axis=0,ascending=True)
+print(Amo)
+
+Amo = Amo.drop(['일자'], axis=1)
+Sam = Sam.drop(['일자'], axis=1)
+
+print(Amo) #[70067 rows x 15 columns] 중복되는 값은 제거한다 행이 70091->에서 70067로 줄어든 것을 확인
+
+# Amo1 = Amo.drop([ '전일비', '금액(백만)','신용비','개인','기관','외인(수량)','외국계','프로그램','외인비'],axis=1) #axis는 컬럼 
+# Sam1 = Sam.drop([ '전일비', '금액(백만)','신용비','개인','기관','외인(수량)','외국계','프로그램','외인비'],axis=1) #axis는 컬럼 
+
+Amo1 = Amo[[ '시가', '고가', '저가', '종가','year','month','day']]
+Sam1 = Sam[[ '시가', '고가', '저가', '종가','year','month','day']]
+Amo2 = Amo1['시가']
+
+
+print(Amo1) #[1035 rows x 8 columns]
+print(Sam1) #[1035 rows x 8 columns]
 
 
 
 
-path = './_data/kaggle_jena/'
-df_weather=pd.read_csv(path + 'kaggle_jena.csv', index_col=0)
-df_weather.describe()
+size = 5
+def split_x(dataset, size): # def라는 예약어로 split_x라는 변수명을 아래에 종속된 기능들을 수행할 수 있도록 정의한다.
+    x = [] 
+    #aaa 는 []라는 값이 없는 리스트임을 정의
+    for i in range(len(dataset)- size + 1): # 6이다 range(횟수)
+        #for문을 사용하여 반복한다.첫문장에서 정의한 dataset을 
+        subset = dataset[i : (i + size-1)]
+        #i는 처음 0에 개념 [0:0+size]
+        # 0~(0+size-1인수 까지 )노출 
+        
+        x.append(subset)
+        #append 마지막에 요소를 추가한다는 뜻
+        #aaa는  []의 빈 리스트 이니 subset이 aaa의 []안에 들어가는 것
+        #aaa 가 [1,2,3]이라면  aaa.append(subset)은 [1,2,3,subset]이 될 것이다.
+    return np.array(x)
 
-print(df_weather.columns)
+print(Amo1.shape) #(1031, 3, 10)
 
-#날짜 datetime 포맷으로 변환
-# pd.to_datetime(df_weather['Date Time'], format='%Y%m%d')
-# # 0      2020-01-07
-# # 1      2020-01-06
-# # 2      2020-01-03
-# # 3      2020-01-02
-# # 4      2019-12-30
+aaa = split_x(Amo1,size) #x1를 위한 데이터 drop 제외 모든 amo에 데이터
+bbb = split_x(Amo2,size) #Y를 위한 시가만있는 데이터
+x1 = aaa[:,:-1]
+y = bbb[:,-1]
+ccc = split_x(Sam1,size) #x2를 위한 데이터 drop 제외 모든 Sam에 데이터
+x2 = ccc[:,:-1]
 
-# df_weather['일자'] = pd.to_datetime(df_weather['Date Time'], format='%Y%m%d')
-# df_weather['연도'] =df_weather['Date Time'].dt.year
-# df_weather['월'] =df_weather['Date Time'].dt.month
-# df_weather['일'] =df_weather['Date Time'].dt.day
+print(x1,x1.shape) #(1031, 3, 10)
+# print(x2,x2.shape) #(1031, 3, 10)
 
-
-
-#Normalization 정규화
-
-from sklearn.preprocessing import MinMaxScaler
-
-scaler = MinMaxScaler()
-scale_cols = ['p (mbar)', 'T (degC)', 'Tpot (K)', 'Tdew (degC)', 'rh (%)',
-       'VPmax (mbar)', 'VPact (mbar)', 'VPdef (mbar)', 'sh (g/kg)',
-       'H2OC (mmol/mol)', 'rho (g/m**3)', 'wv (m/s)', 'max. wv (m/s)',
-       'wd (deg)']
-df_scaled = scaler.fit_transform(df_weather[scale_cols])
-
-df_scaled = pd.DataFrame(df_scaled)
-df_scaled.columns = scale_cols
-
-print(df_scaled)
+# print(y,y.shape) #(1031,)
 
 
 
-#학습을 시킬 데이터 셋 생성
-TEST_SIZE = 200
 
-train = df_scaled[:-TEST_SIZE]
-test = df_scaled[-TEST_SIZE:]
-
-def make_dataset(data, label, window_size=20):
-    feature_list = []
-    label_list = []
-    for i in range(len(data) - window_size):
-        feature_list.append(np.array(data.iloc[i:i+window_size]))
-        label_list.append(np.array(label.iloc[i+window_size]))
-    return np.array(feature_list), np.array(label_list)
-
-
-
-#feature 와 label(예측 데이터) 정의
-feature_cols = ['p (mbar)', 'Tpot (K)', 'Tdew (degC)', 'rh (%)',
-       'VPmax (mbar)', 'VPact (mbar)', 'VPdef (mbar)', 'sh (g/kg)',
-       'H2OC (mmol/mol)', 'rho (g/m**3)', 'wv (m/s)', 'max. wv (m/s)',
-       'wd (deg)']
-label_cols = ['T (degC)']
-
-train_feature = train[feature_cols]
-train_label = train[label_cols]
-
-
-# train dataset
-train_feature, train_label = make_dataset(train_feature, train_label, 20)
-
-# train, validation set 생성
+#시계열 데이터의 특성 상 연속성을 위해서 train_test_split에 셔플을 배제하기 위해
+#위 명령어로 정의한다.suffle을 False로 놓고 해도 될지는 모르겠다.
+from tensorflow.python.keras.models import Sequential,Model
+from tensorflow.python.keras.layers import LSTM,Dense,Dropout,Reshape,Conv1D
+from tensorflow.python.keras.layers import Input
+from keras.callbacks import ModelCheckpoint,EarlyStopping
 from sklearn.model_selection import train_test_split
-x_train, x_test, y_train, y_test = train_test_split(train_feature, train_label, test_size=0.2)
+x1_train,x1_test,x2_train,x2_test,y_train,y_test =train_test_split(x1,x2,y,shuffle=False,train_size=0.91)
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer
+# scaler = StandardScaler()
+scaler = MinMaxScaler()
+x1_train = x1_train.reshape(938,21)
+x1_test = x1_test.reshape(93,21)
+x2_train = x2_train.reshape(938,21)
+x2_test = x2_test.reshape(93,21)
+x1_train = scaler.fit_transform(x1_train)
+x2_train = scaler.fit_transform(x2_train)
+x1_test = scaler.transform(x1_test)
+x2_test = scaler.transform(x2_test)
+x1_train = x1_train.reshape(938,3,7)
+x1_test = x1_test.reshape(93,3,7)
+x2_train = x2_train.reshape(938,3,7)
+x2_test = x2_test.reshape(93,3,7)
+print(x1_train,x1_train.shape) #(938, 3, 7)
+print(x1_test,x1_test.shape) #(93, 3, 7)
+print(x2_train,x2_train.shape) # (938, 3, 7)
+print(x2_test,x2_test.shape) # (93, 3, 7)
+print(y_train.shape) #(938,)
 
-# print(x_train.shape, x_valid.shape)   #(336264, 20, 13) (84067, 20, 13)
+print(y_test.shape) #(93,)
 
-# test dataset (실제 예측 해볼 데이터)
-# test_feature, test_label = make_dataset(test_feature, test_label, 20)
-# print(test_feature.shape, test_label.shape)
+#2-1. 모델구성1
+input1 = Input(shape=(3,7)) #(N,2)
+dense1 = LSTM(100,activation='relu',name='jk1')(input1)
+# dense2 = Dropout(0.15)(dense1)
+dense3 = Dense(64,activation='relu',name='jk2')(dense1) # (N,64)
+output1 = Dense(10,activation='relu',name='out_jk1')(dense3)
 
-# ===>안 되는데 왜 안 되는지 모르겠음
+#2-2. 모델구성2
+input2 = Input(shape=(3,7)) #(N,2)
+dense4 = LSTM(100,activation='relu',name='jk101')(input2)
+# dense5 = Dropout(0.15)(dense4)
+dense6 = Dense(64,activation='relu',name='jk103')(dense4) 
+output2 = Dense(10,activation='relu',name='out_jk2')(dense6)
 
-
-
-#Keras를 활용한 LSTM 모델 생성
-
-#2.모델 구성
-model = Sequential()
-model.add(Conv1D(filters = 64, kernel_size=3, 
-                 padding='same',
-                 input_shape=(train_feature.shape[1], train_feature.shape[2])))
-model.add(MaxPooling1D())
-model.add(LSTM(16))
-model.add(Dropout(0.2))
-model.add(Dense(16, activation='relu'))
-model.add(Dropout(0.2))
-model.add(Dense(50, activation='relu'))
-model.add(Dense(1))
-
-
-#3. 컴파일, 훈련
-
-model.compile(loss='mse', optimizer='adam')
-
-from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
-earlyStopping = EarlyStopping(monitor='val_loss', patience=10, mode='min', verbose=1,
-                restore_best_weights=True)
-
-from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.python.keras.layers import concatenate,Concatenate
+merge1 = concatenate([output1,output2],name= 'mg1')
+merge2 = Dense(32,activation='relu',name='mg2')(merge1)
+merge3 = Dense(16,activation='relu',name='mg3')(merge2)
+merge4 = Dense(16,activation='linear',name='mg4')(merge3)
+last_output = Dense(1,name='last')(merge4)
+model = Model(inputs=[input1,input2], outputs=last_output)
 import datetime
 date = datetime.datetime.now()
+print(date)
+
 date = date.strftime("%m%d_%H%M") # 0707_1723
 print(date)
 
-save_filepath = './_ModelCheckPoint/' + current_name + '/'
-load_filepath = './_ModelCheckPoint/' + current_name + '/'
-
-# model = load_model(load_filepath + '0708_1753_0011-0.0731.hdf5')
+#3. 컴파일,훈련
+filepath = './_ModelCheckPoint/K24/'
 filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
-mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1, save_best_only=True, 
-                      filepath= "".join([save_filepath, date, '_', filename])
-                      )
+#04d :                  4f : 
+earlyStopping = EarlyStopping(monitor='loss', patience=3, mode='min', 
+                              verbose=1,restore_best_weights=True)
+mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
+                      save_best_only=True, 
+                      filepath="".join([filepath,'k24_', date, '_', filename])
+                    )
+model.compile(loss='mae', optimizer='Adam')
 
-import time
+model.fit([x1_train,x2_train], y_train, 
+          validation_split=0.25, 
+          epochs=10,verbose=2
+          ,batch_size=32
+          ,callbacks=[earlyStopping])
+# model.save_weights("./_save/keras46_1_save_weights2.h5")
 
-start_time = time.time()
-hist = model.fit(x_train, y_train, epochs=1, 
-                 batch_size=5, validation_split=0.2, 
-                 callbacks=[earlyStopping, mcp], 
-                 verbose=1) 
+#4. 평가,예측
+loss = model.evaluate([x1_test,x2_test], y_test)
+print("loss :",loss)
+# x1_test = x1_test[] 
+y_predict = model.predict([x1_test,x2_test])
+print(y_predict,y_predict.shape)
+# loss : 130847.375
 
-end_time = time.time() - start_time
-
-
-# 4. 평가, 예측
-loss = model.evaluate(x_test, y_test)
-print('loss : ', loss)
-
-print('걸린 시간 : ', end_time)
