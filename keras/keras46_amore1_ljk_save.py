@@ -88,6 +88,14 @@ print(Amo) #[70067 rows x 15 columns] 중복되는 값은 제거한다 행이 70
 
 Amo1 = Amo.drop([ '전일비', '금액(백만)','신용비','개인','기관','외인(수량)','외국계','프로그램','외인비'],axis=1) #axis는 컬럼 
 Sam1 = Sam.drop([ '전일비', '금액(백만)','신용비','개인','기관','외인(수량)','외국계','프로그램','외인비'],axis=1) #axis는 컬럼 
+Amo2 = Amo1['시가']
+Amo1 = Amo1.sort_index(ascending = False)
+Amo2 = Amo2.sort_index(ascending = False)
+Sam1 = Sam1.sort_index(ascending = False)
+
+print(Amo1)
+
+
 # Amo1 = Amo.drop([ '외인비'],axis=1) #axis는 컬럼 
 # Sam1 = Sam.drop([ '외인비'],axis=1) #axis는 컬럼 
 # Sam1 = Sam['시가','고가','저가','종가','증감량','등락률','거래량']
@@ -98,25 +106,34 @@ print(Amo.shape) #(1035, 19)
 print(Sam)
 print(Sam.shape) #(1035, 19)
 
-def generator(data, window, offset):
-    gen = data.to_numpy() #데이터 프레임을 배열객체로 반환
-    x1 = []
-    y = []
-    for i in range(len(gen)-window-offset): # 420522
-        row = [[a] for a in gen[i:i+window]] #행
-        x1.append(row)
-        label = gen[i+window+offset-1]
-        y.append(label)
-    return np.array(x1), np.array(y)
-WINDOW = 5
-OFFSET = 20
+size = 5
+def split_x(dataset, size): # def라는 예약어로 split_x라는 변수명을 아래에 종속된 기능들을 수행할 수 있도록 정의한다.
+    x = [] 
+    #aaa 는 []라는 값이 없는 리스트임을 정의
+    for i in range(len(dataset)- size + 1): # 6이다 range(횟수)
+        #for문을 사용하여 반복한다.첫문장에서 정의한 dataset을 
+        subset = dataset[i : (i + size-1)]
+        #i는 처음 0에 개념 [0:0+size]
+        # 0~(0+size-1인수 까지 )노출 
+        
+        x.append(subset)
+        #append 마지막에 요소를 추가한다는 뜻
+        #aaa는  []의 빈 리스트 이니 subset이 aaa의 []안에 들어가는 것
+        #aaa 가 [1,2,3]이라면  aaa.append(subset)은 [1,2,3,subset]이 될 것이다.
+    return np.array(x)
 
-x1, y1 = generator(Amo1, WINDOW, OFFSET)
-x2, y2 = generator(Sam1, WINDOW, OFFSET)
-print(x1,x1.shape) #(1010, 5, 1, 8)
-print(x2,x2.shape) #(1010, 5, 1, 8)
-print(y1,y1.shape) #(1010, 8)
-print(y2,y2.shape) #(1010, 8)
+
+aaa = split_x(Amo1,size) #x1를 위한 데이터 drop 제외 모든 amo에 데이터
+bbb = split_x(Amo2,size) #Y를 위한 시가만있는 데이터
+x1 = aaa[:,:-1]
+y = bbb[:,-1]
+ccc = split_x(Sam1,size) #x2를 위한 데이터 drop 제외 모든 Sam에 데이터
+x2 = ccc[:,:-1]
+
+print(x1,x1.shape) #(1031, 3, 10)
+print(x2,x2.shape) #(1031, 3, 10)
+
+print(y,y.shape) #(1031,)
 
 
 
@@ -127,39 +144,39 @@ from tensorflow.python.keras.layers import LSTM,Dense,Dropout,Reshape,Conv1D
 from tensorflow.python.keras.layers import Input
 from keras.callbacks import ModelCheckpoint,EarlyStopping
 from sklearn.model_selection import train_test_split
-x1_train,x1_test,x2_train,x2_test,y1_train,y1_test,y2_train,y2_test =train_test_split(x1,x2,y1,y2,shuffle=False,train_size=0.89)
+x1_train,x1_test,x2_train,x2_test,y_train,y_test =train_test_split(x1,x2,y,shuffle=False,train_size=0.91)
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer
 scaler = StandardScaler()
-# scaler = MinMaxScaler()
-x1_train = x1_train.reshape(898,90)
-x1_test = x1_test.reshape(112,90)
-x2_train = x2_train.reshape(898,90)
-x2_test = x2_test.reshape(112,90)
+# # scaler = MinMaxScaler()
+x1_train = x1_train.reshape(938,30)
+x1_test = x1_test.reshape(93,30)
+x2_train = x2_train.reshape(938,30)
+x2_test = x2_test.reshape(93,30)
 x1_train = scaler.fit_transform(x1_train)
 x2_train = scaler.fit_transform(x2_train)
 x1_test = scaler.transform(x1_test)
 x2_test = scaler.transform(x2_test)
-x1_train = x1_train.reshape(898,5,18)
-x1_test = x1_test.reshape(112,5,18)
-x2_train = x2_train.reshape(898,5,18)
-x2_test = x2_test.reshape(112,5,18)
-print(x1_train,x1_train.shape) #(898, 5, 1, 18)
-print(x1_test,x1_test.shape) #(112, 5, 1, 18)
-print(x2_train,x2_train.shape) # (898, 5, 1, 18)
-print(x2_test,x2_test.shape) # (112, 5, 1, 18)
+x1_train = x1_train.reshape(938,3,10)
+x1_test = x1_test.reshape(93,3,10)
+x2_train = x2_train.reshape(938,3,10)
+x2_test = x2_test.reshape(93,3,10)
+print(x1_train,x1_train.shape) #(938, 3, 10)
+print(x1_test,x1_test.shape) #(93, 3, 10)
+print(x2_train,x2_train.shape) # (938, 3, 10)
+print(x2_test,x2_test.shape) # (93, 3, 10)
+print(y_train.shape) #(938,)
 
-print(y1_test.shape) #(112, 18)
-print(y2_test.shape) #(112, 18)
-'''
+print(y_test.shape) #(93,)
+
 #2-1. 모델구성1
-input1 = Input(shape=(5,18)) #(N,2)
+input1 = Input(shape=(3,10)) #(N,2)
 dense1 = LSTM(100,activation='relu',name='jk1')(input1)
 dense2 = Dense(64,activation='relu',name='jk2')(dense1) # (N,64)
 dense3 = Dense(64,activation='relu',name='jk3')(dense2) # (N,64)
 output1 = Dense(10,activation='relu',name='out_jk1')(dense3)
 
 #2-2. 모델구성2
-input2 = Input(shape=(5,18)) #(N,2)
+input2 = Input(shape=(3,10)) #(N,2)
 dense4 = LSTM(100,activation='relu',name='jk101')(input2)
 dense5 = Dense(64,activation='relu',name='jk102')(dense4) # (N,64)
 dense6 = Dense(64,activation='relu',name='jk103')(dense5) # (N,64)
@@ -191,17 +208,16 @@ mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
                     )
 model.compile(loss='mae', optimizer='Adam')
 
-model.fit([x1_train,x2_train], y1_train, 
+model.fit([x1_train,x2_train], y_train, 
           validation_split=0.25, 
-          epochs=100,verbose=2
-          ,batch_size=128
+          epochs=5,verbose=2
+          ,batch_size=256
           ,callbacks=[earlyStopping])
 # model.save_weights("./_save/keras46_1_save_weights2.h5")
 
 #4. 평가,예측
-loss = model.evaluate([x1_test,x2_test], y1_test)
+loss = model.evaluate([x1_test,x2_test], y_test)
 print("loss :",loss)
 y_predict = model.predict([x1_test,x2_test])
 print(y_predict,y_predict.shape)
 # loss : 130847.375
-'''
