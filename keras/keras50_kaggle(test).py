@@ -10,6 +10,7 @@ path = './_data/kaggle_jena/' # ".은 현재 폴더"
 data = pd.read_csv(path + 'jena_climate_2009_2016.csv' )
 # print(data) #[420551 rows x 15 columns]
 print(data.describe().transpose())
+
 wv = data['wv (m/s)']
 bad_wv = wv == -9999.0
 wv[bad_wv] = 0.0
@@ -48,7 +49,7 @@ data.index = pd.to_datetime(data['Date Time'],
 hourly = data[5::6]
 # 5번째 인수의 데이터를 시작으로 6번째에 위치한 데이터만 반환합니다. 
 # [5::6]으로 자른 이유는 데이터를 시간단위로 분할하기 위해서다.
-#예) 데이터가 [1,2,3,4,5,6,7,8,9,10]을  [1:3]으로 자른다면 [2,5,8]이 된다.
+#예) 데이터가 [1,2,3,4,5,6,7,8,9,10]을  [1::3]으로 자른다면 [2,5,8]이 된다.
 hourly=hourly.drop_duplicates()
 #[70067 rows x 15 columns] 중복되는 값은 제거한다 행이 70091->에서 70067로 줄어든 것을 확인
 hourly.duplicated().sum()
@@ -98,7 +99,7 @@ x_test = x_test.reshape(6304,5,1)
 #위 명령어로 정의한다.suffle을 False로 놓고 해도 될지는 모르겠다.
 
 from tensorflow.python.keras.models import Sequential,Model
-from tensorflow.python.keras.layers import LSTM,Conv1D,Flatten,Reshape
+from tensorflow.python.keras.layers import LSTM,Conv1D,Flatten,Reshape,Dropout
 from tensorflow.python.keras.layers import InputLayer,Input,Dense
 from keras.callbacks import ModelCheckpoint
 from keras.losses import MeanSquaredError
@@ -108,21 +109,23 @@ from keras.callbacks import ModelCheckpoint
 input1 = Input(shape=(WINDOW,1),name='input1') #(N,2)
 dense1 = Conv1D(64,2,activation='relu',name='jk1')(input1)
 dense2 = LSTM(100,activation='relu',name='jk2')(dense1)
-dense3 = Dense(64,activation='relu',name='jk3')(dense2)
-dense4 = Dense(64,activation='relu',name='jk4')(dense3)
-dense5 = Dense(32,activation='relu',name='jk5')(dense4)
-dense6 = Dense(32,activation='relu',name='jk6')(dense5)
-dense7 = Dense(32,activation='relu',name='jk7')(dense6)
-output1 = Dense(1,activation='relu',name='out_jk1')(dense7)
+# dense3 = Dropout(0.2)(dense2)
+dense4 = Dense(64,activation='relu',name='jk3')(dense2)
+# dense5 = Dropout(0.2)(dense4)
+dense6 = Dense(64,activation='relu',name='jk4')(dense4)
+dense7 = Dense(32,activation='relu',name='jk5')(dense6)
+dense8 = Dense(32,activation='relu',name='jk6')(dense7)
+dense9 = Dense(32,activation='relu',name='jk7')(dense8)
+output1 = Dense(1,activation='relu',name='out_jk1')(dense9)
 model = Model(inputs=input1, outputs=output1)
 model.summary()
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
-earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min', 
+earlyStopping = EarlyStopping(monitor='loss', patience=20, mode='min', 
                               verbose=1,restore_best_weights=True)
 #3. 컴파일,훈련
 model.compile(loss='mae', optimizer='Adam')
 model.fit(x_train, y_train, validation_split=0.25,
-          epochs=50,batch_size=8192,
+          epochs=100,batch_size=8192,
           callbacks=[earlyStopping]
           ,verbose=2)
 
