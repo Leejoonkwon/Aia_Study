@@ -16,7 +16,7 @@ def split_x(dataset, size): # def라는 예약어로 split_x라는 변수명을 
         y.append(label)#append 마지막에 요소를 추가한다는 뜻
         #aaa는  []의 빈 리스트 이니 subset이 aaa의 []안에 들어가는 것
         #aaa 가 [1,2,3]이라면  aaa.append(subset)은 [1,2,3,subset]이 될 것이다.
-    return np.array(x),np.array(y)   
+    return np.array(x) 
 
 print(len(a)- size + 1)
 x,y = split_x(a,size)
