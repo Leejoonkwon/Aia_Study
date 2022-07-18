@@ -117,22 +117,23 @@ print(y1,y1.shape) #(1010, 8)
 print(y2,y2.shape) #(1010, 8)
 
 
-# print(y,y.shape) #(70038,)
+
 
 #시계열 데이터의 특성 상 연속성을 위해서 train_test_split에 셔플을 배제하기 위해
 #위 명령어로 정의한다.suffle을 False로 놓고 해도 될지는 모르겠다.
 from tensorflow.python.keras.models import Sequential,Model
-from tensorflow.python.keras.layers import *
-from tensorflow.python.keras.layers import InputLayer
-from keras.callbacks import ModelCheckpoint
+from tensorflow.python.keras.layers import LSTM,Dense,Dropout,Reshape,Conv1D
+from tensorflow.python.keras.layers import Input
+from keras.callbacks import ModelCheckpoint,EarlyStopping
 from sklearn.model_selection import train_test_split
 x1_train,x1_test,x2_train,x2_test,y1_train,y1_test,y2_train,y2_test =train_test_split(x1,x2,y1,y2,shuffle=False,train_size=0.89)
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer
-scaler = StandardScaler()
+# scaler = StandardScaler()
+scaler = MinMaxScaler()
 x1_train = x1_train.reshape(898,50)
 x1_test = x1_test.reshape(112,50)
 x2_train = x2_train.reshape(898,50)
-x2_test = x2_test.reshape(112,40)
+x2_test = x2_test.reshape(112,50)
 x1_train = scaler.fit_transform(x1_train)
 x2_train = scaler.fit_transform(x2_train)
 x1_test = scaler.transform(x1_test)
@@ -149,16 +150,17 @@ print(x2_test,x2_test.shape) #(112, 5, 1, 10)
 print(y1_test.shape) #(112, 10)
 print(y2_test.shape) #(112, 10)
 
+
 #2-1. 모델구성1
-input1 = Input(shape=(5,8)) #(N,2)
-dense1 = LSTM(100,name='jk1')(input1)
+input1 = Input(shape=(5,10)) #(N,2)
+dense1 = LSTM(100,activation='relu',name='jk1')(input1)
 dense2 = Dense(32,activation='relu',name='jk2')(dense1) # (N,64)
 dense3 = Dense(32,activation='relu',name='jk3')(dense2) # (N,64)
 output1 = Dense(10,activation='relu',name='out_jk1')(dense3)
 
 #2-2. 모델구성2
-input2 = Input(shape=(5,8)) #(N,2)
-dense4 = LSTM(100,name='jk101')(input1)
+input2 = Input(shape=(5,10)) #(N,2)
+dense4 = LSTM(100,activation='relu',name='jk101')(input2)
 dense5 = Dense(32,activation='relu',name='jk102')(dense4) # (N,64)
 dense6 = Dense(32,activation='relu',name='jk103')(dense5) # (N,64)
 output2 = Dense(10,activation='relu',name='out_jk2')(dense6)
@@ -170,11 +172,35 @@ merge3 = Dense(16,activation='relu',name='mg3')(merge2)
 merge4 = Dense(16,activation='relu',name='mg4')(merge3)
 last_output = Dense(1,name='last')(merge4)
 model = Model(inputs=[input1,input2], outputs=last_output)
+import datetime
+date = datetime.datetime.now()
+print(date)
+
+date = date.strftime("%m%d_%H%M") # 0707_1723
+print(date)
+
 #3. 컴파일,훈련
+filepath = './_ModelCheckPoint/K24/'
+filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
+#04d :                  4f : 
+earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min', 
+                              verbose=1,restore_best_weights=True)
+mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
+                      save_best_only=True, 
+                      filepath="".join([filepath,'k24_', date, '_', filename])
+                    )
 model.compile(loss='mae', optimizer='Adam')
-model.fit([x1_train,x2_train], y1_train, validation_split=0.25, epochs=3)
+
+model.fit([x1_train,x2_train], y1_train, 
+          validation_split=0.25, 
+          epochs=100,verbose=2
+          ,batch_size=256
+          ,callbacks=[earlyStopping])
+# model.save_weights("./_save/keras46_1_save_weights2.h5")
 
 #4. 평가,예측
 loss = model.evaluate([x1_test,x2_test], y1_test)
 print("loss :",loss)
-
+y_predict = model.predict([x1_test,x2_test])
+print(y_predict,y_predict.shape)
+# loss : 130847.375
