@@ -68,12 +68,7 @@ print(Sam)
 Amo = Amo[Amo['시가'] > 100] #[1035 rows x 17 columns]
 print(Amo.shape)
 print(Amo) #2018/05/04
-Amo = Amo.sort_values(by=['일자'],axis=0,ascending=True)
-Sam = Sam.sort_values(by=['일자'],axis=0,ascending=True)
-print(Amo)
 
-Amo = Amo.drop(['일자','Date'], axis=1)
-Sam = Sam.drop(['일자','Date'], axis=1)
 
 # data에 index 열을 Date Time에 연,월,일,시간,분,초를 각각 문자열로 인식해 대체합니다.
 # print(Amo.info()) #(420551, 15) DatetimeIndex: 3180 entries, 2022-07-18 to 2009-09-01
@@ -115,10 +110,20 @@ def split_x(dataset, size): # def라는 예약어로 split_x라는 변수명을 
         #aaa 가 [1,2,3]이라면  aaa.append(subset)은 [1,2,3,subset]이 될 것이다.
     return np.array(x)
 
+print(Amo1.shape) #(1031, 3, 10)
 
 aaa = split_x(Amo1,size) #x1를 위한 데이터 drop 제외 모든 amo에 데이터
 bbb = split_x(Amo2,size) #Y를 위한 시가만있는 데이터
 x1 = aaa[:,:-1]
+print(x1.shape)
+'''
+Amo = Amo.sort_values(by=['일자'],axis=0,ascending=True)
+Sam = Sam.sort_values(by=['일자'],axis=0,ascending=True)
+print(Amo)
+
+Amo = Amo.drop(['일자','Date'], axis=1)
+Sam = Sam.drop(['일자','Date'], axis=1)
+
 y = bbb[:,-1]
 ccc = split_x(Sam1,size) #x2를 위한 데이터 drop 제외 모든 Sam에 데이터
 x2 = ccc[:,:-1]
@@ -128,7 +133,7 @@ print(x1,x1.shape) #(1031, 3, 10)
 
 # print(y,y.shape) #(1031,)
 
-'''
+
 
 #시계열 데이터의 특성 상 연속성을 위해서 train_test_split에 셔플을 배제하기 위해
 #위 명령어로 정의한다.suffle을 False로 놓고 해도 될지는 모르겠다.
