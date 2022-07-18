@@ -60,8 +60,6 @@ Sam['year'] = Sam['Date'].dt.strftime('%Y')
 Sam['month'] = Sam['Date'].dt.strftime('%m')
 Sam['day'] = Sam['Date'].dt.strftime('%d')
 
-Amo = Amo.drop(['일자','Date'], axis=1)
-Sam = Sam.drop(['일자','Date'], axis=1)
 
 
 Sam = Sam[Sam['시가'] < 100000] #[1035 rows x 17 columns]
@@ -70,6 +68,12 @@ print(Sam)
 Amo = Amo[Amo['시가'] > 100] #[1035 rows x 17 columns]
 print(Amo.shape)
 print(Amo) #2018/05/04
+Amo = Amo.sort_values(by=['일자'],axis=0,ascending=True)
+Sam = Sam.sort_values(by=['일자'],axis=0,ascending=True)
+print(Amo)
+
+Amo = Amo.drop(['일자','Date'], axis=1)
+Sam = Sam.drop(['일자','Date'], axis=1)
 
 # data에 index 열을 Date Time에 연,월,일,시간,분,초를 각각 문자열로 인식해 대체합니다.
 # print(Amo.info()) #(420551, 15) DatetimeIndex: 3180 entries, 2022-07-18 to 2009-09-01
@@ -89,24 +93,13 @@ print(Amo) #[70067 rows x 15 columns] 중복되는 값은 제거한다 행이 70
 Amo1 = Amo.drop([ '전일비', '금액(백만)','신용비','개인','기관','외인(수량)','외국계','프로그램','외인비'],axis=1) #axis는 컬럼 
 Sam1 = Sam.drop([ '전일비', '금액(백만)','신용비','개인','기관','외인(수량)','외국계','프로그램','외인비'],axis=1) #axis는 컬럼 
 Amo2 = Amo1['시가']
-Amo1 = Amo1.sort_index(ascending = False)
-Amo2 = Amo2.sort_index(ascending = False)
-Sam1 = Sam1.sort_index(ascending = False)
+
 
 print(Amo1)
 
 
-# Amo1 = Amo.drop([ '외인비'],axis=1) #axis는 컬럼 
-# Sam1 = Sam.drop([ '외인비'],axis=1) #axis는 컬럼 
-# Sam1 = Sam['시가','고가','저가','종가','증감량','등락률','거래량']
-# 삼성전자 2018 05 04부터 액면 분할 시가 저가 고가 종가 *50배 필요
-print('=================')
-print(Amo)
-print(Amo.shape) #(1035, 19)
-print(Sam)
-print(Sam.shape) #(1035, 19)
 
-size = 5
+size = 20
 def split_x(dataset, size): # def라는 예약어로 split_x라는 변수명을 아래에 종속된 기능들을 수행할 수 있도록 정의한다.
     x = [] 
     #aaa 는 []라는 값이 없는 리스트임을 정의
@@ -131,11 +124,11 @@ ccc = split_x(Sam1,size) #x2를 위한 데이터 drop 제외 모든 Sam에 데�
 x2 = ccc[:,:-1]
 
 print(x1,x1.shape) #(1031, 3, 10)
-print(x2,x2.shape) #(1031, 3, 10)
+# print(x2,x2.shape) #(1031, 3, 10)
 
-print(y,y.shape) #(1031,)
+# print(y,y.shape) #(1031,)
 
-
+'''
 
 #시계열 데이터의 특성 상 연속성을 위해서 train_test_split에 셔플을 배제하기 위해
 #위 명령어로 정의한다.suffle을 False로 놓고 해도 될지는 모르겠다.
@@ -148,35 +141,35 @@ x1_train,x1_test,x2_train,x2_test,y_train,y_test =train_test_split(x1,x2,y,shuff
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer
 scaler = StandardScaler()
 # # scaler = MinMaxScaler()
-x1_train = x1_train.reshape(938,30)
-x1_test = x1_test.reshape(93,30)
-x2_train = x2_train.reshape(938,30)
-x2_test = x2_test.reshape(93,30)
-x1_train = scaler.fit_transform(x1_train)
-x2_train = scaler.fit_transform(x2_train)
-x1_test = scaler.transform(x1_test)
-x2_test = scaler.transform(x2_test)
-x1_train = x1_train.reshape(938,3,10)
-x1_test = x1_test.reshape(93,3,10)
-x2_train = x2_train.reshape(938,3,10)
-x2_test = x2_test.reshape(93,3,10)
-print(x1_train,x1_train.shape) #(938, 3, 10)
-print(x1_test,x1_test.shape) #(93, 3, 10)
-print(x2_train,x2_train.shape) # (938, 3, 10)
-print(x2_test,x2_test.shape) # (93, 3, 10)
-print(y_train.shape) #(938,)
+# x1_train = x1_train.reshape(924,180)
+# x1_test = x1_test.reshape(92,180)
+# x2_train = x2_train.reshape(924,180)
+# x2_test = x2_test.reshape(92,180)
+# x1_train = scaler.fit_transform(x1_train)
+# x2_train = scaler.fit_transform(x2_train)
+# x1_test = scaler.transform(x1_test)
+# x2_test = scaler.transform(x2_test)
+# x1_train = x1_train.reshape(924,18,10)
+# x1_test = x1_test.reshape(92,18,10)
+# x2_train = x2_train.reshape(924,18,10)
+# x2_test = x2_test.reshape(92,18,10)
+print(x1_train,x1_train.shape) #(924, 18, 10)
+print(x1_test,x1_test.shape) #(92, 18, 10)
+print(x2_train,x2_train.shape) # (924, 18, 10)
+print(x2_test,x2_test.shape) # (92, 18, 10)
+print(y_train.shape) #(924,)
 
-print(y_test.shape) #(93,)
+print(y_test.shape) #(92,)
 
 #2-1. 모델구성1
-input1 = Input(shape=(3,10)) #(N,2)
+input1 = Input(shape=(18,10)) #(N,2)
 dense1 = LSTM(100,activation='relu',name='jk1')(input1)
 dense2 = Dense(64,activation='relu',name='jk2')(dense1) # (N,64)
 dense3 = Dense(64,activation='relu',name='jk3')(dense2) # (N,64)
 output1 = Dense(10,activation='relu',name='out_jk1')(dense3)
 
 #2-2. 모델구성2
-input2 = Input(shape=(3,10)) #(N,2)
+input2 = Input(shape=(18,10)) #(N,2)
 dense4 = LSTM(100,activation='relu',name='jk101')(input2)
 dense5 = Dense(64,activation='relu',name='jk102')(dense4) # (N,64)
 dense6 = Dense(64,activation='relu',name='jk103')(dense5) # (N,64)
@@ -200,7 +193,7 @@ print(date)
 filepath = './_ModelCheckPoint/K24/'
 filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 #04d :                  4f : 
-earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min', 
+earlyStopping = EarlyStopping(monitor='loss', patience=3, mode='min', 
                               verbose=1,restore_best_weights=True)
 mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
                       save_best_only=True, 
@@ -210,8 +203,8 @@ model.compile(loss='mae', optimizer='Adam')
 
 model.fit([x1_train,x2_train], y_train, 
           validation_split=0.25, 
-          epochs=5,verbose=2
-          ,batch_size=256
+          epochs=10,verbose=2
+          ,batch_size=16
           ,callbacks=[earlyStopping])
 # model.save_weights("./_save/keras46_1_save_weights2.h5")
 
@@ -221,3 +214,4 @@ print("loss :",loss)
 y_predict = model.predict([x1_test,x2_test])
 print(y_predict,y_predict.shape)
 # loss : 130847.375
+'''
