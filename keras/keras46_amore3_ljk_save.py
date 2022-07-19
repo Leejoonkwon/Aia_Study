@@ -13,6 +13,7 @@ path = './_data/test_amore_0718/' # ".은 현재 폴더"
 Amo = pd.read_csv(path + '아모레220718.csv',thousands=',',encoding='cp949')
 
 Sam = pd.read_csv(path + '삼성전자220718.csv',thousands=',',encoding='cp949')
+# print(Amo.corr())
 
 Amo.at[1035:,'시가'] = 0
 
@@ -29,7 +30,6 @@ Sam['day'] = Sam['Date'].dt.strftime('%d')
 
 
 Sam = Sam[Sam['시가'] < 100000] #[1035 rows x 17 columns]
-
 Amo = Amo[Amo['시가'] > 100] #[1035 rows x 17 columns]
 
 cols = ['year','month','day']
@@ -114,8 +114,7 @@ print(date)
 #3. 컴파일,훈련
 filepath = './_test/'
 filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
-#04d :                  4f : 
-earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min', 
+earlyStopping = EarlyStopping(monitor='loss', patience=30, mode='min', 
                               verbose=1,restore_best_weights=True)
 mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
                       save_best_only=True, 
@@ -125,8 +124,8 @@ model.compile(loss='mae', optimizer='Adam')
 
 model.fit([x1_train,x2_train], y_train, 
           validation_split=0.25, 
-          epochs=150,verbose=2
-          ,batch_size=128
+          epochs=100,verbose=2
+          ,batch_size=256
           ,callbacks=[earlyStopping,mcp])
 model.save_weights("./_save/keras46_3_save_weights().h5")
 
@@ -137,20 +136,8 @@ print("====================")
 
 y_predict = model.predict([x1_test,x2_test])
 print("0720자 종가 :",y_predict[-1])
-#스케일링 전
-# loss : 1615.2457275390625
+# loss : 36247.66796875
 # ====================
-# 0719자 시가 : [[156286.]]
-
-# loss : 2053.936767578125
-# ====================
-# 0719자 시가 : [[157145.89]]
-
-# scaler = StandardScaler() 했을 때 
-# loss : 432307.78125
-# ====================
-# 0719자 시가 : [[473035.94]]
-
-
+# 0720자 종가 : [122495.8]
 
 

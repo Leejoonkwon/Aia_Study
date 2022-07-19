@@ -225,11 +225,9 @@ model.save_weights("./_save/keras46_1_save_weights2.h5")
 loss = model.evaluate([x1_test,x2_test], y_test)
 print("loss :",loss)
 print("====================")
-x1= x1_test[-3:-2]
-x2= x2_test[-3:-2]
 
-y_predict = model.predict([x1,x2])
-print("0719자 시가 :",y_predict)
+y_predict = model.predict([x1_test,x2_test])
+print("0719자 시가 :",y_predict[-1])
 #스케일링 전
 # loss : 1615.2457275390625
 # ====================

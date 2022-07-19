@@ -56,7 +56,8 @@ for col in cols:
     
 size = 10
 def split_x(dataset, size): # def라는 예약어로 split_x라는 변수명을 아래에 종속된 기능들을 수행할 수 있도록 정의한다.
-    aaa = []   #aaa 는 []라는 값이 없는 리스트임을 정의
+    aaa = []
+    #aaa 는 []라는 값이 없는 리스트임을 정의
     for i in range(len(dataset)- size + 1): # 6이다 range(횟수)
         #for문을 사용하여 반복한다.첫문장에서 정의한 dataset을 
         subset = dataset[i : (i + size)]
