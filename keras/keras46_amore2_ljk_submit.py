@@ -11,9 +11,9 @@ matplotlib.rcParams['axes.unicode_minus']=False
 
 path = './_data/test_amore_0718/' # ".은 현재 폴더"
 # Amo1 = pd.read_csv(path + '아모레220718.csv' ,sep='\t',engine='python',encoding='CP949')
-Amo = pd.read_csv(path + '아모레220718.csv',thousands=',')
+Amo = pd.read_csv(path + '아모레220718.csv',thousands=',',encoding='cp949')
 
-Sam = pd.read_csv(path + '삼성전자220718.csv',thousands=',')
+Sam = pd.read_csv(path + '삼성전자220718.csv',thousands=',',encoding='cp949')
 
 # print(Amo) #[3180 rows x 17 columns]
 # print(Sam) #[3040 rows x 17 columns]
