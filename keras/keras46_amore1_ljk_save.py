@@ -147,15 +147,16 @@ from sklearn.model_selection import train_test_split
 x1_train,x1_test,x2_train,x2_test,y_train,y_test =train_test_split(x1,x2,y,shuffle=False,train_size=0.75)
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer
 # scaler = StandardScaler()
-scaler = MinMaxScaler()
-x1_train = x1_train.reshape(754,28)
-x1_test = x1_test.reshape(252,28)
-x2_train = x2_train.reshape(754,28)
-x2_test = x2_test.reshape(252,28)
-x1_train = scaler.fit_transform(x1_train)
-x2_train = scaler.fit_transform(x2_train)
-x1_test = scaler.transform(x1_test)
-x2_test = scaler.transform(x2_test)
+# scaler = MinMaxScaler()
+# scaler = RobustScaler()
+# x1_train = x1_train.reshape(754,28)
+# x1_test = x1_test.reshape(252,28)
+# x2_train = x2_train.reshape(754,28)
+# x2_test = x2_test.reshape(252,28)
+# x1_train = scaler.fit_transform(x1_train)
+# x2_train = scaler.fit_transform(x2_train)
+# x1_test = scaler.transform(x1_test)
+# x2_test = scaler.transform(x2_test)
 x1_train = x1_train.reshape(754,4,7)
 x1_test = x1_test.reshape(252,4,7)
 x2_train = x2_train.reshape(754,4,7)
@@ -172,23 +173,27 @@ print(x2.shape) #(252, 2, 7) [:,-5:-2] #(252, 2, 7)
 #2-1. 모델구성1
 input1 = Input(shape=(4,7)) #(N,2)
 dense1 = LSTM(100,activation='relu',name='jk1')(input1)
-# dense2 = Dropout(0.15)(dense1)
-dense3 = Dense(64,activation='relu',name='jk2')(dense1) # (N,64)
-output1 = Dense(10,activation='relu',name='out_jk1')(dense3)
+dense2 = Dropout(0.15)(dense1)
+dense3 = Dense(64,activation='relu',name='jk2')(dense2) # (N,64)
+dense4 = Dropout(0.15)(dense3)
+output1 = Dense(10,activation='linear',name='out_jk1')(dense4)
 
 #2-2. 모델구성2
 input2 = Input(shape=(4,7)) #(N,2)
 dense4 = LSTM(100,activation='relu',name='jk101')(input2)
-# dense5 = Dropout(0.15)(dense4)
-dense6 = Dense(64,activation='relu',name='jk103')(dense4) 
-output2 = Dense(10,activation='relu',name='out_jk2')(dense6)
+dense5 = Dropout(0.15)(dense4)
+dense6 = Dense(64,activation='relu',name='jk103')(dense5) 
+dense7 = Dropout(0.15)(dense6)
+output2 = Dense(10,activation='linear',name='out_jk2')(dense7)
 
 from tensorflow.python.keras.layers import concatenate,Concatenate
 merge1 = concatenate([output1,output2],name= 'mg1')
 merge2 = Dense(32,activation='relu',name='mg2')(merge1)
-merge3 = Dense(16,activation='relu',name='mg3')(merge2)
-merge4 = Dense(16,activation='linear',name='mg4')(merge3)
-last_output = Dense(1,name='last')(merge4)
+merge3 = Dropout(0.15)(merge2)
+merge4 = Dense(16,activation='relu',name='mg3')(merge3)
+merge5 = Dropout(0.15)(merge4)
+merge6 = Dense(16,activation='linear',name='mg4')(merge5)
+last_output = Dense(1,name='last')(merge6)
 model = Model(inputs=[input1,input2], outputs=last_output)
 import datetime
 date = datetime.datetime.now()
@@ -201,7 +206,7 @@ print(date)
 filepath = './_ModelCheckPoint/K24/'
 filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 #04d :                  4f : 
-earlyStopping = EarlyStopping(monitor='loss', patience=30, mode='min', 
+earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min', 
                               verbose=1,restore_best_weights=True)
 mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
                       save_best_only=True, 
@@ -211,9 +216,9 @@ model.compile(loss='mae', optimizer='Adam')
 
 model.fit([x1_train,x2_train], y_train, 
           validation_split=0.25, 
-          epochs=350,verbose=2
+          epochs=150,verbose=2
           ,batch_size=64
-          ,callbacks=[earlyStopping])
+          ,callbacks=[earlyStopping,mcp])
 model.save_weights("./_save/keras46_1_save_weights2.h5")
 
 #4. 평가,예측
@@ -230,8 +235,34 @@ print("0719자 시가 :",y_predict)
 # ====================
 # 0719자 시가 : [[156286.]]
 
+# loss : 2053.936767578125
+# ====================
+# 0719자 시가 : [[157145.89]]
+
 # scaler = StandardScaler() 했을 때 
 # loss : 432307.78125
 # ====================
 # 0719자 시가 : [[473035.94]]
+
+# scaler = MinMaxScaler()
+# loss : 863323.0
+# ====================
+# 0719자 시가 : [[815745.1]]
+
+# scaler = RobustScaler()
+# loss : 480104.875
+# ====================
+# 0719자 시가 : [[612833.5]]
+
+
+#drop out 했을 때 
+# loss : 26591.232421875
+# ====================
+# 0719자 시가 : [[134084.11]]
+
+# loss : 28393.443359375
+# ====================
+# 0719자 시가 : [[138740.89]]
+
+
 
