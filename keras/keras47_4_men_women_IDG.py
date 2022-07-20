@@ -19,14 +19,25 @@ xydata = train.flow_from_directory(
     batch_size=500,
     shuffle=True,) # 경로 및 폴더 설정
 
-print(xydata[0][0],xydata[0][0].shape) # (500, 150, 150, 3)
+# print(xydata[0][0],xydata[0][0].shape) # (500, 150, 150, 3)
 
-x = xydata[0][0]
-y = xydata[0][1]
+# x = xydata[0][0]
+# y = xydata[0][1]
+my = train.flow_from_directory(
+    'D:\\study_data\\_data\\image\\archive\\images',
+    target_size=(150,150),
+    class_mode='binary',
+    batch_size=1,
+    shuffle=True,) # 경로 및 폴더 설정
 
-from sklearn.model_selection import train_test_split
-x_train,x_test,y_train,y_test = train_test_split(x,y,random_state=100,train_size=0.7)
-np.save('D:/study_data/_save/_npy/keras47_4_train_x.npy',arr=x_train)
-np.save('D:/study_data/_save/_npy/keras47_4_train_y.npy',arr=y_train)
-np.save('D:/study_data/_save/_npy/keras47_4_test_x.npy',arr=x_test)
-np.save('D:/study_data/_save/_npy/keras47_4_test_y.npy',arr=y_test)
+
+# from sklearn.model_selection import train_test_split
+# x_train,x_test,y_train,y_test = train_test_split(x,y,random_state=100,train_size=0.7)
+
+# np.save('D:/study_data/_save/_npy/keras47_4_train_x.npy',arr=x_train)
+# np.save('D:/study_data/_save/_npy/keras47_4_train_y.npy',arr=y_train)
+# np.save('D:/study_data/_save/_npy/keras47_4_test_x.npy',arr=x_test)
+# np.save('D:/study_data/_save/_npy/keras47_4_test_y.npy',arr=y_test)
+
+np.save('D:/study_data/_save/_npy/keras47_4_test_z.npy',arr=my[0][0])
+

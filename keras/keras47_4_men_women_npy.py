@@ -11,6 +11,7 @@ x_train = np.load('D:/study_data/_save/_npy/keras47_4_train_x.npy')
 y_train = np.load('D:/study_data/_save/_npy/keras47_4_train_y.npy')
 x_test = np.load('D:/study_data/_save/_npy/keras47_4_test_x.npy')
 y_test = np.load('D:/study_data/_save/_npy/keras47_4_test_y.npy')
+z_test = np.load('D:/study_data/_save/_npy/keras47_4_test_z.npy')
 
 
 #2. 모델 
@@ -36,10 +37,12 @@ val_accuracy = hist.history['val_accuracy']
 loss =  hist.history['loss']
 val_loss =  hist.history['val_loss']
 
+
 print('loss :',loss[-1])
 print('val_loss :',val_loss[-1])
 print('accuracy :',accuracy[-1])
 print('val_accuracy :',val_accuracy[-1])
+
 
 
 #4. 평가,훈련
@@ -47,5 +50,11 @@ loss = model.evaluate(x_test, y_test)
 print("loss :",loss)
 print("====================")
 
-y_predict = model.predict(x_test)
-print(y_predict)
+
+y_predict = model.predict(z_test)
+y_predict = np.around(y_predict)
+if 	y_predict >= 1 :
+    print('여자다') # 출력값: 
+else :
+    print('남자다') # 출력값:
+
