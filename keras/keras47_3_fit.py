@@ -23,7 +23,7 @@ test_datagen = ImageDataGenerator(
 xy_train = train_datagen.flow_from_directory(
     'd:/_data/image/brain/train/',
     target_size=(200,200),
-    batch_size=5,
+    batch_size=160,
     class_mode='binary',
     color_mode='grayscale',
     shuffle=True,) # 경로 및 폴더 설정
@@ -31,13 +31,12 @@ xy_train = train_datagen.flow_from_directory(
 xy_test = test_datagen.flow_from_directory(
     'd:/_data/image/brain/test/',
      target_size=(200,200), #target_size는 본인 자유 
-    batch_size=5,
+    batch_size=160,
     class_mode='binary',
     color_mode='grayscale',
     shuffle=True,
     ) # Found 120 images belonging to 2 classes.
 
-print(xy_train[31][0],xy_train[31][0].shape) #[0](5, 200, 200, 1) #[1] (5,)
 
 # 현재 5,200,200,1의 데이터가 32덩어리
 
@@ -52,26 +51,25 @@ model.add(Conv2D(64,(3,3),activation='relu'))
 model.add(Flatten())
 model.add(Dense(100,activation='relu'))
 model.add(Dense(100,activation='relu'))
-
 model.add(Dense(1,activation='sigmoid'))
 
 #3. 컴파일,훈련
 model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
-# model.fit(xy_train[0][0],xy_train[0][1]) 배치를 최대로 잡을 경우 가능한 구조
-hist = model.fit_generator(xy_train,epochs=100,
-                    validation_data=xy_test,
-                    steps_per_epoch=32,
-                    validation_steps=4) # 배치가 최대 아닐 경우 사용
+hist = model.fit(xy_train[0][0],xy_train[0][1],epochs=100,verbose=2,validation_split=0.25) #배치를 최대로 잡을 경우 가능한 구조
+# hist = model.fit_generator(xy_train,epochs=100,
+#                     validation_data=xy_test,
+#                     steps_per_epoch=32,
+#                     validation_steps=4) # 배치가 최대 아닐 경우 사용
 
 accuracy = hist.history['accuracy']
-val_accuracy = hist.history['val_accuracy']
+# val_accuracy = hist.history['val_accuracy']
 loss =  hist.history['loss']
 val_loss =  hist.history['val_loss']
 
 print('loss :',loss[-1])
 print('val_loss :',val_loss[-1])
 print('accuracy :',accuracy[-1])
-print('val_accuracy :',val_accuracy[-1])
+# print('val_accuracy :',val_accuracy[-1])
 
 plt.figure(figsize=(9,6))
 plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
@@ -83,10 +81,15 @@ plt.xlabel('epochs')
 # plt.legend(loc='upper right')
 plt.legend()
 plt.show()
+####################fit genarator
 # loss : 0.32224059104919434
 # val_loss : 1.612489104270935
 # accuracy : 0.8687499761581421
 # val_accuracy : 0.6000000238418579
 
+##################fit
+# loss : 3.744199148059124e-06
+# val_loss : 1.830583930015564
+# accuracy : 1.0
 
 
