@@ -52,8 +52,8 @@ print("====================")
 
 
 y_predict = model.predict(z_test)
-y_predict = np.around(y_predict)
-if 	y_predict >= 1 :
+
+if 	y_predict >= 0.5 :
     print('여자다') # 출력값: 
 else :
     print('남자다') # 출력값:
