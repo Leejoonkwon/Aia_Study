@@ -1,228 +1,87 @@
-import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.utils import shuffle
-from tensorflow.keras import utils
-import os
-import matplotlib
-from sklearn.preprocessing import LabelEncoder
-matplotlib.rcParams['font.family']='Malgun Gothic'
-matplotlib.rcParams['axes.unicode_minus']=False
+from keras.preprocessing.image import ImageDataGenerator
 
-path = './_data/test_amore_0718/' # ".은 현재 폴더"
-# Amo1 = pd.read_csv(path + '아모레220718.csv' ,sep='\t',engine='python',encoding='CP949')
-Amo = pd.read_csv(path + '아모레220718.csv',thousands=',')
+# 1. 데이터
+train_datagen = ImageDataGenerator(
+    rescale=1./255, # MinMaxScale 하겠다
+    horizontal_flip=True, # 수평 뒤집기
+    vertical_flip=True, # 수직 뒤집기
+    width_shift_range=0.1, # 가로 이동 범위
+    height_shift_range=5, # 세로 이동 범위
+    rotation_range=5, # 회전 범위
+    zoom_range=1.2, # 확대 범위
+    shear_range=0.7, # 기울이기 범위
+    fill_mode='nearest' # 채우기 모드는 가장 가까운 거로
+) # 위 내용을 랜덤으로 적용해서 수치화로 땡겨옴, 안넣으면 그냥 수치화
 
-Sam = pd.read_csv(path + '삼성전자220718.csv',thousands=',')
+test_datagen = ImageDataGenerator(
+    rescale=1./255
+) # 평가는 증폭하면 안됨. 원래 있던 걸 맞춰야되니까.
 
-# print(Amo) #[3180 rows x 17 columns]
-# print(Sam) #[3040 rows x 17 columns]
-# print(Amo.head())
-# print(Amo.describe().transpose())
-# print(Amo['시가'].corr()) # 상관 계수 확인
+xy_train = train_datagen.flow_from_directory( # 경로상의 폴더에 있는 이미지를 가져오겠다
+    'd:/_data/image/brain/train/',
+    target_size=(100, 100),
+    batch_size=5,
+    class_mode='binary',
+    color_mode='grayscale',
+    shuffle=True,
+)
+  
+xy_test = test_datagen.flow_from_directory(
+    'd:/_data/image/brain/test/',
+    target_size=(100, 100),
+    batch_size=5,
+    class_mode='binary',
+    shuffle=True,
+) # Found 120 images belonging to 2 classes.
 
-# Amo["시가"].plot(figsize=(12,6)) 
-# plt.show() # 'T (degC)'열의 전체 데이터 시각화
+print(xy_train)
+# <keras.preprocessing.image.DirectoryIterator object at 0x0000015FCEFB28E0>
+# sklearn 데이터형식과 같음 ex)load_boston()처럼
+# from sklearn.datasets import load_boston
+# datasets = load_boston()
+# print(datasets)
 
-# plt.figure(figsize=(20,10),dpi=120)
-# plt.plot(Amo['시가'][0:6*24*365],color="black",linewidth=0.2)
-# plt.show() # 'T (degC)'열의 1년간 데이터 추이 시각화
+'''
+print(xy_train[0])
+print(xy_train[0][0])
+print(xy_train[0][0].shape) # (5, 150, 150, 3) grayscale해주면 (5, 150, 150, 1)
+print(xy_train[0][1].shape) # (5, )
+print(type(xy_train)) # <class 'keras.preprocessing.image.DirectoryIterator'>
+print(type(xy_train[0])) # <class 'tuple'>
+print(type(xy_train[0][0])) # <class 'numpy.array'>
+print(type(xy_train[0][1])) # <class 'numpy.array'>
+'''
+# 현재 5, 200, 200, 1 짜리 데이터가 32덩어리
 
-# print(Amo.info()) #[3180 rows x 17 columns] objetct 14
-print(Sam.info()) #(3040 rows x 17 columns] objetct 14
+# 2. 모델
+from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.layers import Dense, Conv2D, Flatten
 
+model = Sequential()
+model.add(Conv2D(10, (2,2), input_shape=(100,100,1), activation='relu'))
+model.add(Conv2D(10, (3,3), activation='relu'))
+model.add(Flatten())
+model.add(Dense(10, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
 
-# Amo = Amo.drop([1773,1774,1775,1776,1777,1778,1779,1780,1781,1782,1783], axis=0)
+# 3. 컴파일, 훈련
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']) # 메트릭스에 'acc'해도 됨
 
-print(Sam.shape) #3037,17
-
-# Sam.at[:1036, '시가'] =1
-# print(Sam['시가'])
-print(Amo) #2018/05/04
-Amo.at[1035:,'시가'] = 0
-print(Amo) #2018/05/04
-
-
-# Amo.index = pd.to_datetime(Amo['일자'],
-#                             format = "%Y/%m/%d") 
-# Sam.index = pd.to_datetime(Sam['일자'],
-#                             format = "%Y/%m/%d") 
-Amo['Date'] = pd.to_datetime(Amo['일자'])
-
-Amo['year'] = Amo['Date'].dt.strftime('%Y')
-Amo['month'] = Amo['Date'].dt.strftime('%m')
-Amo['day'] = Amo['Date'].dt.strftime('%d')
-print(Amo)
-print(Amo.shape)
-Sam['Date'] = pd.to_datetime(Sam['일자'])
-
-Sam['year'] = Sam['Date'].dt.strftime('%Y')
-Sam['month'] = Sam['Date'].dt.strftime('%m')
-Sam['day'] = Sam['Date'].dt.strftime('%d')
-
-
-
-Sam = Sam[Sam['시가'] < 100000] #[1035 rows x 17 columns]
-print(Sam.shape)
-print(Sam)
-Amo = Amo[Amo['시가'] > 100] #[1035 rows x 17 columns]
-print(Amo.shape)
-print(Amo) #2018/05/04
-
-
-# data에 index 열을 Date Time에 연,월,일,시간,분,초를 각각 문자열로 인식해 대체합니다.
-# print(Amo.info()) #(420551, 15) DatetimeIndex: 3180 entries, 2022-07-18 to 2009-09-01
-cols = ['year','month','day']
-for col in cols:
-    le = LabelEncoder()
-    Amo[col]=le.fit_transform(Amo[col])
-    Sam[col]=le.fit_transform(Sam[col])
-print(Amo) 
-print(Amo.info())
-
-Amo = Amo.rename(columns={'Unnamed: 6':'증감량'})
-Sam = Sam.rename(columns={'Unnamed: 6':'증감량'})
-
-
-Amo = Amo.sort_values(by=['일자'],axis=0,ascending=True)
-Sam = Sam.sort_values(by=['일자'],axis=0,ascending=True)
-print(Amo)
-
-Amo = Amo.drop(['일자'], axis=1)
-Sam = Sam.drop(['일자'], axis=1)
-
-print(Amo) #[70067 rows x 15 columns] 중복되는 값은 제거한다 행이 70091->에서 70067로 줄어든 것을 확인
-
-# Amo1 = Amo.drop([ '전일비', '금액(백만)','신용비','개인','기관','외인(수량)','외국계','프로그램','외인비'],axis=1) #axis는 컬럼 
-# Sam1 = Sam.drop([ '전일비', '금액(백만)','신용비','개인','기관','외인(수량)','외국계','프로그램','외인비'],axis=1) #axis는 컬럼 
-
-Amo1 = Amo[[ '시가', '고가', '저가', '종가','year','month','day']]
-Sam1 = Sam[[ '시가', '고가', '저가', '종가','year','month','day']]
-Amo2 = Amo1['시가']
-
-
-print(Amo1) #[1035 rows x 8 columns]
-print(Sam1) #[1035 rows x 8 columns]
-
-
-
-
-size = 5
-def split_x(dataset, size): # def라는 예약어로 split_x라는 변수명을 아래에 종속된 기능들을 수행할 수 있도록 정의한다.
-    x = [] 
-    #aaa 는 []라는 값이 없는 리스트임을 정의
-    for i in range(len(dataset)- size + 1): # 6이다 range(횟수)
-        #for문을 사용하여 반복한다.첫문장에서 정의한 dataset을 
-        subset = dataset[i : (i + size-1)]
-        #i는 처음 0에 개념 [0:0+size]
-        # 0~(0+size-1인수 까지 )노출 
-        
-        x.append(subset)
-        #append 마지막에 요소를 추가한다는 뜻
-        #aaa는  []의 빈 리스트 이니 subset이 aaa의 []안에 들어가는 것
-        #aaa 가 [1,2,3]이라면  aaa.append(subset)은 [1,2,3,subset]이 될 것이다.
-    return np.array(x)
-
-print(Amo1.shape) #(1031, 3, 10)
-
-aaa = split_x(Amo1,size) #x1를 위한 데이터 drop 제외 모든 amo에 데이터
-bbb = split_x(Amo2,size) #Y를 위한 시가만있는 데이터
-x1 = aaa[:,:-1]
-y = bbb[:,-1]
-ccc = split_x(Sam1,size) #x2를 위한 데이터 drop 제외 모든 Sam에 데이터
-x2 = ccc[:,:-1]
-
-print(x1,x1.shape) #(1031, 3, 10)
-# print(x2,x2.shape) #(1031, 3, 10)
-
-# print(y,y.shape) #(1031,)
-
-
-
-
-#시계열 데이터의 특성 상 연속성을 위해서 train_test_split에 셔플을 배제하기 위해
-#위 명령어로 정의한다.suffle을 False로 놓고 해도 될지는 모르겠다.
-from tensorflow.python.keras.models import Sequential,Model
-from tensorflow.python.keras.layers import LSTM,Dense,Dropout,Reshape,Conv1D
-from tensorflow.python.keras.layers import Input
-from keras.callbacks import ModelCheckpoint,EarlyStopping
-from sklearn.model_selection import train_test_split
-x1_train,x1_test,x2_train,x2_test,y_train,y_test =train_test_split(x1,x2,y,shuffle=False,train_size=0.91)
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer
-# scaler = StandardScaler()
-scaler = MinMaxScaler()
-x1_train = x1_train.reshape(938,21)
-x1_test = x1_test.reshape(93,21)
-x2_train = x2_train.reshape(938,21)
-x2_test = x2_test.reshape(93,21)
-x1_train = scaler.fit_transform(x1_train)
-x2_train = scaler.fit_transform(x2_train)
-x1_test = scaler.transform(x1_test)
-x2_test = scaler.transform(x2_test)
-x1_train = x1_train.reshape(938,3,7)
-x1_test = x1_test.reshape(93,3,7)
-x2_train = x2_train.reshape(938,3,7)
-x2_test = x2_test.reshape(93,3,7)
-print(x1_train,x1_train.shape) #(938, 3, 7)
-print(x1_test,x1_test.shape) #(93, 3, 7)
-print(x2_train,x2_train.shape) # (938, 3, 7)
-print(x2_test,x2_test.shape) # (93, 3, 7)
-print(y_train.shape) #(938,)
-
-print(y_test.shape) #(93,)
-
-#2-1. 모델구성1
-input1 = Input(shape=(3,7)) #(N,2)
-dense1 = LSTM(100,activation='relu',name='jk1')(input1)
-# dense2 = Dropout(0.15)(dense1)
-dense3 = Dense(64,activation='relu',name='jk2')(dense1) # (N,64)
-output1 = Dense(10,activation='relu',name='out_jk1')(dense3)
-
-#2-2. 모델구성2
-input2 = Input(shape=(3,7)) #(N,2)
-dense4 = LSTM(100,activation='relu',name='jk101')(input2)
-# dense5 = Dropout(0.15)(dense4)
-dense6 = Dense(64,activation='relu',name='jk103')(dense4) 
-output2 = Dense(10,activation='relu',name='out_jk2')(dense6)
-
-from tensorflow.python.keras.layers import concatenate,Concatenate
-merge1 = concatenate([output1,output2],name= 'mg1')
-merge2 = Dense(32,activation='relu',name='mg2')(merge1)
-merge3 = Dense(16,activation='relu',name='mg3')(merge2)
-merge4 = Dense(16,activation='linear',name='mg4')(merge3)
-last_output = Dense(1,name='last')(merge4)
-model = Model(inputs=[input1,input2], outputs=last_output)
-import datetime
-date = datetime.datetime.now()
-print(date)
-
-date = date.strftime("%m%d_%H%M") # 0707_1723
-print(date)
-
-#3. 컴파일,훈련
-filepath = './_ModelCheckPoint/K24/'
-filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
-#04d :                  4f : 
-earlyStopping = EarlyStopping(monitor='loss', patience=3, mode='min', 
-                              verbose=1,restore_best_weights=True)
-mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
-                      save_best_only=True, 
-                      filepath="".join([filepath,'k24_', date, '_', filename])
+# model.fit(xy_train[0][0], xy_train[0][1]) # 배치사이즈 최대로하면 한덩이라서 이렇게 가능
+log = model.fit_generator(xy_train, epochs= 30, validation_data=xy_test, 
+                    validation_steps=4, 
+                    steps_per_epoch=32 # dataset/batch size = 16-/5 = 32
+                                       # 1에포에 배치 몇개를 돌리겠다
                     )
-model.compile(loss='mae', optimizer='Adam')
 
-model.fit([x1_train,x2_train], y_train, 
-          validation_split=0.25, 
-          epochs=10,verbose=2
-          ,batch_size=32
-          ,callbacks=[earlyStopping])
-# model.save_weights("./_save/keras46_1_save_weights2.h5")
+# 그래프
+accuracy = log.histroy['accuracy']
+val_accuracy = log.history['val_accuracy']
+loss = log.history['loss']
+val_loss = log.history['val_loss']
 
-#4. 평가,예측
-loss = model.evaluate([x1_test,x2_test], y_test)
-print("loss :",loss)
-# x1_test = x1_test[] 
-y_predict = model.predict([x1_test,x2_test])
-print(y_predict,y_predict.shape)
-# loss : 130847.375
-
+print('loss: ', loss[-1])
+print('val_loss: ', val_loss[-1])
+print('accuracy: ', accuracy[-1])
+print('val_accuracy: ', val_accuracy[-1])
