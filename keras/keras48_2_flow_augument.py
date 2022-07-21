@@ -23,11 +23,32 @@ print(x_train.shape[2]) #28
 
 augument_size = 40000
 randidx = np.random.randint(x_train.shape[0],size=augument_size)
-print(randidx)
+print(randidx,randidx.shape) #(40000,)
 print(np.min(randidx),np.max(randidx))  #0 59997
+print(type(randidx)) #<class 'numpy.ndarray'>
 
+x_augumented = x_train[randidx].copy()
+y_augumented = y_train[randidx].copy()
 
+print(x_augumented.shape)
+print(y_augumented.shape)
+x_train = x_train.reshape(60000,28,28,1)
+x_test = x_test.reshape(x_test.shape[0],x_test.shape[1],x_test.shape[2],1)
+
+x_augumented = x_augumented.reshape(x_augumented.shape[0],
+                                    x_augumented.shape[1],
+                                    x_augumented.shape[2], 1)
+
+x_augumented = train_datagen.flow(x_augumented,y_augumented,
+                                  batch_size=augument_size,shuffle=False).next()[0]
+    
+print(x_augumented,x_augumented.shape) #(40000, 28, 28, 1)
+x_train = np.concatenate((x_train,x_augumented)) # 소괄호() 1개와  소괄호(()) 2개의 차이를 공부해라!
+y_train = np.concatenate((y_train,y_augumented)) 
+# 소괄호() 1개와  소괄호(()) 2개의 차이를 공부해라! 2개인 이유는 안에 옵션을 더 넣을 수 있기 때문이다.아무 것도 안하면 디폴트로 들어감
+print(x_train.shape,y_train.shape)
 '''
+# .copy() 메모리에 저장하겠다.
 # randint는 랜덤한 숫자 1개를 뽑는 모듈 
 # ex) randint(9)    0~8 까지 중 임의 숫자 1개 선택
 # ex) randint(1,20) 1~19까지 중 임의 숫자 1개 선택
