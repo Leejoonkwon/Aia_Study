@@ -53,7 +53,8 @@ xy_df3 = test_datagen.flow(x_df,y_df,
 
 # 소괄호() 1개와  소괄호(()) 2개의 차이를 공부해라! 2개인 이유는 안에 옵션을 더 넣을 수 있기 때문이다.아무 것도 안하면 디폴트로 들어감
 print(x_train.shape,y_train.shape) #(100000, 28, 28, 1) (100000,)
-
+print(y_test.shape) #(10000,)
+'''
 #2. 모델 구성
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense,Conv2D,Flatten
@@ -78,3 +79,4 @@ print("loss :",loss)
 y_predict = model.predict(x_test)
 print(y_predict)
 
+'''
