@@ -25,6 +25,7 @@ test_datagen = ImageDataGenerator(
     
 
 augument_size = 4000
+
 randidx = np.random.randint(x_train.shape[0],size=augument_size)
 
 x_augumented = x_train[randidx].copy()

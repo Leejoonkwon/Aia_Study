@@ -28,14 +28,17 @@ model.add(Dense(3,activation='softmax'))
 
 #3. 컴파일,훈련
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-hist = model.fit(x_train,y_train,epochs=4,verbose=2,validation_split=0.25,batch_size=50)
+hist = model.fit(x_train,y_train,epochs=200,verbose=2,validation_split=0.25,batch_size=100)
 
 
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
 print('loss :', loss)
 y_predict = model.predict(x_test)
+y_predict = np.argmax(y_predict,axis=1)
 print('y_predict :', y_predict) #(10000, 100)
+acc = accuracy_score(y_test, y_predict)
+print('acc 스코어 :', acc)
 # loss : 1.9426530599594116
 # val_loss : 0.901305615901947
 
