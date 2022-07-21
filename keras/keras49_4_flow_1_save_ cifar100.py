@@ -3,129 +3,46 @@ from tensorflow.python.keras.layers import Dense, Conv2D, Flatten, MaxPooling2D,
 from keras.datasets import mnist,cifar10,cifar100
 import pandas as pd
 import numpy as np
-
+from keras.preprocessing.image import ImageDataGenerator
 
 #1. 데이터 전처리
 
 (x_train, y_train), (x_test, y_test) = cifar100.load_data()
 
 print(x_train.shape,y_train.shape) #(50000, 32, 32, 3) (50000, 1)
-print(x_test.shape,y_test.shape) #(10000, 32, 32, 3) (10000, 1)
+train_datagen = ImageDataGenerator(
+    rescale=1./255,
+    horizontal_flip=True,
+    # vertical_flip=True,
+    width_shift_range=0.1,
+    height_shift_range=0.1,
+    rotation_range=5,
+    zoom_range=0.1,
+    # shear_range=0.7,
+    fill_mode='nearest'
+)
+test_datagen = ImageDataGenerator(
+    rescale=1./255,)
+    
 
-x_train = x_train.reshape(50000, 32*32* 3) #
-x_test = x_test.reshape(10000, 32*32*3)
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer
-scaler = StandardScaler()
-scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
-scaler.transform(x_train)
-x_train = scaler.transform(x_train)
-x_test = scaler.transform(x_test)
-# x_train = x_train.reshape(50000, 32,32, 3)
-# x_test = x_test.reshape(10000, 32,32,3)
-# print(x_train.shape) #(50000, 32, 32, 3, 1)
-# print(x_test.shape) #(10000, 32, 32, 3, 1)
-print(np.unique(y_train,return_counts=True))
+augument_size = 10000
+randidx = np.random.randint(x_train.shape[0],size=augument_size)
 
-# (array([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
-#        17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
-#        34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-#        51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67,
-#        68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84,
-#        85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]), array([500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
-#        500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
-#        500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
-#        500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
-#        500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
-#        500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
-#        500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
-#        500, 500, 500, 500, 500, 500, 500, 500, 500], dtype=int64))
-print(y_train.shape) #(50000, 100)
-print(y_test.shape) #(10000, 10)
-from tensorflow.keras.utils import to_categorical 
-y_train = to_categorical(y_train) 
-y_test = to_categorical(y_test) 
-
-# y_train = pd.get_dummies((y_train)) 
-# y_test = pd.get_dummies((y_test))
-#get_dummies 사용 시 오류가 뜨는 이유는 get_dummies는 2차원 타입의 데이터까지만  인코딩 가능하기 때문이다.
-#3차원 이상의 데이터를 인코딩할 때는 원핫인코딩과 카테고리컬을 사용한다.
-print(y_train.shape) #(50000, 100)
-print(y_test.shape) #(10000, 100)
+x_augumented = x_train[randidx].copy()
+y_augumented = y_train[randidx].copy()
 
 
-#2. 모델 구성
-#2. 모델 구성
-# model = Sequential()
-# # model.add(Flatten()) #  해도 돌아감
-# model.add(Dense(1000,input_shape=(3072,),activation='swish'))
-# model.add(Dropout(0.3))
-# model.add(Dense(1000,activation='swish'))
-# model.add(Dropout(0.3))
-# model.add(Dense(1000, activation='relu'))
-# model.add(Dropout(0.3))
-# model.add(Dense(100, activation='softmax'))
-# model.summary()
-from tensorflow.python.keras.models import Sequential,Model
-from tensorflow.python.keras.layers import Dense,Input
-input1 = Input(shape=(3072,))
-dense1 = Dense(100)(input1)
-dense2 = Dense(100,activation='relu')(dense1)
-dense3 = Dense(100,activation='relu')(dense2)
-output1 = Dense(100,activation='softmax')(dense3)
-model = Model(inputs=input1, outputs=output1)
+xy_df2 = train_datagen.flow(x_train,y_train,
+                                  batch_size=augument_size,shuffle=False)
+x_df = np.concatenate((x_train,x_augumented))
+y_df = np.concatenate((y_train,y_augumented))
+# print(x_df.shape) #(64000, 28, 28, 1)
 
-
-#3. 컴파일 훈련
-filepath = './_ModelCheckPoint/K27/'
-filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
-from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
-earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min', 
-                              verbose=1,restore_best_weights=True)
-# mcp = ModelCheckpoint(monitor='loss',mode='auto',verbose=1,
-#                       save_best_only=True, 
-#                       filepath="".join([filepath,'k27_', date, '_', filename])
-#                     )
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-
-model.fit(x_train, y_train, epochs=100, batch_size=580, 
-                callbacks = [earlyStopping],
-                validation_split=0.25,
-                verbose=2
-                )
-model.save_weights("./_save/keras23_5_cifar10_2.h5")
-#4. 평가 예측
-loss = model.evaluate(x_test, y_test)
-print('loss :', loss)
-y_predict = model.predict(x_test)
-from sklearn.metrics import r2_score,accuracy_score
-r2 = r2_score(y_test, y_predict)
-print('r2스코어 :', r2)
-y_test = np.argmax(y_test,axis=1)
-print(y_test)
-
-y_predict = np.argmax(y_predict,axis=1)
-# y_test와 y_predict의  shape가 일치해야한다.
-print(y_predict)
-
-
-acc = accuracy_score(y_test, y_predict)
-print('acc 스코어 :', acc)
-
-# loss : [3.8618671894073486, 0.45080000162124634]
-# r2스코어 : 0.1313088401031084
-# acc 스코어 : 0.4508
-
-#conv2d 포함
-# loss : [2.9135234355926514, 0.6779000163078308]
-# r2스코어 : -1.844786723836507
-# acc 스코어 : 0.6908
-
-
-#conv2d 미포함 reshape 바로 Dense
-# loss : [2.2696797847747803, 0.590399980545044]
-# r2스코어 : -4.116410039075688
-# acc 스코어 : 0.5442
-
-###### 함수형 모델 진행시
-# loss : [6.645954132080078, 0.17180000245571136]
-# acc 스코어 : 0.1718
+xy_df3 = test_datagen.flow(x_df,y_df,
+                       batch_size=augument_size,shuffle=False)
+from sklearn.model_selection import train_test_split
+# x_train,x_test,y_train,y_test =train_test_split(xy_df3[0][0],xy_df3[0][1],train_size=0.75,shuffle=False)
+np.save('D:/study_data/_save/_npy/keras49_4_train_x.npy',arr=xy_df3[0][0])
+np.save('D:/study_data/_save/_npy/keras49_4_train_y.npy',arr=xy_df3[0][1])
+np.save('D:/study_data/_save/_npy/keras49_4_test_x.npy',arr=x_test)
+np.save('D:/study_data/_save/_npy/keras49_4_test_y.npy',arr=y_test)

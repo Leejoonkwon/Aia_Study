@@ -28,75 +28,69 @@ xy_train = train_datagen.flow_from_directory(
     color_mode='grayscale',
     shuffle=True,) # 경로 및 폴더 설정
 # Found 160 images belonging to 2 classes.
+
 xy_test = test_datagen.flow_from_directory(
     'd:/study_data/_data/image/brain/test/',
      target_size=(150,150), #target_size는 본인 자유 
     batch_size=160,
     class_mode='binary',
     color_mode='grayscale',
-    shuffle=True,
+    shuffle=False,
     ) # Found 120 images belonging to 2 classes.
 print("==================")
 print(xy_train[0][1], xy_train[0][1].shape) #(160, 150, 150, 1) (160,) 1027장??
 
 # print(xy_test[0][0].shape, xy_test[0][1].shape) #(120, 150, 150, 1) (120,)
 
+print(x_train.shape,y_train.shape) #(50000, 32, 32, 3) (50000, 1)
+print(x_test.shape,y_test.shape) #(10000, 32, 32, 3) (10000, 1)
+train_datagen = ImageDataGenerator(
+    rescale=1./255,
+    horizontal_flip=True,
+    # vertical_flip=True,
+    width_shift_range=0.1,
+    height_shift_range=0.1,
+    rotation_range=5,
+    zoom_range=0.1,
+    # shear_range=0.7,
+    fill_mode='nearest'
+)
+test_datagen = ImageDataGenerator(
+    rescale=1./255,)
+    
 
-'''
-np.save('D:/study_data/_save/_npy/keras46_5_train_x.npy',arr=xy_train[0][0])
-np.save('D:/study_data/_save/_npy/keras46_5_train_y.npy',arr=xy_train[0][1])
-np.save('D:/study_data/_save/_npy/keras46_5_test_x.npy',arr=xy_test[0][0])
-np.save('D:/study_data/_save/_npy/keras46_5_test_y.npy',arr=xy_test[0][1])
-#\\\ 주의하라 
-# 현재 5,200,200,1의 데이터가 32덩어리
+augument_size = 40000
+randidx = np.random.randint(x_train.shape[0],size=augument_size)
+
+x_augumented = x_train[randidx].copy()
+y_augumented = y_train[randidx].copy()
 
 
-#2. 모델 
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Conv2D,Flatten,Dense,MaxPool2D
+print(x_augumented.shape)  #(400, 28, 28)
+print(y_augumented.shape) #(400,) 50000, 32, 32, 3)
+x_train = x_train.reshape(50000, 32, 32, 3)
+print(x_train.shape)
 
-model = Sequential()
-model.add(Conv2D(32,(2,2),input_shape=(200,200,1),padding='same',activation='relu'))
-model.add(MaxPool2D())
-model.add(Conv2D(64,(3,3),activation='relu'))
-model.add(Flatten())
-model.add(Dense(100,activation='relu'))
-model.add(Dense(100,activation='relu'))
+x_augumented = x_augumented.reshape(x_augumented.shape[0],
+                                    x_augumented.shape[1],
+                                    x_augumented.shape[2], 3)
 
-model.add(Dense(1,activation='sigmoid'))
 
-#3. 컴파일,훈련
-model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
-# model.fit(xy_train[0][0],xy_train[0][1]) 배치를 최대로 잡을 경우 가능한 구조
-hist = model.fit_generator(xy_train,epochs=100,
-                    validation_data=xy_test,
-                    steps_per_epoch=32,
-                    validation_steps=4) # 배치가 최대 아닐 경우 사용
+x_test = x_test.reshape(x_test.shape[0],x_test.shape[1],x_test.shape[2],3)
 
-accuracy = hist.history['accuracy']
-val_accuracy = hist.history['val_accuracy']
-loss =  hist.history['loss']
-val_loss =  hist.history['val_loss']
+xy_df2 = train_datagen.flow(x_train,y_train,
+                                  batch_size=augument_size,shuffle=False)
+x_df = np.concatenate((x_train,x_augumented))
+y_df = np.concatenate((y_train,y_augumented))
+# print(x_df.shape) #(64000, 28, 28, 1)
 
-print('loss :',loss[-1])
-print('val_loss :',val_loss[-1])
-print('accuracy :',accuracy[-1])
-print('val_accuracy :',val_accuracy[-1])
-
-plt.figure(figsize=(9,6))
-plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
-plt.plot(hist.history['val_loss'],marker='.',c='blue',label='val_loss')
-plt.grid()
-plt.title('show') #맥플러립 한글 깨짐 현상 알아서 해결해라 
-plt.ylabel('loss')
-plt.xlabel('epochs')
-# plt.legend(loc='upper right')
-plt.legend()
-plt.show()
-# loss : 0.32224059104919434
-# val_loss : 1.612489104270935
-# accuracy : 0.8687499761581421
-# val_accuracy : 0.6000000238418579
-'''
+xy_df3 = test_datagen.flow(x_df,y_df,
+                       batch_size=augument_size,shuffle=False)
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test =train_test_split(xy_df3[0][0],xy_df3[0][1],train_size=0.75,shuffle=False)
+np.save('D:/study_data/_save/_npy/keras49_4_train_x.npy',arr=x_train)
+np.save('D:/study_data/_save/_npy/keras49_4_train_y.npy',arr=y_train)
+np.save('D:/study_data/_save/_npy/keras49_4_test_x.npy',arr=x_test)
+np.save('D:/study_data/_save/_npy/keras49_4_test_y.npy',arr=y_test)
 
 

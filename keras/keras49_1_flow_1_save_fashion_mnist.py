@@ -35,6 +35,8 @@ y_augumented = y_train[randidx].copy()
 print(x_augumented.shape)  #(400, 28, 28)
 print(y_augumented.shape) #(400,)
 x_train = x_train.reshape(60000,28,28,1)
+print(x_train.shape) #(60000, 28, 28, 1)
+
 x_augumented = x_augumented.reshape(x_augumented.shape[0],
                                     x_augumented.shape[1],
                                     x_augumented.shape[2], 1)
