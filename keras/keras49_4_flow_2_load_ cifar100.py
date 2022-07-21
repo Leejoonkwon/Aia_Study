@@ -32,6 +32,6 @@ model.fit(x_train,y_train,epochs=4,verbose=2,
 loss = model.evaluate(x_test, y_test)
 print('loss :', loss)
 y_predict = model.predict(x_test)
-print('y_predict :', y_predict)
+print('y_predict :', y_predict.shape) #(10000, 100)
 #증폭 후 
 # loss : 4.604773998260498

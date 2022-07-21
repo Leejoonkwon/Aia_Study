@@ -15,6 +15,10 @@ x_train = np.load('D:/study_data/_save/_npy/keras49_3_train_x.npy')
 y_train = np.load('D:/study_data/_save/_npy/keras49_3_train_y.npy')
 x_test = np.load('D:/study_data/_save/_npy/keras49_3_test_x.npy')
 y_test = np.load('D:/study_data/_save/_npy/keras49_3_test_y.npy')
+print(x_train.shape) #(40000, 32, 32, 3)
+print(x_test.shape) #(10000, 32, 32, 3)
+print(y_train.shape) #(40000, 1)
+print(y_test.shape)# (40000, 1)
 
 #2. 모델 
 from tensorflow.python.keras.models import Sequential

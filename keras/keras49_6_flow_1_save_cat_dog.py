@@ -18,8 +18,10 @@ train_datagen = ImageDataGenerator(
   )                               # 회전 축소 등으로 이미지에 여백이생겼을때 채우는 방법입니다.
 
 test_datagen = ImageDataGenerator(
-    rescale=1./255
-) # test data는 원형을 건드리지 않는다.훈련한 데이터와 비교하기 위해서 변형 X
+    rescale=1./255  
+) 
+
+# test data는 원형을 건드리지 않는다.훈련한 데이터와 비교하기 위해서 변형 X
 xy_train = train_datagen.flow_from_directory(
     'd:/study_data/_data/image/cat_dog/training_set/training_set',
     target_size=(150,150),
@@ -35,12 +37,36 @@ xy_test = test_datagen.flow_from_directory(
     shuffle=True,
     ) # Found 120 images belonging to 2 classes.
 
-print(xy_train[0][0].shape, xy_train[0][1].shape)    #  (5000, 150, 150, 3) (5000,)
-print(xy_test[0][0].shape, xy_test[0][1].shape)      #  (2023, 150, 150, 3) (2023,)
+# print(xy_test[0][0].shape, xy_test[0][1].shape) #(120, 150, 150, 1) (120,)
+x_train = xy_train[0][0]
+y_train = xy_train[0][1]
+x_test = xy_test[0][0]
+y_test = xy_test[0][1]
+augument_size = 1500
+randidx = np.random.randint(x_train.shape[0],size=augument_size)
+
+x_augumented = x_train[randidx].copy()
+y_augumented = y_train[randidx].copy()
 
 
-# np.save('D:/study_data/_save/_npy/keras47_1_train_x.npy',arr=xy_train[0][0])
-# np.save('D:/study_data/_save/_npy/keras47_1_train_y.npy',arr=xy_train[0][1])
-# np.save('D:/study_data/_save/_npy/keras47_1_test_x.npy',arr=xy_test[0][0])
-# np.save('D:/study_data/_save/_npy/keras47_1_test_y.npy',arr=xy_test[0][1])
+print(x_augumented.shape)  #(400, 28, 28)
+print(y_augumented.shape) #(400,) 50000, 32, 32, 3)
+print(x_train.shape) #(160, 150, 150, 1)
+
+
+
+
+xy_df2 = train_datagen.flow(x_train,y_train,
+                                  batch_size=augument_size,shuffle=False)
+x_df = np.concatenate((x_train,x_augumented))
+y_df = np.concatenate((y_train,y_augumented))
+# print(x_df.shape) #(64000, 28, 28, 1)
+
+xy_df3 = test_datagen.flow(x_df,y_df,
+                       batch_size=augument_size,shuffle=False)
+from sklearn.model_selection import train_test_split
+np.save('D:/study_data/_save/_npy/keras49_6_train_x.npy',arr=xy_df3[0][0])
+np.save('D:/study_data/_save/_npy/keras49_6_train_y.npy',arr=xy_df3[0][1])
+np.save('D:/study_data/_save/_npy/keras49_6_test_x.npy',arr=x_test)
+np.save('D:/study_data/_save/_npy/keras49_6_test_y.npy',arr=y_test)
 

@@ -53,8 +53,12 @@ xy_df3 = test_datagen.flow(x_df,y_df,
                        batch_size=augument_size,shuffle=False)
 from sklearn.model_selection import train_test_split
 # x_train,x_test,y_train,y_test =train_test_split(xy_df3[0][0],xy_df3[0][1],train_size=0.75,shuffle=False)
+print(x_test.shape)
+print(y_test.shape)
+
+'''
 np.save('D:/study_data/_save/_npy/keras49_3_train_x.npy',arr=xy_df3[0][0])
 np.save('D:/study_data/_save/_npy/keras49_3_train_y.npy',arr=xy_df3[0][1])
 np.save('D:/study_data/_save/_npy/keras49_3_test_x.npy',arr=x_test)
 np.save('D:/study_data/_save/_npy/keras49_3_test_y.npy',arr=y_test)
-
+'''
