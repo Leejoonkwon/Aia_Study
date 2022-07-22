@@ -47,6 +47,7 @@ from tensorflow.python.keras.layers import LSTM,Dense,Embedding,Flatten,Conv1D
 # pad_x = pad_x.reshape(14,5,1)
 model = Sequential() # 인풋으 (14,5)가 31개
 model.add(Embedding(input_dim=31,output_dim=10,input_length=5))  # Embedding 후 (N,5,10)
+model.add(Flatten())
 #단어사전의 갯수 * output_dim(아우풋 노드) =파라미터
 # input_dim이 꼭 단어 갯수와 일치해야하는 것은 아니지만 가급적 맞춰야 좋다.
 # model.add(Embedding(input_dim=31,output_dim=10)) #length를 명시하지 않아도 N개로 인식해서 실행한다.
