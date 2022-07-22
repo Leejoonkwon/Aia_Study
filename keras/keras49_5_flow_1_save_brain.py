@@ -36,7 +36,7 @@ xy_test = test_datagen.flow_from_directory(
     class_mode='binary',
     color_mode='grayscale',
     shuffle=False,
-    ) # Found 120 images belonging to 2 classes.
+    ).next() # Found 120 images belonging to 2 classes.
 print("==================")
 print(xy_train[0][1], xy_train[0][1].shape) #(160, 150, 150, 1) (160,) 1027장??
 

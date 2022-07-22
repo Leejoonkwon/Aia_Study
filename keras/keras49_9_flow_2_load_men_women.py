@@ -29,7 +29,7 @@ model.add(Dense(1,activation='sigmoid'))
 
 #3. 컴파일,훈련
 model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
-hist = model.fit(x_train,y_train,epochs=4,verbose=2,validation_split=0.25,batch_size=50)
+hist = model.fit(x_train,y_train,epochs=50,verbose=2,validation_split=0.25,batch_size=50)
 
 
 #4. 평가,훈련

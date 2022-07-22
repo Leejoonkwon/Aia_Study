@@ -11,7 +11,7 @@ x_train = np.load('D:/study_data/_save/_npy/keras49_7_train_x.npy')
 y_train = np.load('D:/study_data/_save/_npy/keras49_7_train_y.npy')
 x_test = np.load('D:/study_data/_save/_npy/keras49_7_test_x.npy')
 y_test = np.load('D:/study_data/_save/_npy/keras49_7_test_y.npy')
-
+print(y_test,y_test.shape) #(297,)
 
 #2. 모델 
 from tensorflow.python.keras.models import Sequential
@@ -28,18 +28,22 @@ model.add(Dense(1,activation='sigmoid'))
 
 #3. 컴파일,훈련
 model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
-model.fit(x_train,y_train,epochs=4,verbose=2,validation_split=0.25,batch_size=100)
+model.fit(x_train,y_train,epochs=250,verbose=2,validation_split=0.25,batch_size=100)
 
 
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
 print('loss :', loss)
 y_predict = model.predict(x_test)
-print('y_predict :', y_predict) #(10000, 100)
+y_predict = np.round(y_predict,0)
+print('y_predict :', y_predict.shape) #(297,1)
+from sklearn.metrics import accuracy_score
+acc = accuracy_score(y_test, y_predict) 
+print('acc 스코어 :', acc)
 # loss : [0.8918216228485107, 0.5096391439437866]
 # y_predict : [[0.8578456 ]
 
 #### 증폭 후
-# loss : [5.992246150970459, 0.4511784613132477]
-# y_predict : [[0.99974626]
-
+# loss : [12.333027839660645, 0.5488215684890747]
+# y_predict : (297, 1)
+# acc 스코어 : 0.5488215488215489

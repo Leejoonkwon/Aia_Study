@@ -11,7 +11,7 @@ x_train = np.load('D:/study_data/_save/_npy/keras49_8_train_x.npy')
 y_train = np.load('D:/study_data/_save/_npy/keras49_8_train_y.npy')
 x_test = np.load('D:/study_data/_save/_npy/keras49_8_test_x.npy')
 y_test = np.load('D:/study_data/_save/_npy/keras49_8_test_y.npy')
-
+print(y_test.shape)# (50, 3)
 
 #2. 모델 
 from tensorflow.python.keras.models import Sequential
@@ -28,7 +28,7 @@ model.add(Dense(3,activation='softmax'))
 
 #3. 컴파일,훈련
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-hist = model.fit(x_train,y_train,epochs=250,verbose=2,validation_split=0.25,batch_size=100)
+hist = model.fit(x_train,y_train,epochs=2,verbose=2,validation_split=0.25,batch_size=100)
 
 
 #4. 평가,예측
@@ -36,13 +36,16 @@ loss = model.evaluate(x_test, y_test)
 print('loss :', loss)
 y_predict = model.predict(x_test)
 y_predict = np.argmax(y_predict,axis=1)
-print('y_predict :', y_predict) #(10000, 100)
+y_test = np.argmax(y_test,axis=1)
+
+print('y_predict :', y_predict.shape) #y_predict : (50,)
 from sklearn.metrics import accuracy_score
-# acc = accuracy_score(y_test, y_predict)
-# print('acc 스코어 :', acc)
+acc = accuracy_score(y_test, y_predict)
+print('acc 스코어 :', acc)
 # loss : 1.9426530599594116
 # val_loss : 0.901305615901947
 
 #### 증폭 후
-# loss : [24.979812622070312, 0.4399999976158142]
-# y_predict : [[0.99974626]
+# loss : [539.5560302734375, 0.23999999463558197]
+# y_predict : (50,)
+# acc 스코어 : 0.24

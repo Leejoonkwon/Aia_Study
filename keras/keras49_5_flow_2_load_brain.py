@@ -32,17 +32,16 @@ model.add(Dense(1,activation='sigmoid'))
 #3. 컴파일,훈련
 model.compile(loss='sparse_categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
 
-model.fit(x_train,y_train,epochs=4,verbose=2,validation_split=0.2,batch_size=10)# 배치를 최대로 잡을 경우 가능한 구조
-
-# hist = model.fit_generator(xy_train,epochs=100,
-#                     validation_data=xy_test,
-#                     steps_per_epoch=32,
-#                     validation_steps=4) # 배치가 최대 아닐 경우 사용
+model.fit(x_train,y_train,epochs=30,verbose=2,validation_split=0.2,batch_size=50)# 배치를 최대로 잡을 경우 가능한 구조
 
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
 print('loss :', loss)
 y_predict = model.predict(x_test)
-print('y_predict :', y_predict) #(10000, 100)
+print('y_predict :', y_predict) 
+from sklearn.metrics import accuracy_score
+y_predict = np.round(y_predict,0)
+acc = accuracy_score(y_test, y_predict) 
+print('acc 스코어 :', acc)
 # loss : [0.9344231486320496, 0.5]
 # y_predict : [0.1711559]

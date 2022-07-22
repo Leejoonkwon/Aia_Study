@@ -26,13 +26,18 @@ model.add(Dense(1,activation='sigmoid'))
 
 #3. 컴파일,훈련
 model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
-hist = model.fit(x_train,y_train,epochs=4,verbose=2,validation_split=0.25,batch_size=500)
+hist = model.fit(x_train,y_train,epochs=10,verbose=2,validation_split=0.25,batch_size=10)
 
 
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
 print('loss :', loss)
 y_predict = model.predict(x_test)
-print('y_predict :', y_predict) #(10000, 100)
+print('y_predict :', y_predict)
+y_predict = np.round(y_predict,0)
+print('y_predict :', y_predict.shape) #(297,1)
+from sklearn.metrics import accuracy_score
+acc = accuracy_score(y_test, y_predict) 
+print('acc 스코어 :', acc)
 # loss : [0.8918216228485107, 0.5096391439437866]
 # y_predict : [[0.8578456 ]
