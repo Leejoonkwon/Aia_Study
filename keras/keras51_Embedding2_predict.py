@@ -7,12 +7,12 @@ docs = ['너무 재밌어요', '참 최고에요', '참 잘 만든 영화에요'
         '별로에요', '생각보다 지루해요', '연기가 어색해요',
         '재미없어요', ' 너무 재미없다.','참 재밌네요', '민수가 못 생기기긴 했어요'
         ,'안결 혼해요']
+
 #[실습]###########
-x_predict = ['나는 형권이가 정말 재미없다 너무 정말']
 # 긍정 1,부정 0
 label= np.array([1,1,1,1,1,0,0,0,0,0,0,1,1,0]) # (14,)
  
-token = Tokenizer(oov_token="<OOV>")
+token = Tokenizer(oov_token="<OOV>") #oov = out of vocabulary 
 token.fit_on_texts(docs)
 
 # print(token.word_index)
@@ -59,7 +59,10 @@ model.add(Embedding(input_dim=31,output_dim=10,input_length=6)) #단어사전의
 # model.add(Embedding(31,10)) # 명시하지 않아도 위치에 따라 옵션을 자동으로 인식한다.
 # model.add(Embedding(31,10,5)) # error input_length는 명시해야 한다.
 # model.add(Embedding(31,3,input_length = 5)) 
-model.add(LSTM(32))
+model.add(LSTM(32,activation='relu'))
+model.add(Dense(32,activation='relu'))
+model.add(Dense(32,activation='relu'))
+model.add(Dense(16,activation='relu'))
 model.add(Dense(1,activation='sigmoid'))
 model.summary() #Total params: 5,847
 
@@ -82,5 +85,5 @@ if 	x2 >= 0.5 :
 else :
     print('부정') # 출력값:
     
-# [[0.50277036]] (1, 1)
-# 긍정
+# [[0.49834225]] (1, 1)
+# 부정

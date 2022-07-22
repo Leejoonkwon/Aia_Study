@@ -44,7 +44,8 @@ from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import LSTM,Dense,Embedding,Conv1D,Flatten
 #Embedding이란 원핫 인코딩 필요없이 문자간 상관 관계를 고려해 벡터를 부여한다.그리고 Embedding은 인풋 레이어에서 시작하며 
 #총 개수를 input_dim으로 한다.
-pad_x = pad_x.reshape(14,5,1)
+pad_x = pad_x.reshape(14,5,1) 
+#Embedding을 쓰지 않는 경우 중 CNN을 모델로 사용한다면 3차원 데이터로 가공이 필요하다.성능은 Embedding 이 더 좋다.
 model = Sequential()
 # model.add(Embedding(input_dim=31,output_dim=10,input_length=5)) #단어사전의 갯수 * output_dim(아우풋 노드) =파라미터
 # input_dim이 꼭 단어 갯수와 일치해야하는 것은 아니지만 가급적 맞춰야 좋다.
