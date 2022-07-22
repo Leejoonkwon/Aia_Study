@@ -45,6 +45,7 @@ x_train = xy_train[0][0]
 y_train = xy_train[0][1]
 x_test = xy_test[0][0]
 y_test = xy_test[0][1]
+
 augument_size = 40000
 randidx = np.random.randint(x_train.shape[0],size=augument_size)
 

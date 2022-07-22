@@ -29,7 +29,7 @@ model.add(Dense(1,activation='sigmoid'))
 #3. 컴파일,훈련
 model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
 
-model.fit(x_train,y_train,epochs=4,verbose=2,validation_split=0.25,batch_size=500)
+model.fit(x_train,y_train,epochs=4,verbose=2,validation_split=0.25,batch_size=50)
 # hist = model.fit_generator(x_train,y_train,epochs=2,
 #                     validation_split=0.25,
 #                     steps_per_epoch=32,
@@ -42,6 +42,15 @@ y_predict = model.predict(x_test)
 from sklearn.metrics import r2_score,accuracy_score
 r2 = r2_score(y_test, y_predict)
 print('r2스코어 :', r2)
+from sklearn.metrics import accuracy_score
+y_predict = np.round(y_predict,0)
+acc = accuracy_score(y_test, y_predict) 
+print('acc 스코어 :', acc)
+
+# LSTM
+# loss : [4.3096160888671875, 0.03200000151991844]
+# acc 스코어 : 0.032
+
 #증폭 후 
 # loss : [-2273.6396484375, 0.11900000274181366]
 # r2스코어 : -1.4131460288439657

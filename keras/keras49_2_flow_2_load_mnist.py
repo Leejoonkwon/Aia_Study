@@ -40,7 +40,9 @@ loss = model.evaluate(x_test, y_test)
 print('loss :', loss)
 y_predict = model.predict(x_test)
 print('y_predict :', y_predict)
-
+from sklearn.metrics import accuracy_score
+acc = accuracy_score(y_test, y_predict) 
+print('acc 스코어 :', acc)
 #증폭 후 
 # loss : [0.35870376229286194, 0.8970000147819519] 
 
