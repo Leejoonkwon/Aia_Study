@@ -34,7 +34,7 @@ model.add(Embedding(input_dim=46,output_dim=10,input_length=100)) #단어사전�
 model.add(LSTM(32))
 model.add(Dense(32,activation='relu'))
 model.add(Dense(32,activation='relu'))
-model.add(Dense(1,activation='sigmoid'))
+model.add(Dense(2,activation='sigmoid'))
 model.summary() #Total params: 5,847
 
 #3. 컴파일, 훈련
@@ -46,5 +46,6 @@ acc = model.evaluate(x_test,y_test)[1]
 print('acc :',acc)
 # y_predict = model.predict(x_test)
 # print('predict :',y_predict)
+# acc : 0.5599600076675415
 #
 # acc : 0.5416799783706665
