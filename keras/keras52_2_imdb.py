@@ -13,7 +13,7 @@ from keras.utils.np_utils import to_categorical
 y_train = to_categorical(y_train)
 y_test = to_categorical(y_test)
 print(y_train.shape)
-'''
+
 print("뉴스기사의 최대길이 :",max(len(i) for i in x_train))         #뉴스기사의 최대길이 : 2494
 print("뉴스기사의 평균길이 :",sum(map(len,x_train)) / len(x_train)) #뉴스기사의 평균길이 : 238.71364
 
@@ -48,4 +48,3 @@ print('acc :',acc)
 # print('predict :',y_predict)
 #
 # acc : 0.5416799783706665
-'''
