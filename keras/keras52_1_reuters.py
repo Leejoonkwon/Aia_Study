@@ -56,10 +56,12 @@ model.summary() #Total params: 5,847
 
 #3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['acc'])
-model.fit(x_train,y_train,epochs=500,batch_size=2500)
+model.fit(x_train,y_train,epochs=10,batch_size=5000)
 
 #4. 평가, 예측
 loss = model.evaluate(x_test,y_test)
 print('loss :',loss)
 y_predict = model.predict(x_test)
 print('predict :',np.round(y_predict[-1],0))
+#loss : [3.710134506225586, 0.21104185283184052]
+
