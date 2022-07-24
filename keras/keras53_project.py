@@ -55,7 +55,7 @@ y_train = xy_train[0][1]
 x_test = xy_test[0][0]
 y_test = xy_test[0][1]
 
-augument_size = 5000
+augument_size = 500
 randidx = np.random.randint(x_train.shape[0],size=augument_size)
 
 x_augumented = x_train[randidx].copy()
@@ -76,10 +76,10 @@ y_df = np.concatenate((y_train,y_augumented))
 xy_df3 = test_datagen.flow(x_df,y_df,
                        batch_size=augument_size,shuffle=False)
 
-np.save('C:\study\Study\_save\_train_x.npy',arr=xy_df3[0][0])
-np.save('C:\study\Study\_save\_train_y.npy',arr=xy_df3[0][1])
-np.save('C:\study\Study\_save\_test_x.npy',arr=x_test)
-np.save('C:\study\Study\_save\_test_y.npy',arr=y_test)
+np.save('C:\_data\_save\_train_x.npy',arr=xy_df3[0][0])
+np.save('C:\_data\_save\_train_y.npy',arr=xy_df3[0][1])
+np.save('C:\_data\_save\_test_x.npy',arr=x_test)
+np.save('C:\_data\_save\_test_y.npy',arr=y_test)
 
 
 

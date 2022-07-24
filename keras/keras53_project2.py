@@ -3,14 +3,14 @@ from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
 from sklearn import datasets
 
-# np.save('C:\study\Study\_save_train_x.npy',arr=xy_df3[0][0])
-# np.save('C:\study\Study\_save_train_y.npy',arr=xy_df3[0][1])
-# np.save('C:\study\Study\_save_test_x.npy',arr=x_test)
-# np.save('C:\study\Study\_save_test_y.npy',arr=y_test)
-x_train = np.load('C:\study\Study\_save\_save_train_x.npy')
-y_train = np.load('C:\study\Study\_save\_save_train_y.npy')
-x_test = np.load('C:\study\Study\_save\_save_test_x.npy')
-y_test = np.load('C:\study\Study\_save\_save_test_y.npy')
+# np.save('C:\_data\_save\_train_x.npy',arr=xy_df3[0][0])
+# np.save('C:\_data\_save\_train_y.npy',arr=xy_df3[0][1])
+# np.save('C:\_data\_save\_test_x.npy',arr=x_test)
+# np.save('C:\_data\_save\_test_y.npy',arr=y_test)
+x_train = np.load('C:\_data\_save\_train_x.npy')
+y_train = np.load('C:\_data\_save\_train_y.npy')
+x_test = np.load('C:\_data\_save\_test_x.npy')
+y_test = np.load('C:\_data\_save\_test_y.npy')
 print(x_train.shape,y_train.shape)  # (10000, 150, 150, 3) (10000, 7)
 print(x_test.shape,y_test.shape)    # (7178, 150, 150, 3) (7178, 7)
 
@@ -22,10 +22,10 @@ from tensorflow.python.keras.layers import Conv2D,Flatten,Dense,MaxPool2D
 model = Sequential()
 model.add(Conv2D(32,(2,2),input_shape=(150,150,3),padding='same',activation='relu'))
 model.add(MaxPool2D())
-model.add(Conv2D(64,(3,3),activation='relu'))
+model.add(Conv2D(16,(3,3),activation='relu'))
 model.add(Flatten())
-model.add(Dense(100,activation='relu'))
-model.add(Dense(100,activation='relu'))
+model.add(Dense(10,activation='relu'))
+model.add(Dense(10,activation='relu'))
 model.add(Dense(7,activation='softmax'))
 import time
 start_time = time.time()
