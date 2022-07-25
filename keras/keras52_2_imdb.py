@@ -9,6 +9,11 @@ print(x_train,x_train.shape,x_test.shape) #(25000,) (25000,)
 print(y_train,y_train.shape) #(25000,) 
 print(len(np.array(x_train))) #25000
 print(len(np.unique(y_train))) #2개
+from keras.utils.np_utils import to_categorical
+y_train = to_categorical(y_train)
+y_test = to_categorical(y_test)
+print(y_train.shape)
+
 print("뉴스기사의 최대길이 :",max(len(i) for i in x_train))         #뉴스기사의 최대길이 : 2494
 print("뉴스기사의 평균길이 :",sum(map(len,x_train)) / len(x_train)) #뉴스기사의 평균길이 : 238.71364
 
@@ -29,7 +34,11 @@ model.add(Embedding(input_dim=46,output_dim=10,input_length=100)) #단어사전�
 model.add(LSTM(32))
 model.add(Dense(32,activation='relu'))
 model.add(Dense(32,activation='relu'))
+<<<<<<< HEAD
 model.add(Dense(1,activation='sigmoid'))
+=======
+model.add(Dense(2,activation='sigmoid'))
+>>>>>>> bc514901d26e19fad45765b4f2686f98230492c7
 model.summary() #Total params: 5,847
 
 #3. 컴파일, 훈련
@@ -39,7 +48,9 @@ model.fit(x_train,y_train,epochs=3,batch_size=5000)
 #4. 평가, 예측
 acc = model.evaluate(x_test,y_test)[1]
 print('acc :',acc)
-y_predict = model.predict(x_test)
-print('predict :',y_predict)
+# y_predict = model.predict(x_test)
+# print('predict :',y_predict)
+# acc : 0.5599600076675415
 #
 # acc : 0.5416799783706665
+

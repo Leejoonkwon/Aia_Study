@@ -1,6 +1,4 @@
-# 실습
-# 본인 사진으로 predict 하시오
-# d:/study_data/_data/image/
+
 import numpy as np      
 from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
@@ -13,10 +11,11 @@ train = ImageDataGenerator(
   )                               # 회전 축소 등으로 이미지에 여백이생겼을때 채우는 방법입니다.
 test_datagen = ImageDataGenerator(
     rescale=1./255)
+
 xydata = train.flow_from_directory(
-    'D:\\study_data\\_data\\image\\archive\\data',
+    'C:\study\Study\_data\emotion\\train',
     target_size=(150,150),
-    class_mode='binary',
+    class_mode='categorical',
     batch_size=500,
     shuffle=True,) # 경로 및 폴더 설정
 
