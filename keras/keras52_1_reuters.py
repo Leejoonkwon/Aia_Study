@@ -42,13 +42,9 @@ print(y_train.shape,y_test.shape) #(8982, 46) (2246, 46)
 from tensorflow.python.keras.models import Sequential
 #[맹그러오]
 model = Sequential()
-model.add(Embedding(input_dim=46,output_dim=10,input_length=100)) #단어사전의 갯수 * output_dim(아우풋 노드) =파라미터
-# input_dim이 꼭 단어 갯수와 일치해야하는 것은 아니지만 가급적 맞춰야 좋다.
-# model.add(Embedding(input_dim=31,output_dim=10)) #length를 명시하지 않아도 N개로 인식해서 실행한다.
-# model.add(Embedding(31,10)) # 명시하지 않아도 위치에 따라 옵션을 자동으로 인식한다.
-# model.add(Embedding(31,10,5)) # error input_length는 명시해야 한다.
-# model.add(Embedding(31,3,input_length = 5)) 
-model.add(LSTM(32))
+model.add(Embedding(input_dim=46,output_dim=10,input_length=100)) 
+model.add(LSTM(32,activation='relu'))
+model.add(Dense(32,activation='relu'))
 model.add(Dense(32,activation='relu'))
 model.add(Dense(32,activation='relu'))
 model.add(Dense(46,activation='softmax'))
@@ -62,4 +58,4 @@ model.fit(x_train,y_train,epochs=500,batch_size=2500)
 loss = model.evaluate(x_test,y_test)
 print('loss :',loss)
 y_predict = model.predict(x_test)
-print('predict :',np.round(y_predict[-1],0))
+print('predict :',y_predict[-1])

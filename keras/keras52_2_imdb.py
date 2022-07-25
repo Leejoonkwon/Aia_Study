@@ -27,14 +27,14 @@ model.add(Embedding(input_dim=46,output_dim=10,input_length=100)) #단어사전�
 # model.add(Embedding(31,10,5)) # error input_length는 명시해야 한다.
 # model.add(Embedding(31,3,input_length = 5)) 
 model.add(LSTM(32))
-model.add(Dense(32,activation='sigmoid'))
-model.add(Dense(32,activation='sigmoid'))
+model.add(Dense(32,activation='relu'))
+model.add(Dense(32,activation='relu'))
 model.add(Dense(1,activation='sigmoid'))
 model.summary() #Total params: 5,847
 
 #3. 컴파일, 훈련
 model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['acc'])
-model.fit(x_train,y_train,epochs=20,batch_size=5000)
+model.fit(x_train,y_train,epochs=3,batch_size=5000)
 
 #4. 평가, 예측
 acc = model.evaluate(x_test,y_test)[1]
