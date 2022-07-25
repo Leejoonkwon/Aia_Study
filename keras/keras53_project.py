@@ -36,13 +36,13 @@ test_datagen = ImageDataGenerator(
     rescale=1./255)
 
 xy_train= train_datagen.flow_from_directory(
-    'C:\_data\emotion\\train',
+    'D:\study_data\_data\emotion\\train',
     target_size=(150,150),
     class_mode='categorical',
     batch_size=28709,
     shuffle=True,) # 경로 및 폴더 설정
 xy_test= test_datagen.flow_from_directory(
-    'C:\_data\emotion\\test',
+    'D:\study_data\_data\emotion\\test',
     target_size=(150,150),
     class_mode='categorical',
     batch_size=7178,
@@ -76,10 +76,10 @@ y_df = np.concatenate((y_train,y_augumented))
 xy_df3 = test_datagen.flow(x_df,y_df,
                        batch_size=augument_size,shuffle=False)
 
-np.save('C:\_data\_save\_train_x.npy',arr=xy_df3[0][0])
-np.save('C:\_data\_save\_train_y.npy',arr=xy_df3[0][1])
-np.save('C:\_data\_save\_test_x.npy',arr=x_test)
-np.save('C:\_data\_save\_test_y.npy',arr=y_test)
+np.save('D:\study_data\_data\_save\_npy\_train_x.npy',arr=xy_df3[0][0])
+np.save('D:\study_data\_data\_save\_npy\_train_y.npy',arr=xy_df3[0][1])
+np.save('D:\study_data\_data\_save\_npy\_test_x.npy',arr=x_test)
+np.save('D:\study_data\_data\_save\_npy\_test_y.npy',arr=y_test)
 
 
 
