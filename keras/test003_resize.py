@@ -13,4 +13,4 @@ for f in files:
         img_resize.save(title + '_half' + ext)
     except OSError as e:
         pass    
-    
+# save 위치 바꿔 보기    
