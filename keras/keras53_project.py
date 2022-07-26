@@ -18,6 +18,7 @@ import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
 from sklearn import datasets
+from sklearn.model_selection import train_test_split
 
 #1. 데이터
 
@@ -39,24 +40,14 @@ xy_train= train_datagen.flow_from_directory(
     'D:\study_data\_data\emotion\\train',
     target_size=(150,150),
     class_mode='categorical',
-    batch_size=28709,
+    color_mode='grayscale',
+    batch_size=28872,
     shuffle=True,) # 경로 및 폴더 설정
-xy_test= test_datagen.flow_from_directory(
-    'D:\study_data\_data\emotion\\test',
-    target_size=(150,150),
-    class_mode='categorical',
-    batch_size=7178,
-    shuffle=True,) # 경로 및 폴더 설정
-# print(xydata[0][0],xydata[0][0].shape) # (500, 150, 150, 3)
-# print(xy_train[0][0].shape) # (28709, 150, 150, 3)
-# print(xy_train[0][1].shape) # (28709, 21)
 
 x_train = xy_train[0][0]
 y_train = xy_train[0][1]
-x_test = xy_test[0][0]
-y_test = xy_test[0][1]
 
-augument_size = 2000
+augument_size = 20000
 randidx = np.random.randint(x_train.shape[0],size=augument_size)
 
 x_augumented = x_train[randidx].copy()
@@ -75,12 +66,15 @@ y_df = np.concatenate((y_train,y_augumented))
 # print(x_df.shape) #(64000, 28, 28, 1)
 
 xy_df3 = test_datagen.flow(x_df,y_df,
-                       batch_size=augument_size,shuffle=False)
-
-# np.save('D:\study_data\_save\_npy\_train_x1.npy',arr=xy_df3[0][0])
-# np.save('D:\study_data\_save\_npy\_train_y1.npy',arr=xy_df3[0][1])
-# np.save('D:\study_data\_save\_npy\_test_x1.npy',arr=x_test)
-# np.save('D:\study_data\_save\_npy\_test_y1.npy',arr=y_test)
+                       batch_size=augument_size,
+                       shuffle=False)
+x = xy_df3[0][0]
+y = xy_df3[0][1]
+x_train,x_test,y_train,y_test = train_test_split(x,y,train_size = 0.75,shuffle=False)
+np.save('D:\study_data\_save\_npy\_train_x1.npy',arr=x_train)
+np.save('D:\study_data\_save\_npy\_train_y1.npy',arr=y_train)
+np.save('D:\study_data\_save\_npy\_test_x1.npy',arr=x_test)
+np.save('D:\study_data\_save\_npy\_test_y1.npy',arr=y_test)
 
 
 

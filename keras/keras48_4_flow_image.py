@@ -3,7 +3,7 @@ from keras.preprocessing.image import ImageDataGenerator
 import numpy as np
 
 
-(x_train,y_train),(x_test,y_test) = fashion_mnist.load_data()   
+# (x_train,y_train),(x_test,y_test) = fashion_mnist.load_data()   
 
 train_datagen = ImageDataGenerator(
     rescale=1./255,
@@ -17,33 +17,27 @@ train_datagen = ImageDataGenerator(
     fill_mode='nearest'
 )
 test_datagen = ImageDataGenerator(
-    rescale=1./255,
-   
-)
+    rescale=1./255,)
+x_train = np.load('D:\study_data\_save\_npy\_train_x1.npy')
+y_train = np.load('D:\study_data\_save\_npy\_train_y1.npy')
+x_test = np.load('D:\study_data\_save\_npy\_test_x1.npy')
+y_test = np.load('D:\study_data\_save\_npy\_test_y1.npy')
+print(x_train.shape,x_test.shape) #(15000, 150, 150, 3) (5000, 150, 150, 3)
+print(y_train.shape,y_test.shape) #(15000, 21) (5000, 21)
 
 augument_size = 10
 randidx = np.random.randint(x_train.shape[0],size=augument_size)
 
-# print(randidx,randidx.shape) #((20,)
-
-# print(np.min(randidx),np.max(randidx)) # 174 49920
-# print(type(randidx)) #<class 'numpy.ndarray'>
-
 x_augumented = x_train[randidx].copy()
 x_train = x_train[randidx].copy()
-# print(x_augumented.shape) #(10, 28, 28)
-# print(x_train.shape) #(10, 28, 28)
 
-# xy = np.concatenate((x_train,x_augumented))
-# x_train = x_train.reshape(10,28,28,1)
-# x_augumented = x_augumented.reshape(10,28,28,1)
 x_data = train_datagen.flow(
-    np.tile(x_train[0].reshape(28*28),10).reshape(-1,28,28,1), # x
+    np.tile(x_train[0].reshape(150*450),10).reshape(-1,150,150,3), # x
     np.zeros(10) ,# y 
     batch_size=10,
     shuffle=True)
 y_data = test_datagen.flow(
-    np.tile(x_augumented[0].reshape(28*28),10).reshape(-1,28,28,1), # x
+    np.tile(x_augumented[0].reshape(150*450),10).reshape(-1,150,150,3), # x
     np.zeros(10) ,# y 
     batch_size=10,
     shuffle=False)
