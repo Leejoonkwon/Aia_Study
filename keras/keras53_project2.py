@@ -47,9 +47,11 @@ earlyStopping = EarlyStopping(monitor='loss', patience=30, mode='min',
 #                       filepath="".join([filepath,'k24_', date, '_', filename])
 #                     )
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-hist = model.fit(x_train,y_train,epochs=350,verbose=2,validation_split=0.25,batch_size=100)
-model.load_weights("D:\study_data\_save.h5")
-
+hist = model.fit(x_train,y_train,epochs=350,verbose=2,
+                 validation_split=0.25,batch_size=500
+                 ,callbacks=[earlyStopping])
+model.save_weights("D:\study_data\_save.h5")
+model.save_weights("./_save/keras23_5_save_weights1.h5")
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
 print('loss :', loss)
