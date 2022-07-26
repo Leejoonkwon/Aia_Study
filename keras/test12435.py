@@ -10,3 +10,5 @@ for imagePath in imagePaths:
     img_numpy = np.array(img, 'uint8')
     cv2.imwrite("D:\study_data\_data\emotion\\train\jealousy\\" + imagePath.split("\\")[-1], img_numpy)
 print("All Done")
+
+# All Done
