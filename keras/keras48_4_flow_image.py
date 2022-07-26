@@ -24,15 +24,15 @@ test_datagen = ImageDataGenerator(
 augument_size = 10
 randidx = np.random.randint(x_train.shape[0],size=augument_size)
 
-print(randidx,randidx.shape) #((20,)
+# print(randidx,randidx.shape) #((20,)
 
-print(np.min(randidx),np.max(randidx)) # 174 49920
-print(type(randidx)) #<class 'numpy.ndarray'>
+# print(np.min(randidx),np.max(randidx)) # 174 49920
+# print(type(randidx)) #<class 'numpy.ndarray'>
 
 x_augumented = x_train[randidx].copy()
 x_train = x_train[randidx].copy()
-print(x_augumented.shape) #(10, 28, 28)
-print(x_train.shape) #(10, 28, 28)
+# print(x_augumented.shape) #(10, 28, 28)
+# print(x_train.shape) #(10, 28, 28)
 
 # xy = np.concatenate((x_train,x_augumented))
 # x_train = x_train.reshape(10,28,28,1)
@@ -53,7 +53,7 @@ xy = np.concatenate((x_data,y_data))
 # [실습]
 print(xy[0][0].shape) #(20, 28, 28, 1)
 
-'''
+
 # 1. x_augumented 10개와 x_train 10개를 비교하는 이미지 출력할 것
 import matplotlib.pyplot as plt
 plt.figure(figsize=(7,7))
@@ -65,7 +65,7 @@ for i in range(20):
 plt.show() 
 # plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
 # plt.plot(hist.history['val_loss'],marker='.',c='blue',label='val_loss')
-'''
+
 
 
 

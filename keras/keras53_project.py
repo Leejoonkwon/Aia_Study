@@ -48,23 +48,24 @@ xy_test= test_datagen.flow_from_directory(
     batch_size=7178,
     shuffle=True,) # 경로 및 폴더 설정
 # print(xydata[0][0],xydata[0][0].shape) # (500, 150, 150, 3)
-print(xy_train[0][0].shape) # (500, 150, 150, 3)
-print(xy_train[0][1].shape) # (500, 7)
+# print(xy_train[0][0].shape) # (28709, 150, 150, 3)
+# print(xy_train[0][1].shape) # (28709, 21)
+
 x_train = xy_train[0][0]
 y_train = xy_train[0][1]
 x_test = xy_test[0][0]
 y_test = xy_test[0][1]
 
-augument_size = 500
+augument_size = 2000
 randidx = np.random.randint(x_train.shape[0],size=augument_size)
 
 x_augumented = x_train[randidx].copy()
 y_augumented = y_train[randidx].copy()
 
 
-print(x_augumented.shape)  #(10000, 150, 150, 3)
-print(y_augumented.shape) #(10000, 7)
-print(x_train.shape) #(28709, 150, 150, 3)
+# print(x_augumented.shape)  #(500, 150, 150, 3)
+# print(y_augumented.shape) #(500, 21)
+# print(x_train.shape) #(28709, 150, 150, 3)
 
 
 
@@ -76,10 +77,10 @@ y_df = np.concatenate((y_train,y_augumented))
 xy_df3 = test_datagen.flow(x_df,y_df,
                        batch_size=augument_size,shuffle=False)
 
-np.save('D:\study_data\_data\_save\_npy\_train_x.npy',arr=xy_df3[0][0])
-np.save('D:\study_data\_data\_save\_npy\_train_y.npy',arr=xy_df3[0][1])
-np.save('D:\study_data\_data\_save\_npy\_test_x.npy',arr=x_test)
-np.save('D:\study_data\_data\_save\_npy\_test_y.npy',arr=y_test)
+# np.save('D:\study_data\_save\_npy\_train_x1.npy',arr=xy_df3[0][0])
+# np.save('D:\study_data\_save\_npy\_train_y1.npy',arr=xy_df3[0][1])
+# np.save('D:\study_data\_save\_npy\_test_x1.npy',arr=x_test)
+# np.save('D:\study_data\_save\_npy\_test_y1.npy',arr=y_test)
 
 
 
