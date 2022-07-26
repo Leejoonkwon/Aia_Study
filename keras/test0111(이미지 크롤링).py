@@ -14,7 +14,7 @@ def createFolder(directory):
         print ('Error: Creating directory. ' +  directory)
 
 
-keyword='따분한'
+keyword='따분한,고요한'
 #keyword2='고화질'
 createFolder('d:/project/'+keyword)
 
