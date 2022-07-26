@@ -34,11 +34,11 @@ model.add(Embedding(input_dim=46,output_dim=10,input_length=100)) #단어사전�
 model.add(LSTM(32))
 model.add(Dense(32,activation='relu'))
 model.add(Dense(32,activation='relu'))
-<<<<<<< HEAD
+
 model.add(Dense(1,activation='sigmoid'))
-=======
+
 model.add(Dense(2,activation='sigmoid'))
->>>>>>> bc514901d26e19fad45765b4f2686f98230492c7
+
 model.summary() #Total params: 5,847
 
 #3. 컴파일, 훈련
