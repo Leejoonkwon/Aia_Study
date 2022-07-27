@@ -17,8 +17,8 @@ soup = BeautifulSoup(html,'html.parser') #soup이라는 변수에는 BeautifulSo
 titles = soup.select('p.title')
 artists = soup.select('p.artist')
 driver = webdriver.Chrome('C:\chromedriver.exe') 
-# print(titles[1].text)
-# print(artists[1].text)
+print(titles[1].text)
+print(artists[1].text)
 f = open('BugsTOP100.txt','w',-1,'UTF-8')
 for i in range(len(titles)):
     driver.find_element('xpath','//*[@id="CHARTday"]/table/tbody/tr[]').click()

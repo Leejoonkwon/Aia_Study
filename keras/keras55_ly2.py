@@ -38,7 +38,9 @@ html = request.text
 soup = BeautifulSoup(html,'html.parser') #soup이라는 변수에는 BeautifulSoup() 함수를 이용해 html 즉 request의 text를. parser 분석하라는 뜻입니다.
 
 print(soup.find('xmp').string) # 텍스트로 뽑아야함 
+
 driver.back()
+
 search_click = driver.find_element('xpath','//*[@id="CHARTday"]/table/tbody/'+'tr[2]/td[4]'+'/a')
 # //*[@id="CHARTday"]/table/tbody/tr[2]/td[4]/a
 # //*[@id="CHARTday"]/table/tbody/tr[3]/td[4]/a

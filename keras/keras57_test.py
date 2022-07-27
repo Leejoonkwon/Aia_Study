@@ -16,7 +16,7 @@ train_datagen = ImageDataGenerator(
     fill_mode='nearest'
 )
 
-augument_size = 10
+augument_size = 10              # 300장  +300        ,10000 
 randidx = np.random.randint(x_train.shape[0], size=augument_size)
 
 x_augument = x_train[randidx].copy()

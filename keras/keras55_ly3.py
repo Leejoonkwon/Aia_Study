@@ -33,8 +33,9 @@ for i in songTagList:
 lyric2=[]
 for i in number:
     driver.get("https://www.melon.com/song/detail.htm?songId=" + i) 
-    lyric=driver.find_elements(By.CLASS_NAME,"lyric on")
+    lyric=driver.find_elements('xpath','//*[@id="lyricArea"]/button ')
     lyric2.append(lyric)
-    
+stats = driver.find_elements('xpath','//*[@id="lyricArea"]/button ')
+print(stats)   
 df=pd.DataFrame({"제목":title2,"가수":singer2,"가사":lyric2})
 df.to_excel("멜론TOP50 가사.xlsx",  encoding='utf-8')    
