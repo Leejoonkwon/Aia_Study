@@ -1,4 +1,3 @@
-from tensorflow.keras.datasets import fashion_mnist
 from keras.preprocessing.image import ImageDataGenerator 
 import numpy as np
 
@@ -18,13 +17,13 @@ train_datagen = ImageDataGenerator(
 test_datagen = ImageDataGenerator(
     rescale=1./255,)
     
-augument_size = 10              # 300장  +300        ,10000 
-randidx = np.random.randint(x_train.shape[0], size=augument_size)
+# augument_size = 10              # 300장  +300        ,10000 
+# randidx = np.random.randint(x_train.shape[0], size=augument_size)
 
-x_augument = x_train[randidx].copy()
-y_augument = y_train[randidx].copy()
-x_10_train = x_train[randidx]
-print(x_augument.shape)
+# x_augument = x_train[randidx].copy()
+# y_augument = y_train[randidx].copy()
+# x_10_train = x_train[randidx]
+# print(x_augument.shape)
 
       
 xy_train= train_datagen.flow_from_directory(
