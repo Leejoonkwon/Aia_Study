@@ -30,14 +30,11 @@ songTagList = driver.find_elements(By.ID,'lst50')
 number=[]
 for i in songTagList:
     number.append(i.get_attribute('data-song-no'))
-html = driver.page_source
-soup = BeautifulSoup(html, 'html.parser')
 lyric2=[]
 for i in number:
     driver.get("https://www.melon.com/song/detail.htm?songId=" + i) 
-    lyric=driver.find_elements(By.CLASS_NAME,"lyric on").text
-    # lyrics = soup.select_one('#content > div > p.lyrics').get_text()
-    lyric2.append(lyrics)
+    lyric=driver.find_elements(By.CLASS_NAME,"lyric on")
+    lyric2.append(lyric)
     
 df=pd.DataFrame({"제목":title2,"가수":singer2,"가사":lyric2})
 df.to_excel("멜론TOP50 가사.xlsx",  encoding='utf-8')    
