@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-
-URL = 'https://music.bugs.co.kr/genre/chart/kpop/elec/total/day' #URL 변수에는 대상이 되는 사이트의 주소를 넣어줬습니다.
+from selenium import webdriver
+URL = 'https://music.bugs.co.kr/genre/chart/kpop/jazz/total/day' #URL 변수에는 대상이 되는 사이트의 주소를 넣어줬습니다.
 
 request = requests.get(URL) #request라는 변수를 만들어 requests의 get() 함수를 이용하여 주소를
 
@@ -16,10 +16,12 @@ soup = BeautifulSoup(html,'html.parser') #soup이라는 변수에는 BeautifulSo
 
 titles = soup.select('p.title')
 artists = soup.select('p.artist')
+driver = webdriver.Chrome('C:\chromedriver.exe') 
 # print(titles[1].text)
 # print(artists[1].text)
 f = open('BugsTOP100.txt','w',-1,'UTF-8')
 for i in range(len(titles)):
+    driver.find_element('xpath','//*[@id="CHARTday"]/table/tbody/tr[]').click()
     title = titles[i].text.strip().split('\n')[0]
     artist =artists[i].text.strip().split('\n')[0]
     data = '{:3}위 {} - {}'.format(i+1, title, artist)
