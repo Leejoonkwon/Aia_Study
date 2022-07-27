@@ -26,7 +26,7 @@ y_augument = y_train[randidx].copy()
 x_10_train = x_train[randidx]
 print(x_augument.shape)
 
-
+      
 xy_train= train_datagen.flow_from_directory(
     'D:\study_data\\train',
     target_size=(150,150),
