@@ -2,6 +2,7 @@ from psutil import ZombieProcess
 from tensorflow.keras.datasets import fashion_mnist
 from keras.preprocessing.image import ImageDataGenerator 
 import numpy as np
+import cv2
 
 (x_train,y_train),(x_test,y_test) = fashion_mnist.load_data()   
 
