@@ -47,7 +47,7 @@ xy_train= train_datagen.flow_from_directory(
 x_train = xy_train[0][0]
 y_train = xy_train[0][1]
 
-augument_size = 20000
+augument_size = 25000
 randidx = np.random.randint(x_train.shape[0],size=augument_size)
 
 x_augumented = x_train[randidx].copy()
