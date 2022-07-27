@@ -9,7 +9,7 @@ file_list[0]
 len(file_list)
 print(len(file_list))
 
-file_name_list = []
+file_name_list = [] ###3
 
 for i in range(len(file_list)):
     file_name_list.append(file_list[i].replace(".jpg",""))
