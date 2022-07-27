@@ -13,7 +13,7 @@ x_test = np.load('D:\study_data\_save\_npy\_test_x2.npy')
 y_test = np.load('D:\study_data\_save\_npy\_test_y2.npy')
 print(x_train.shape,y_train.shape)  # (15000, 150, 150, 1) (15000, 21)
 print(x_test.shape,y_test.shape)    # (5000, 150, 150, 1) (5000, 21)
-'''
+
 # import matplotlib.pyplot as plt
 # plt.figure(figsize=(100,5))
 # for i in range(300):
@@ -54,7 +54,7 @@ earlyStopping = EarlyStopping(monitor='loss', patience=30, mode='min',
 #                       filepath="".join([filepath,'k24_', date, '_', filename])
 #                     )
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-hist = model.fit(x_train,y_train,epochs=8080,verbose=2,
+hist = model.fit(x_train,y_train,epochs=3,verbose=2,
                  validation_split=0.25,batch_size=10
                  ,callbacks=[earlyStopping])
 model.save_weights("D:\study_data\_save\keras53_project2.h5")
@@ -79,7 +79,12 @@ print('acc 스코어 :', acc)
 # 걸린 시간 : 1010.0424473285675
 # y_predict : (5000,)
 # acc 스코어 : 0.254
-'''
+
+# loss : [1.862046718597412, 0.24500000476837158]
+# 걸린 시간 : 35.0883367061615
+# y_predict : (5000,)
+# acc 스코어 : 0.245
+
 
 
 
