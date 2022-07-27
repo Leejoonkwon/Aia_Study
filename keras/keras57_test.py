@@ -15,11 +15,9 @@ train_datagen = ImageDataGenerator(
     # shear_range=0.7,
     fill_mode='nearest'
 )
-<<<<<<< HEAD
 test_datagen = ImageDataGenerator(
     rescale=1./255,)
-=======
-
+    
 augument_size = 10              # 300장  +300        ,10000 
 randidx = np.random.randint(x_train.shape[0], size=augument_size)
 
@@ -27,7 +25,6 @@ x_augument = x_train[randidx].copy()
 y_augument = y_train[randidx].copy()
 x_10_train = x_train[randidx]
 print(x_augument.shape)
->>>>>>> 79424ea1380b9539ed78cffa83f174e999d0c642
 
 
 xy_train= train_datagen.flow_from_directory(
