@@ -24,10 +24,10 @@ from sklearn.model_selection import train_test_split
 
 train_datagen = ImageDataGenerator(
     rescale=1./255,
-    horizontal_flip=True,
+    # horizontal_flip=True,
     vertical_flip=True,
-    width_shift_range=0.1,
-    height_shift_range=0.1,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
     rotation_range=5,
     zoom_range=0.1,
     # shear_range=0.7,
