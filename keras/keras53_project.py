@@ -25,7 +25,7 @@ from sklearn.model_selection import train_test_split
 train_datagen = ImageDataGenerator(
     rescale=1./255,
     horizontal_flip=True,
-    # vertical_flip=True,
+    vertical_flip=True,
     width_shift_range=0.1,
     height_shift_range=0.1,
     rotation_range=5,
@@ -36,8 +36,8 @@ train_datagen = ImageDataGenerator(
 test_datagen = ImageDataGenerator(
     rescale=1./255)
 
-xy_train= train_datagen.flow_from_directory(
-    'D:\study_data\_data\emotion\\train',
+xy_train= test_datagen.flow_from_directory(
+    'D:\study_data\\train',
     target_size=(150,150),
     class_mode='categorical',
     color_mode='grayscale',
@@ -47,34 +47,29 @@ xy_train= train_datagen.flow_from_directory(
 x_train = xy_train[0][0]
 y_train = xy_train[0][1]
 
-augument_size = 25000
+augument_size = 10000
 randidx = np.random.randint(x_train.shape[0],size=augument_size)
 
 x_augumented = x_train[randidx].copy()
 y_augumented = y_train[randidx].copy()
+x_train = x_train[randidx]
+y_train = y_train[randidx]
+print(x_augumented.shape) #(25000, 150, 150, 1)
+print(y_augumented.shape) #(25000, 21)
 
-
-# print(x_augumented.shape)  #(500, 150, 150, 3)
-# print(y_augumented.shape) #(500, 21)
-# print(x_train.shape) #(28709, 150, 150, 3)
-
-
-
-
-x_df = np.concatenate((x_train,x_augumented))
-y_df = np.concatenate((y_train,y_augumented))
-# print(x_df.shape) #(64000, 28, 28, 1)
-
-xy_df3 = test_datagen.flow(x_df,y_df,
+xy_df3 = train_datagen.flow(x_augumented,y_augumented,
                        batch_size=augument_size,
                        shuffle=False)
-x = xy_df3[0][0]
-y = xy_df3[0][1]
-x_train,x_test,y_train,y_test = train_test_split(x,y,train_size = 0.75,shuffle=False)
-np.save('D:\study_data\_save\_npy\_train_x1.npy',arr=x_train)
-np.save('D:\study_data\_save\_npy\_train_y1.npy',arr=y_train)
-np.save('D:\study_data\_save\_npy\_test_x1.npy',arr=x_test)
-np.save('D:\study_data\_save\_npy\_test_y1.npy',arr=y_test)
+x_data = np.concatenate((x_train,xy_df3[0][0]))
+y_data = np.concatenate((y_train,xy_df3[0][1]))
+
+
+x_train,x_test,y_train,y_test = train_test_split(x_data,y_data,train_size = 0.75,shuffle=False)
+
+np.save('D:\study_data\_save\_npy\_train_x2.npy',arr=x_train)
+np.save('D:\study_data\_save\_npy\_train_y2.npy',arr=y_train)
+np.save('D:\study_data\_save\_npy\_test_x2.npy',arr=x_test)
+np.save('D:\study_data\_save\_npy\_test_y2.npy',arr=y_test)
 
 
 

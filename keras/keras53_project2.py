@@ -3,17 +3,24 @@ from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
 from sklearn import datasets
 
-# np.save('D:\study_data\_save\_npy\_train_x1.npy',arr=xy_df3[0][0])
-# np.save('D:\study_data\_data\_save\_npy\_train_y1.npy',arr=xy_df3[0][1])
-# np.save('D:\study_data\_data\_save\_npy\_test_x1.npy',arr=x_test)
-# np.save('D:\study_data\_data\_save\_npy\_test_y1.npy',arr=y_test)
-x_train = np.load('D:\study_data\_save\_npy\_train_x1.npy')
-y_train = np.load('D:\study_data\_save\_npy\_train_y1.npy')
-x_test = np.load('D:\study_data\_save\_npy\_test_x1.npy')
-y_test = np.load('D:\study_data\_save\_npy\_test_y1.npy')
-# print(x_train.shape,y_train.shape)  # (15000, 150, 150, 1) (15000, 21)
-# print(x_test.shape,y_test.shape)    # (5000, 150, 150, 1) (5000, 21)
-
+# np.save('D:\study_data\_save\_npy\_train_x2.npy',arr=x_train)
+# np.save('D:\study_data\_save\_npy\_train_y2.npy',arr=y_train)
+# np.save('D:\study_data\_save\_npy\_test_x2.npy',arr=x_test)
+# np.save('D:\study_data\_save\_npy\_test_y2.npy',arr=y_test)
+x_train = np.load('D:\study_data\_save\_npy\_train_x2.npy')
+y_train = np.load('D:\study_data\_save\_npy\_train_y2.npy')
+x_test = np.load('D:\study_data\_save\_npy\_test_x2.npy')
+y_test = np.load('D:\study_data\_save\_npy\_test_y2.npy')
+print(x_train.shape,y_train.shape)  # (15000, 150, 150, 1) (15000, 21)
+print(x_test.shape,y_test.shape)    # (5000, 150, 150, 1) (5000, 21)
+'''
+# import matplotlib.pyplot as plt
+# plt.figure(figsize=(100,5))
+# for i in range(300):
+#     plt.subplot(6,50,i+1)
+#     plt.axis('off')
+#     plt.imshow(x_train[i])
+# plt.show()
 
 #2. 모델 
 from tensorflow.python.keras.models import Sequential
@@ -72,7 +79,7 @@ print('acc 스코어 :', acc)
 # 걸린 시간 : 1010.0424473285675
 # y_predict : (5000,)
 # acc 스코어 : 0.254
-
+'''
 
 
 
