@@ -77,7 +77,7 @@ print(x_data1.shape)# (38872, 48, 48, 1)
 print(y_data1.shape) #(38872, 21)
 # [실습]
 
-x_train,x_test,y_train,y_test = train_test_split(x_data1,y_data1,train_size=0.7,shuffle=False)
+x_train,x_test,y_train,y_test = train_test_split(x_data1,y_data1,train_size=0.8,shuffle=True)
 np.save('D:\study_data\_save\_npy\_train_x5.npy',arr=x_train)
 np.save('D:\study_data\_save\_npy\_train_y5.npy',arr=y_train)
 np.save('D:\study_data\_save\_npy\_test_x5.npy',arr=x_test)
