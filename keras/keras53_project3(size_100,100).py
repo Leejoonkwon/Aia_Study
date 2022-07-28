@@ -38,6 +38,8 @@ model.add(Conv2D(128,(2,2),padding='same',activation='relu'))
 model.add(MaxPool2D((2,2)))
 model.add(Conv2D(128,(2,2),padding='same',activation='relu'))
 model.add(MaxPool2D((2,2)))
+model.add(Conv2D(128,(2,2),padding='same',activation='relu'))
+model.add(MaxPool2D((2,2)))
 model.add(Flatten())
 model.add(Dense(256,activation='relu'))
 model.add(Dropout(0.6))
@@ -58,7 +60,7 @@ earlyStopping = EarlyStopping(monitor='val_loss', patience=10, mode='min',
 #                       filepath="".join([filepath,'k24_', date, '_', filename])
 #                     )
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-hist = model.fit(x_train,y_train,epochs=150,verbose=2,
+hist = model.fit(x_train,y_train,epochs=350,verbose=2,
                  validation_split=0.3,
                  batch_size=500,
                  callbacks=[earlyStopping])
@@ -95,9 +97,10 @@ print('acc 스코어 :', acc)
 # y_predict : (6775,)
 # acc 스코어 : 0.36487084870848707
 ######
-# 걸린 시간 : 137.71111226081848
+# loss : [1.354625940322876, 0.4937269389629364]
+# 걸린 시간 : 185.19427919387817
 # y_predict : (6775,)
-# acc 스코어 : 0.4277490774907749
+# acc 스코어 : 0.49372693726937267
 
 
 
