@@ -10,9 +10,8 @@ x_train = np.load('D:\study_data\_save\_npy\_train_x4.npy')
 y_train = np.load('D:\study_data\_save\_npy\_train_y4.npy')
 x_test = np.load('D:\study_data\_save\_npy\_test_x4.npy')
 y_test = np.load('D:\study_data\_save\_npy\_test_y4.npy')
-print(x_train.shape,y_train.shape)  # (34210, 150, 150, 1) (34210, 21)
-print(x_test.shape,y_test.shape)    # (14662, 150, 150, 1) (14662, 21)
-# print(x_test,y_test)    # (5000, 150, 150, 1) (5000, 21)
+print(x_train.shape,y_train.shape)  # (27210, 48, 48, 1) (27210, 21)
+print(x_test.shape,y_test.shape)    # (11662, 48, 48, 1) (11662, 21)
 
 # import matplotlib.pyplot as plt
 # plt.figure(figsize=(100,5))
@@ -27,15 +26,15 @@ from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Conv2D,Flatten,Dense,MaxPool2D,Dropout
 
 model = Sequential()
-model.add(Conv2D(64,(3,3),input_shape=(150,150,1),padding='same',activation='relu'))
-model.add(MaxPool2D())
-model.add(Conv2D(64,(3,3),activation='relu'))
+model.add(Conv2D(48,(2,2),input_shape=(48,48,1),padding='same',activation='relu'))
+model.add(MaxPool2D((2,2)))
+model.add(Conv2D(64,(2,2),padding='same',activation='relu'))
+model.add(MaxPool2D((2,2)))
+# model.add(Conv2D(64,(2,2),padding='same',activation='relu'))
+# model.add(MaxPool2D((3,3)))
 model.add(Flatten())
 model.add(Dense(100,activation='relu'))
-model.add(Dropout(0.2))
-model.add(Dense(100,activation='relu'))
-model.add(Dense(100,activation='relu'))
-model.add(Dropout(0.2))
+model.add(Dropout(0.6))
 model.add(Dense(21,activation='softmax'))
 import time
 from keras.callbacks import ModelCheckpoint,EarlyStopping
@@ -51,9 +50,10 @@ earlyStopping = EarlyStopping(monitor='val_loss', patience=10, mode='min',
 #                       filepath="".join([filepath,'k24_', date, '_', filename])
 #                     )
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-hist = model.fit(x_train,y_train,epochs=2,verbose=2,
-                 validation_split=0.3,batch_size=5
-                 ,callbacks=[earlyStopping])
+hist = model.fit(x_train,y_train,epochs=30,verbose=2,
+                 validation_split=0.3,
+                 batch_size=2000,
+                 callbacks=[earlyStopping])
 model.save_weights("D:\study_data\_save\keras53_project2.h5")
 # model.save_weights("./_save/keras23_5_save_weights1.h5")
 #4. 평가,예측

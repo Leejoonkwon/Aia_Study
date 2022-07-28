@@ -26,7 +26,7 @@ test_datagen = ImageDataGenerator(
       
 xy_train= train_datagen.flow_from_directory(
     'D:\study_data\\train',
-    target_size=(48,48),
+    target_size=(100,100),
     class_mode='categorical',
     color_mode='grayscale',
     batch_size=28872,
@@ -37,67 +37,62 @@ print(y.shape)
 np.save('D:\study_data\_save\_npy\\train_x.npy',arr=x)
 np.save('D:\study_data\_save\_npy\\train_y.npy',arr=y)
 
-'''
+
 x = np.load('D:\study_data\_save\_npy\\train_x.npy')
 y = np.load('D:\study_data\_save\_npy\\train_y.npy')
 
-print(x.shape) #(28872, 150, 150, 1)
+print(x.shape) #(28872, 48, 48, 1)
 print(y.shape) #(28872, 21)
 
 # print(xy_train[0][0].shape) #(28872, 150, 150, 1)
 
-augument_size = 100
-x1 = x[:28708] # kaggle data
 x2 = x[28708:] # 직접 모은 데이터
-y1 = y[:28708] # kaggle data
 y2 = y[28708:] # 직접 모은 데이터
-print(x1.shape,x2.shape) #(28708, 150, 150, 1) (164, 150, 150, 1)
-print(y1.shape,y2.shape) #(28708, 21) (164, 21)
 
 augument_size = 164
 
 randidx = np.random.randint(x2.shape[0],size=augument_size)
 x_augumented = x2[randidx].copy()
 y_augumented = y2[randidx].copy()
-print(y_augumented.shape) #(164, 21)
+# print(x_augumented.shape) #(164, 48, 48, 1)
+# print(y_augumented.shape) #(164, 21)
 
-x2 = x2[randidx]
-y2 = y2[randidx]
 x_data = train_datagen.flow(
-    np.tile(x_augumented[0].reshape(150*150),20000).reshape(-1,150,150,1), # x
-    np.tile(y_augumented[0].reshape(21*1),20000).reshape(-1,21) ,# y 
-    batch_size=20000,
+    np.tile(x_augumented[0].reshape(100*100),5000).reshape(-1,100,100,1), # x
+    np.tile(y_augumented[0].reshape(21*1),5000).reshape(-1,21) ,# y 
+    batch_size=5000,
     shuffle=True)
 
 
-print(x_data[0][0].shape) # (20000, 150, 150, 1)
-print(x_data[0][1].shape) # (20000, 21)
+print(x_data[0][0].shape) # (10000, 48, 48, 1)
+print(x_data[0][1].shape) # (10000, 21)
 
-print(x.shape) #(28872, 150, 150, 1)
+print(x.shape) #(28872, 48, 48, 1)
 print(y.shape) #(28872, 21)
 
 
 x_data1 = np.concatenate((x,x_data[0][0])) # 48872 행이네 
 y_data1 = np.concatenate((y,x_data[0][1]))
-print(x_data1.shape)# (48872, 150, 150, 1)
-print(y_data1.shape) #(48872, 21)
+print(x_data1.shape)    # (33872, 100, 100, 1)
+print(y_data1.shape)    # (33872, 21)
 # [실습]
-x_train,x_test,y_train,y_test = train_test_split(x_data1,y_data1,train_size=0.7,shuffle=False)
-np.save('D:\study_data\_save\_npy\_train_x4.npy',arr=x_train)
-np.save('D:\study_data\_save\_npy\_train_y4.npy',arr=y_train)
-np.save('D:\study_data\_save\_npy\_test_x4.npy',arr=x_test)
-np.save('D:\study_data\_save\_npy\_test_y4.npy',arr=y_test)
+
+x_train,x_test,y_train,y_test = train_test_split(x_data1,y_data1,train_size=0.8,shuffle=True)
+np.save('D:\study_data\_save\_npy\_train_x5.npy',arr=x_train)
+np.save('D:\study_data\_save\_npy\_train_y5.npy',arr=y_train)
+np.save('D:\study_data\_save\_npy\_test_x5.npy',arr=x_test)
+np.save('D:\study_data\_save\_npy\_test_y5.npy',arr=y_test)
 
 
 
-# 1. x_augumented 10개와 x_train 10개를 비교하는 이미지 출력할 것
-import matplotlib.pyplot as plt
-plt.figure(figsize=(7,7))
-for i in range(200):
-    plt.subplot(20,10,i+1)
-    plt.axis('off')
-    plt.imshow(x_data[i],cmap='gray')
+# # 1. x_augumented 10개와 x_train 10개를 비교하는 이미지 출력할 것
+# import matplotlib.pyplot as plt
+# plt.figure(figsize=(7,7))
+# for i in range(200):
+#     plt.subplot(20,10,i+1)
+#     plt.axis('off')
+#     plt.imshow(x_data[i],cmap='gray')
     
-plt.show() 
-'''
+# plt.show() 
+
 
