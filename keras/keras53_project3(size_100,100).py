@@ -40,6 +40,8 @@ model.add(Conv2D(128,(2,2),padding='same',activation='relu'))
 model.add(MaxPool2D((2,2)))
 model.add(Conv2D(128,(2,2),padding='same',activation='relu'))
 model.add(MaxPool2D((2,2)))
+model.add(Conv2D(128,(2,2),padding='same',activation='relu'))
+model.add(MaxPool2D((2,2)))
 model.add(Flatten())
 model.add(Dense(256,activation='relu'))
 model.add(Dropout(0.6))
@@ -53,16 +55,16 @@ start_time = time.time()
 #3. 컴파일,훈련
 # filepath = './_test/'
 # filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
-earlyStopping = EarlyStopping(monitor='val_loss', patience=10, mode='min', 
+earlyStopping = EarlyStopping(monitor='val_loss', patience=5, mode='min', 
                               verbose=1,restore_best_weights=True)
 # mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
 #                       save_best_only=True, 
 #                       filepath="".join([filepath,'k24_', date, '_', filename])
 #                     )
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-hist = model.fit(x_train,y_train,epochs=350,verbose=2,
-                 validation_split=0.3,
-                 batch_size=500,
+hist = model.fit(x_train,y_train,epochs=100,verbose=2,
+                 validation_split=0.35,
+                 batch_size=300,
                  callbacks=[earlyStopping])
 model.save_weights("D:\study_data\_save\keras53_project2.h5")
 # model.save_weights("./_save/keras23_5_save_weights1.h5")
@@ -82,26 +84,10 @@ acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
 
 #### 증폭 후
-# loss : [1.5243678092956543, 0.39542436599731445]
-# 걸린 시간 : 47.57860064506531
+# loss : [1.3046691417694092, 0.507749080657959]
+# 걸린 시간 : 168.37035512924194
 # y_predict : (6775,)
-# acc 스코어 : 0.39542435424354244
-######
-# loss : [1.5229676961898804, 0.39261993765830994]
-# 걸린 시간 : 48.090755462646484
-# y_predict : (6775,)
-# acc 스코어 : 0.392619926199262
-######
-# loss : [1.552404522895813, 0.3648708462715149]
-# 걸린 시간 : 21.46925687789917
-# y_predict : (6775,)
-# acc 스코어 : 0.36487084870848707
-######
-# loss : [1.354625940322876, 0.4937269389629364]
-# 걸린 시간 : 185.19427919387817
-# y_predict : (6775,)
-# acc 스코어 : 0.49372693726937267
-
+# acc 스코어 : 0.5077490774907749
 
 
 
