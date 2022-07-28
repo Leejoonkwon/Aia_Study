@@ -73,8 +73,8 @@ print(y.shape) #(28872, 21)
 
 x_data1 = np.concatenate((x,x_data[0][0])) # 48872 행이네 
 y_data1 = np.concatenate((y,x_data[0][1]))
-print(x_data1.shape)# (38872, 48, 48, 1)
-print(y_data1.shape) #(38872, 21)
+print(x_data1.shape)    # (33872, 100, 100, 1)
+print(y_data1.shape)    # (33872, 21)
 # [실습]
 
 x_train,x_test,y_train,y_test = train_test_split(x_data1,y_data1,train_size=0.8,shuffle=True)
