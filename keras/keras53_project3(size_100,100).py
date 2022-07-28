@@ -1,6 +1,8 @@
+from matplotlib.font_manager import _Weight
 import numpy as np      
 from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
+from keras.applications import vgg16
 
 # np.save('D:\study_data\_save\_npy\_train_x5.npy',arr=x_train)
 # np.save('D:\study_data\_save\_npy\_train_y5.npy',arr=y_train)
@@ -26,9 +28,12 @@ y_test = np.load('D:\study_data\_save\_npy\_test_y5.npy')
 #2. 모델 
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Conv2D,Flatten,Dense,MaxPool2D,Dropout
-
+conv_base = vgg16(weigts='imagenet',
+                  includ_top=False,
+                  input_shape=(100,100,1))
 model = Sequential()
-model.add(Conv2D(48,(2,2),input_shape=(100,100,1),padding='same',activation='relu'))
+# model.add(Conv2D(48,(2,2),input_shape=(100,100,1),padding='same',activation='relu'))
+model.add(conv_base)
 model.add(MaxPool2D((2,2)))
 model.add(Conv2D(64,(2,2),padding='same',activation='relu'))
 model.add(MaxPool2D((2,2)))
@@ -58,6 +63,7 @@ hist = model.fit(x_train,y_train,epochs=500,verbose=2,
                  callbacks=[earlyStopping])
 model.save_weights("D:\study_data\_save\keras53_project2.h5")
 # model.save_weights("./_save/keras23_5_save_weights1.h5")
+
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
 print('loss :', loss)
