@@ -1,7 +1,6 @@
 import numpy as np      
 from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
-from tensorflow.keras.applications import VGG16
 
 # np.save('D:\study_data\_save\_npy\_train_x5.npy',arr=x_train)
 # np.save('D:\study_data\_save\_npy\_train_y5.npy',arr=y_train)
@@ -40,8 +39,8 @@ model.add(Conv2D(128,(2,2),padding='same',activation='relu'))
 model.add(MaxPool2D((2,2)))
 model.add(Conv2D(128,(2,2),padding='same',activation='relu'))
 model.add(MaxPool2D((2,2)))
-model.add(Conv2D(128,(2,2),padding='same',activation='relu'))
-model.add(MaxPool2D((2,2)))
+# model.add(Conv2D(128,(2,2),padding='same',activation='relu'))
+# model.add(MaxPool2D((2,2)))
 model.add(Flatten())
 model.add(Dense(256,activation='relu'))
 model.add(Dropout(0.6))
@@ -55,16 +54,15 @@ start_time = time.time()
 #3. 컴파일,훈련
 # filepath = './_test/'
 # filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
-earlyStopping = EarlyStopping(monitor='val_loss', patience=5, mode='min', 
+earlyStopping = EarlyStopping(monitor='val_loss', patience=100, mode='min', 
                               verbose=1,restore_best_weights=True)
 # mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
 #                       save_best_only=True, 
 #                       filepath="".join([filepath,'k24_', date, '_', filename])
 #                     )
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-hist = model.fit(x_train,y_train,epochs=100,verbose=2,
+hist = model.fit(x_train,y_train,epochs=30,verbose=2,
                  validation_split=0.35,
-                 batch_size=300,
                  callbacks=[earlyStopping])
 model.save_weights("D:\study_data\_save\keras53_project2.h5")
 # model.save_weights("./_save/keras23_5_save_weights1.h5")
