@@ -24,26 +24,26 @@ test_datagen = ImageDataGenerator(
 # print(x_augument.shape)
 
       
-xy_train= train_datagen.flow_from_directory(
-    'D:\study_data\\train',
-    target_size=(48,48),
-    class_mode='categorical',
-    color_mode='grayscale',
-    batch_size=28872,
-    shuffle=False,) # 경로 및 폴더 설정
-x = xy_train[0][0]
-y = xy_train[0][1]
-print(y.shape)
-np.save('D:\study_data\_save\_npy\\train_x.npy',arr=x)
-np.save('D:\study_data\_save\_npy\\train_y.npy',arr=y)
+# xy_train= train_datagen.flow_from_directory(
+#     'D:\study_data\\train',
+#     target_size=(48,48),
+#     class_mode='categorical',
+#     color_mode='grayscale',
+#     batch_size=28872,
+#     shuffle=False,) # 경로 및 폴더 설정
+# x = xy_train[0][0]
+# y = xy_train[0][1]
+# print(y.shape)
+# np.save('D:\study_data\_save\_npy\\train_x.npy',arr=x)
+# np.save('D:\study_data\_save\_npy\\train_y.npy',arr=y)
 
-'''
+
 x = np.load('D:\study_data\_save\_npy\\train_x.npy')
 y = np.load('D:\study_data\_save\_npy\\train_y.npy')
 
 print(x.shape) #(28872, 150, 150, 1)
 print(y.shape) #(28872, 21)
-
+'''
 # print(xy_train[0][0].shape) #(28872, 150, 150, 1)
 
 augument_size = 100
