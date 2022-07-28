@@ -1,8 +1,7 @@
-from matplotlib.font_manager import _Weight
 import numpy as np      
 from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
-from keras.applications import vgg16
+from tensorflow.keras.applications import VGG16
 
 # np.save('D:\study_data\_save\_npy\_train_x5.npy',arr=x_train)
 # np.save('D:\study_data\_save\_npy\_train_y5.npy',arr=y_train)
@@ -28,21 +27,23 @@ y_test = np.load('D:\study_data\_save\_npy\_test_y5.npy')
 #2. 모델 
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Conv2D,Flatten,Dense,MaxPool2D,Dropout
-conv_base = vgg16(weigts='imagenet',
-                  includ_top=False,
-                  input_shape=(100,100,1))
+# conv_base = VGG16(weights='imagenet',
+#                   include_top=False,
+#                   input_shape=(100,100,3))
 model = Sequential()
-# model.add(Conv2D(48,(2,2),input_shape=(100,100,1),padding='same',activation='relu'))
-model.add(conv_base)
+model.add(Conv2D(128,(2,2),input_shape=(100,100,1),padding='same',activation='relu'))
+# model.add(conv_base)
 model.add(MaxPool2D((2,2)))
-model.add(Conv2D(64,(2,2),padding='same',activation='relu'))
+model.add(Conv2D(128,(2,2),padding='same',activation='relu'))
 model.add(MaxPool2D((2,2)))
-# model.add(Conv2D(64,(2,2),padding='same',activation='relu'))
-# model.add(MaxPool2D((3,3)))
+model.add(Conv2D(128,(2,2),padding='same',activation='relu'))
+model.add(MaxPool2D((2,2)))
 model.add(Flatten())
-model.add(Dense(100,activation='relu'))
+model.add(Dense(256,activation='relu'))
 model.add(Dropout(0.6))
 model.add(Dense(21,activation='softmax'))
+model.summary()
+
 import time
 from keras.callbacks import ModelCheckpoint,EarlyStopping
 
@@ -57,9 +58,9 @@ earlyStopping = EarlyStopping(monitor='val_loss', patience=10, mode='min',
 #                       filepath="".join([filepath,'k24_', date, '_', filename])
 #                     )
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-hist = model.fit(x_train,y_train,epochs=500,verbose=2,
+hist = model.fit(x_train,y_train,epochs=150,verbose=2,
                  validation_split=0.3,
-                 batch_size=100,
+                 batch_size=500,
                  callbacks=[earlyStopping])
 model.save_weights("D:\study_data\_save\keras53_project2.h5")
 # model.save_weights("./_save/keras23_5_save_weights1.h5")
@@ -88,6 +89,15 @@ print('acc 스코어 :', acc)
 # 걸린 시간 : 48.090755462646484
 # y_predict : (6775,)
 # acc 스코어 : 0.392619926199262
+######
+# loss : [1.552404522895813, 0.3648708462715149]
+# 걸린 시간 : 21.46925687789917
+# y_predict : (6775,)
+# acc 스코어 : 0.36487084870848707
+######
+# 걸린 시간 : 137.71111226081848
+# y_predict : (6775,)
+# acc 스코어 : 0.4277490774907749
 
 
 
