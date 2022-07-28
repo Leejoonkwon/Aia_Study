@@ -16,14 +16,18 @@ soup = BeautifulSoup(html,'html.parser') #soup이라는 변수에는 BeautifulSo
 
 titles = soup.select('p.title')
 artists = soup.select('p.artist')
+numbers = soup.select('tbody')
 driver = webdriver.Chrome('C:\chromedriver.exe') 
 print(titles[1].text)
 print(artists[1].text)
+print(numbers[0])
+'''
 f = open('BugsTOP100.txt','w',-1,'UTF-8')
 for i in range(len(titles)):
-    driver.find_element('xpath','//*[@id="CHARTday"]/table/tbody/tr[]').click()
     title = titles[i].text.strip().split('\n')[0]
     artist =artists[i].text.strip().split('\n')[0]
-    data = '{:3}위 {} - {}'.format(i+1, title, artist)
+    number =numbers[i].get
+    data = '{:3}위 {} - {} - {}'.format(i+1, title, artist,number)
     f.write(data + '\n')
 f.close()
+'''
