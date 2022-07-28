@@ -41,26 +41,22 @@ test_datagen = ImageDataGenerator(
 x = np.load('D:\study_data\_save\_npy\\train_x.npy')
 y = np.load('D:\study_data\_save\_npy\\train_y.npy')
 
-print(x.shape) #(28872, 150, 150, 1)
+print(x.shape) #(28872, 48, 48, 1)
 print(y.shape) #(28872, 21)
-'''
+
 # print(xy_train[0][0].shape) #(28872, 150, 150, 1)
 
-augument_size = 100
-x1 = x[:28708] # kaggle data
 x2 = x[28708:] # 직접 모은 데이터
-y1 = y[:28708] # kaggle data
 y2 = y[28708:] # 직접 모은 데이터
-print(x1.shape,x2.shape) #(28708, 150, 150, 1) (164, 150, 150, 1)
-print(y1.shape,y2.shape) #(28708, 21) (164, 21)
 
 augument_size = 164
 
 randidx = np.random.randint(x2.shape[0],size=augument_size)
 x_augumented = x2[randidx].copy()
 y_augumented = y2[randidx].copy()
+print(x_augumented.shape) #(164, 21)
 print(y_augumented.shape) #(164, 21)
-
+'''
 x2 = x2[randidx]
 y2 = y2[randidx]
 x_data = train_datagen.flow(
