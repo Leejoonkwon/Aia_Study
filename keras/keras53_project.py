@@ -38,7 +38,7 @@ test_datagen = ImageDataGenerator(
 
 xy_train= test_datagen.flow_from_directory(
     'D:\study_data\\train',
-    target_size=(150,150),
+    target_size=(48,48),
     class_mode='categorical',
     color_mode='grayscale',
     batch_size=28872,
