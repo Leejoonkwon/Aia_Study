@@ -19,9 +19,7 @@ driver.get('https://music.bugs.co.kr/genre/chart/etc/nost/total/day')
 time.sleep(3)
 
 search_click = driver.find_element('xpath','//*[@id="CHARTday"]/table/tbody/tr[1]/td[4]/a')
-# //*[@id="CHARTday"]/table/tbody/tr[2]/td[4]/a
-# //*[@id="CHARTday"]/table/tbody/tr[3]/td[4]/a
-# //*[@id="CHARTday"]/table/tbody/tr[100]/td[4]/a
+
 search_click.click()
 
 time.sleep(3)

@@ -2,8 +2,6 @@ from keras.preprocessing.text import Tokenizer
 
 text1 = '나는 진짜 매우 매우 맛있는 밥을 엄청 마구 마구 마구 먹었다.'
 text2 = '나는 지구용사 이재근이다. 멋있다.또 또 얘기해봐'
-x = csv['분류']
-y = csv['글귀']
 token = Tokenizer()
 
 token.fit_on_texts([text1,text2]) # text에 있는 문자를 읽고 index를 부여해 수치화한다.
