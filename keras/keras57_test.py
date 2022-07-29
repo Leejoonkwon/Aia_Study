@@ -28,7 +28,8 @@ xy_train= train_datagen.flow_from_directory(
     'D:\study_data\\train',
     target_size=(100,100),
     class_mode='categorical',
-    batch_size=28872,
+    color_mode='grayscale',
+    batch_size=2385,
     shuffle=False,) # 경로 및 폴더 설정
 x = xy_train[0][0]
 y = xy_train[0][1]
@@ -43,31 +44,31 @@ print(x.shape)
 # x = np.load('D:\study_data\_save\_npy\\train_x.npy')
 # y = np.load('D:\study_data\_save\_npy\\train_y.npy')
 
-print(x.shape) #(28872, 48, 48, 1)
-print(y.shape) #(28872, 21)
+# print(x.shape) #(28872, 48, 48, 1)
+# print(y.shape) #(28872, 21)
 
 # print(xy_train[0][0].shape) #(28872, 150, 150, 1)
 
-x2 = x[28708:] # 직접 모은 데이터
-y2 = y[28708:] # 직접 모은 데이터
+# x2 = x[28708:] # 직접 모은 데이터
+# y2 = y[28708:] # 직접 모은 데이터
 
-augument_size = 164
+augument_size = 2500
 
-randidx = np.random.randint(x2.shape[0],size=augument_size)
-x_augumented = x2[randidx].copy()
-y_augumented = y2[randidx].copy()
+randidx = np.random.randint(x.shape[0],size=augument_size)
+x_augumented = x[randidx].copy()
+y_augumented = y[randidx].copy()
 # print(x_augumented.shape) #(164, 48, 48, 1)
 # print(y_augumented.shape) #(164, 21)
 
 x_data = train_datagen.flow(
-    np.tile(x_augumented[0].reshape(100*100*3),10000).reshape(-1,100,100,3), # x
-    np.tile(y_augumented[0].reshape(21*1),10000).reshape(-1,21) ,# y 
-    batch_size=10000,
+    np.tile(x_augumented[0].reshape(100*100*1),15000).reshape(-1,100,100,1), # x
+    np.tile(y_augumented[0].reshape(21*1),15000).reshape(-1,21) ,# y 
+    batch_size=15000,
     shuffle=True)
 y_data = train_datagen.flow(
-    np.tile(x[0].reshape(100*100*3),10000).reshape(-1,100,100,3), # x
-    np.tile(y[0].reshape(21*1),10000).reshape(-1,21) ,# y 
-    batch_size=10000,
+    np.tile(x[0].reshape(100*100*1),15000).reshape(-1,100,100,1), # x
+    np.tile(y[0].reshape(21*1),15000).reshape(-1,21) ,# y 
+    batch_size=15000,
     shuffle=True)
 
 # print(x_data[0][0].shape) # (20000, 100, 100, 1)
@@ -84,10 +85,10 @@ print(y_data1.shape)    # (33872, 21)
 # [실습]
 
 x_train,x_test,y_train,y_test = train_test_split(x_data1,y_data1,train_size=0.8,shuffle=True,random_state=100)
-np.save('D:\study_data\_save\_npy\_train_x8.npy',arr=x_train)
-np.save('D:\study_data\_save\_npy\_train_y8.npy',arr=y_train)
-np.save('D:\study_data\_save\_npy\_test_x8.npy',arr=x_test)
-np.save('D:\study_data\_save\_npy\_test_y8.npy',arr=y_test)
+np.save('D:\study_data\_save\_npy\_train_x9.npy',arr=x_train)
+np.save('D:\study_data\_save\_npy\_train_y9.npy',arr=y_train)
+np.save('D:\study_data\_save\_npy\_test_x9.npy',arr=x_test)
+np.save('D:\study_data\_save\_npy\_test_y9.npy',arr=y_test)
 
 
 
