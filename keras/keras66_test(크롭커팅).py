@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import os
 
-path_dir = "D:\project\\jealousy face"
+path_dir = "D:\project\\longing face"
 file_list = os.listdir(path_dir)
 
 file_list[0]
@@ -29,9 +29,9 @@ def Cutting_face_save(image, name):
         cv2.destroyAllWindows()
 
         # 이미지 저장하기
-        cv2.imwrite(f"D:\project\\jealousy face/{name}.jpg", resize)
+        cv2.imwrite(f"D:\project\\longing face/{name}.jpg", resize)
         
 for name in file_name_list:
-    img = cv2.imread("D:\project\\jealousy face/"+name+".jpg")
+    img = cv2.imread("D:\project\\longing face/"+name+".jpg")
     Cutting_face_save(img, name)
     
