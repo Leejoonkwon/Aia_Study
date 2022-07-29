@@ -73,21 +73,28 @@ loss = model.evaluate(x_test, y_test)
 print('loss :', loss)
 end_time = time.time()-start_time
 print("걸린 시간 :",end_time)
-y_predict = model.predict(x_test)
+xy = np.load('D:\study_data\_save\_npy\_train_test.npy')
+y_predict = model.predict(xy)
 y_predict = np.argmax(y_predict,axis=1)
-y_test = np.argmax(y_test,axis=1)
 
-print('y_predict :', y_predict.shape) #y_predict : (50,)
-from sklearn.metrics import accuracy_score
-acc = accuracy_score(y_test, y_predict)
-print('acc 스코어 :', acc)
+print(y_predict)
+# y_predict = np.argmax(y_predict,axis=1)
+# y_test = np.argmax(y_test,axis=1)
+
+# print('y_predict :', y_predict.shape) #y_predict : (50,)
+# from sklearn.metrics import accuracy_score
+# acc = accuracy_score(y_test, y_predict)
+# print('acc 스코어 :', acc)
+
+
+
 
 #### 증폭 후 데이터 3만개 일때
 # loss : [1.3046691417694092, 0.507749080657959]
 # 걸린 시간 : 168.37035512924194
 # y_predict : (6775,)
 # acc 스코어 : 0.5077490774907749
-##########
+##########VGG16 적용
 # loss : [0.0, 1.0]
 # 걸린 시간 : 121.65885210037231
 # y_predict : (6000,)
