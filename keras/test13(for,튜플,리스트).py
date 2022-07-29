@@ -1,80 +1,100 @@
-######### for 문 예제
-# for 변수 in 리스트(또는 튜플, 문자열):
-#    수행할 문장 1
-#    수행할 문장 2
+from hamcrest import none
+from keras.preprocessing.image import ImageDataGenerator 
+import numpy as np
+from sklearn.model_selection import train_test_split
 
 
-# 예제
-test_list = ['one','two','three']
-for i in test_list:
-  print(i)
-# ['one', 'two', 'three'] 리스트의 첫 번째 요소인 'one'이 먼저 i 변수에 대입된 후 print(i) 문장을 수행한다. 
-# 다음에 두 번째 요소 'two'가 i 변수에 대입된 후 print(i) 문장을 수행하고 리스트의 
-# 마지막 요소까지 이것을 반복한다.
-a = [(1,2), (3,4), (5,6)]
-for (first, last) in a:
-    print(first + last)
-# 3,7,11 
-   
-######### tuple(튜플) 예제
-# 튜플의 형식
-# - 튜플은 콤마(,) 로 분리된 값을 의미하며 순서있는 임의의 객체의 모음이다.
-# - 인덱스가 존재한다.
-# - 튜플은 리스트와 유사하지만 튜플 내의 값을 변경할 수 없으므로 상수와 비슷한 속성을 가진다.
-# 튜플의 표현
-# - 튜플은 튜플은 콤마(,) 와 소괄호를 사용하여 설정하며 반드시 
-# 콤마(,) 가 존재해야 하며 소괄호 없이 콤마(,) 로  표현할 수도 있지만 권장하지는 않는다.
 
-b = (1) in (1,2,3)
-print(b)
-# True
-c = (12) in (1,2,3)
-print(c)
-# False
+train_datagen = ImageDataGenerator(
+    rescale=1./255,
+    horizontal_flip=True,
+    # vertical_flip=True,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    rotation_range=5,
+    zoom_range=0.1,
+    # shear_range=0.7,
+    fill_mode='nearest'
+)
+test_datagen = ImageDataGenerator(
+    rescale=1./255,)
+    
+# x_augument = x_train[randidx].copy()
+# y_augument = y_train[randidx].copy()
+# x_10_train = x_train[randidx]
+# print(x_augument.shape)
 
-# a = (1,2,3)
-# b = ('시작',a,'끝')
-# print(b)
-# ('시작', (1, 2, 3), '끝')
+      
+# xy_train= train_datagen.flow_from_directory(
+#     'D:\study_data\\train',
+#     target_size=(100,100),
+#     class_mode='categorical',
+#     color_mode='grayscale',
+#     batch_size=2385,
+#     shuffle=False,) # 경로 및 폴더 설정
+# x = xy_train[0][0]
+# y = xy_train[0][1]
+# print(y.shape)
+# print(x.shape)
 
 
-#튜플 자료형 요소
-# a = [1,2,3] 
-# b = ( '시작',a, '끝' ) 
-# print(b)
-a=(1,2,3,4) 
-b=(a,1,2,3)
-b[0] 
-print(b[0])# (1, 2, 3, 4)
-# b[0][2]
-print(b[0][2]) #3 인덱싱을 통한 중첩 튜플 인수를 두 번 지정할 경우 지정된 인수 위치의 값을 반환
-# b[0]=(1, 2, 3, 4) 이 상태에서 [2]는 (1,2,3,4)에서 인수 값 [2]에 위치한 3을 반환한다.
-### 패킹과 언패킹
-#1. 패킹: 하나의 튜플 안에 여러 개의 데이터를 넣는 작업
-a = (1, 2, 'python')
-print(a) #(1, 2, 'python')
-# 2. 언패킹: 하나의 튜플에서 여러 개의 데이터를 한꺼번에 꺼내와 각각 객체에 할당하는 작업
-a = (1, 2, 'python') 
-x, y, z = a # a로 정의된 튜플 인수를 x, y, z로 대치한다.
-# print(x) 1
-# print(z) python
-###### List(리스트)
+# np.save('D:\study_data\_save\_npy\\train_x.npy',arr=x)
+# np.save('D:\study_data\_save\_npy\\train_y.npy',arr=y)
 
-# List(리스트)(5) - 리스트 정렬
 
-# reverse : 리스트를 거꾸로 뒤집는다. desc 정렬이 아님
-#  a = [1, 10, 5, 7, 6]
-#  a.reverse()
-#  print(a)
-# [6, 7, 5, 10, 1]
+# x = np.load('D:\study_data\_save\_npy\\train_x.npy')
+# y = np.load('D:\study_data\_save\_npy\\train_y.npy')
 
-# sort : 정렬, 기본값은 오름차순 정렬, reverse옵션 True는 내림차순 정렬
-#  a = [1, 10, 5, 7, 6]
-#  a.sort()
-#  print(a)
-# [1, 5, 6, 7, 10]
+# print(x.shape) #(28872, 48, 48, 1)
+# print(y.shape) #(28872, 21)
 
-#  a = [1, 10, 5, 7, 6]
-#  a.sort(reverse=True)
-#  print(a)
-# [10, 7, 6, 5, 1]
+# print(xy_train[0][0].shape) #(28872, 150, 150, 1)
+
+# x2 = x[28708:] # 직접 모은 데이터
+# y2 = y[28708:] # 직접 모은 데이터
+
+# augument_size = 2500
+
+# randidx = np.random.randint(x.shape[0],size=augument_size)
+# x_augumented = x[randidx].copy()
+# y_augumented = y[randidx].copy()
+# # print(x_augumented.shape) #(164, 48, 48, 1)
+# # print(y_augumented.shape) #(164, 21)
+
+# x_data = train_datagen.flow(
+#     np.tile(x_augumented[0].reshape(100*100*1),15000).reshape(-1,100,100,1), # x
+#     np.tile(y_augumented[0].reshape(21*1),15000).reshape(-1,21) ,# y 
+#     batch_size=15000,
+#     shuffle=True)
+# y_data = train_datagen.flow(
+#     np.tile(x[0].reshape(100*100*1),15000).reshape(-1,100,100,1), # x
+#     np.tile(y[0].reshape(21*1),15000).reshape(-1,21) ,# y 
+#     batch_size=15000,
+#     shuffle=True)
+xy = test_datagen.flow_from_directory(
+    'D:\study_data\image',
+    target_size=(100,100),
+    class_mode='binary',
+    color_mode='grayscale',
+    batch_size=2385,
+    shuffle=False,) # 경로 및 폴더 설정
+# print(x_data[0][0].shape) # (20000, 100, 100, 1)
+# print(x_data[0][1].shape) # (20000, 21)
+# print(y_data[0][0].shape) # (20000, 100, 100, 1)
+# print(y_data[0][1].shape) # (20000, 21)
+
+
+np.save('D:\study_data\_save\_npy\_train_test.npy',arr=xy[0][0])
+
+
+# # 1. x_augumented 10개와 x_train 10개를 비교하는 이미지 출력할 것
+# import matplotlib.pyplot as plt
+# plt.figure(figsize=(7,7))
+# for i in range(200):
+#     plt.subplot(20,10,i+1)
+#     plt.axis('off')
+#     plt.imshow(x_data[i],cmap='gray')
+    
+# plt.show() 
+
+

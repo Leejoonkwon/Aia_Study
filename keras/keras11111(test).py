@@ -1,17 +1,34 @@
+import pandas as pd
+import numpy as np
+from keras.preprocessing.text import Tokenizer
+#1. 데이터
+path = 'D:\study_data\_data/' # ".은 현재 폴더"
+df = pd.read_csv(path + 'music.csv',
+                        )
 
-import Augmentor
+print(df.shape) #(400, 3)
 
-## 증강 시킬 이미지 폴더 경로
-img = Augmentor.Pipeline("D:/study_data/train/unfair")
+print(df.info())
 
-## 좌우 반전
-img.flip_left_right(probability=1.0) 
+token = Tokenizer(oov_token="<OOV>") #oov = out of vocabulary 
+print(df.shape)
 
-## 상하 반전
-# img.flip_top_bottom(probability=1.0)
+token.fit_on_texts(df['lyric'])
+x1 = token.texts_to_sequences(df['lyric'])
+x2 = token.texts_to_sequences(df['title'])
+x3 = token.texts_to_sequences(df['artist'])
+print(x2)
+y = df['class']
+print(y)
+# token.fit_on_texts(data) # 나는 코딩 고수다.  1:나는 2:코딩  3:고수다
+# print(data[:1])
+# print(token.word_index)
+# data = data.reshape(900,2)
+# print(data.shape) #900,2
+# # data = np.array(data)
+# print(data[0][1])
 
-## 왜곡
-img.random_distortion(probability=1, grid_width=5, grid_height=6, magnitude=6)
+# x = data
+# y = token.texts_to_sequences(x)# ( 1 2 3) # ( 5 2 1 )
+# print(y)
 
-## 증강 이미지 수
-img.sample(10)
