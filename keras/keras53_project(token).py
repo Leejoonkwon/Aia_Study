@@ -32,6 +32,14 @@ print(data.shape) #(1800,)
 # x_train,x_test,y_train
 
 token = Tokenizer(oov_token="<OOV>") #oov = out of vocabulary 
+<<<<<<< HEAD
+print(df.shape)
+'''
+token.fit_on_texts(df)
+x = token.texts_to_sequences(df)
+print(x)
+'''
+=======
 token.fit_on_texts(data) # 나는 코딩 고수다.  1:나는 2:코딩  3:고수다
 print(data[:1])
 print(token.word_index)
@@ -44,3 +52,4 @@ x = data
 y = token.texts_to_sequences(x)# ( 1 2 3) # ( 5 2 1 )
 print(y)
 '''
+>>>>>>> c3759647974a215fc0589295540965ae5534e537

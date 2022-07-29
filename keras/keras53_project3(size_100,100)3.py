@@ -8,10 +8,10 @@ import matplotlib.pyplot as plt
 # np.save('D:\study_data\_save\_npy\_test_y5.npy',arr=y_test)
 ###########size 100,100으로 한 파일
  
-x_train = np.load('D:\study_data\_save\_npy\_train_x5.npy')
-y_train = np.load('D:\study_data\_save\_npy\_train_y5.npy')
-x_test = np.load('D:\study_data\_save\_npy\_test_x5.npy')
-y_test = np.load('D:\study_data\_save\_npy\_test_y5.npy')
+x_train = np.load('D:\study_data\_save\_npy\_train_x9.npy')
+y_train = np.load('D:\study_data\_save\_npy\_train_y9.npy')
+x_test = np.load('D:\study_data\_save\_npy\_test_x9.npy')
+y_test = np.load('D:\study_data\_save\_npy\_test_y9.npy')
 # print(x_train.shape,y_train.shape)  # (27097, 100, 100, 1) (27097, 21)
 # print(x_test.shape,y_test.shape) # (6775, 100, 100, 1) (6775, 21)
 
@@ -62,9 +62,8 @@ earlyStopping = EarlyStopping(monitor='val_loss', patience=10, mode='min',
 #                       filepath="".join([filepath,'k24_', date, '_', filename])
 #                     )
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-hist = model.fit(x_train,y_train,epochs=50,verbose=2,
+hist = model.fit(x_train,y_train,epochs=10,verbose=2,
                  validation_split=0.25,
-                 batch_size=500,
                  callbacks=[earlyStopping])
 model.save_weights("D:\study_data\_save\keras53_project2.h5")
 # model.save_weights("./_save/keras23_5_save_weights1.h5")
@@ -88,6 +87,11 @@ print('acc 스코어 :', acc)
 # 걸린 시간 : 168.37035512924194
 # y_predict : (6775,)
 # acc 스코어 : 0.5077490774907749
+##########
+# loss : [0.0, 1.0]
+# 걸린 시간 : 121.65885210037231
+# y_predict : (6000,)
+# acc 스코어 : 1.0
 
 
 
