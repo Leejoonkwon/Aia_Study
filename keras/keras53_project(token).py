@@ -10,6 +10,9 @@ path = 'C:\Study\Study\keras/' # ".은 현재 폴더"
 df = pd.read_csv(path + 'music.csv',
                         index_col=0)
 token = Tokenizer(oov_token="<OOV>") #oov = out of vocabulary 
+print(df.shape)
+'''
 token.fit_on_texts(df)
 x = token.texts_to_sequences(df)
 print(x)
+'''
