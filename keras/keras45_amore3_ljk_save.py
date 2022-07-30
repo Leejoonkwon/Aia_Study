@@ -11,11 +11,18 @@ matplotlib.rcParams['axes.unicode_minus']=False
 path = './_data/test_amore_0718/' # ".은 현재 폴더"
 # Amo1 = pd.read_csv(path + '아모레220718.csv' ,sep='\t',engine='python',encoding='CP949')
 Amo = pd.read_csv(path + '아모레220718.csv',thousands=',',encoding='cp949')
+<<<<<<< HEAD:keras/keras46_amore3_ljk_save.py
+
+Sam = pd.read_csv(path + '삼성전자220718.csv',thousands=',',encoding='cp949')
+
+Amo.loc[1035:,'시가'] = 0
+=======
 
 Sam = pd.read_csv(path + '삼성전자220718.csv',thousands=',',encoding='cp949')
 # print(Amo.corr())
 
 Amo.at[1035:,'시가'] = 0
+>>>>>>> 2bec2bb76d3d8977afcd9264af5186df6df717c5:keras/keras45_amore3_ljk_save.py
 
 Amo['Date'] = pd.to_datetime(Amo['일자'])
 Amo['year'] = Amo['Date'].dt.strftime('%Y')
@@ -114,6 +121,10 @@ print(date)
 #3. 컴파일,훈련
 filepath = './_test/'
 filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
+<<<<<<< HEAD:keras/keras46_amore3_ljk_save.py
+#04d :                  4f : 
+=======
+>>>>>>> 2bec2bb76d3d8977afcd9264af5186df6df717c5:keras/keras45_amore3_ljk_save.py
 earlyStopping = EarlyStopping(monitor='loss', patience=30, mode='min', 
                               verbose=1,restore_best_weights=True)
 mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
@@ -140,4 +151,10 @@ print("0720자 종가 :",y_predict[-1])
 # ====================
 # 0720자 종가 : [122495.8]
 
+<<<<<<< HEAD:keras/keras46_amore3_ljk_save.py
+
+
+
+=======
+>>>>>>> 2bec2bb76d3d8977afcd9264af5186df6df717c5:keras/keras45_amore3_ljk_save.py
 

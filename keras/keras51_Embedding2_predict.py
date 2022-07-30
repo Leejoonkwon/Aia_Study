@@ -12,8 +12,7 @@ docs = ['너무 재밌어요', '참 최고에요', '참 잘 만든 영화에요'
 # 긍정 1,부정 0
 label= np.array([1,1,1,1,1,0,0,0,0,0,0,1,1,0]) # (14,)
  
-token = Tokenizer(oov_token="<OOV>") #oov = out of vocabulary 
-token.fit_on_texts(docs)
+
 
 # print(token.word_index)
 # {'참': 1, '너무': 2, '재밌어요': 3, '최고에요': 4, '잘': 5, '만든': 6, '영화에요': 7, 
@@ -21,7 +20,8 @@ token.fit_on_texts(docs)
 #  싶네요': 15, '글세요': 16, '별로에요': 17, '생각보다': 18, '지루해요': 19, '연기가': 20, 
 #  '어색해요': 21, '재미없어요': 22, '재미없다': 23, '재밌네요': 24, '민수가': 25, '못': 26,
 #  '생기기긴': 27, '했어요': 28, '안결': 29, '혼해요': 30}
-
+token = Tokenizer(oov_token="<OOV>") #oov = out of vocabulary 
+token.fit_on_texts(docs)
 x = token.texts_to_sequences(docs)
 
 print(x) 
@@ -87,3 +87,9 @@ else :
     
 # [[0.49834225]] (1, 1)
 # 부정
+# acc : 1.0
+# [[0.5115312]] (1, 1)
+# 긍정
+# acc : 1.0
+# [[0.50010556]] (1, 1)
+# 긍정

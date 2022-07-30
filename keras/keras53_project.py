@@ -18,15 +18,16 @@ import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
 from sklearn import datasets
+from sklearn.model_selection import train_test_split
 
 #1. 데이터
 
 train_datagen = ImageDataGenerator(
     rescale=1./255,
-    horizontal_flip=True,
-    # vertical_flip=True,
-    width_shift_range=0.1,
-    height_shift_range=0.1,
+    # horizontal_flip=True,
+    vertical_flip=True,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
     rotation_range=5,
     zoom_range=0.1,
     # shear_range=0.7,
@@ -35,51 +36,40 @@ train_datagen = ImageDataGenerator(
 test_datagen = ImageDataGenerator(
     rescale=1./255)
 
-xy_train= train_datagen.flow_from_directory(
-    'C:\_data\emotion\\train',
-    target_size=(150,150),
+xy_train= test_datagen.flow_from_directory(
+    'D:\study_data\\train',
+    target_size=(48,48),
     class_mode='categorical',
-    batch_size=28709,
+    color_mode='grayscale',
+    batch_size=28872,
     shuffle=True,) # 경로 및 폴더 설정
-xy_test= test_datagen.flow_from_directory(
-    'C:\_data\emotion\\test',
-    target_size=(150,150),
-    class_mode='categorical',
-    batch_size=7178,
-    shuffle=True,) # 경로 및 폴더 설정
-# print(xydata[0][0],xydata[0][0].shape) # (500, 150, 150, 3)
-print(xy_train[0][0].shape) # (500, 150, 150, 3)
-print(xy_train[0][1].shape) # (500, 7)
+
 x_train = xy_train[0][0]
 y_train = xy_train[0][1]
-x_test = xy_test[0][0]
-y_test = xy_test[0][1]
 
-augument_size = 500
+augument_size = 10000
 randidx = np.random.randint(x_train.shape[0],size=augument_size)
 
 x_augumented = x_train[randidx].copy()
 y_augumented = y_train[randidx].copy()
+x_train = x_train[randidx]
+y_train = y_train[randidx]
+print(x_augumented.shape) #(25000, 150, 150, 1)
+print(y_augumented.shape) #(25000, 21)
+
+xy_df3 = train_datagen.flow(x_augumented,y_augumented,
+                       batch_size=augument_size,
+                       shuffle=False)
+x_data = np.concatenate((x_train,xy_df3[0][0]))
+y_data = np.concatenate((y_train,xy_df3[0][1]))
 
 
-print(x_augumented.shape)  #(10000, 150, 150, 3)
-print(y_augumented.shape) #(10000, 7)
-print(x_train.shape) #(28709, 150, 150, 3)
+x_train,x_test,y_train,y_test = train_test_split(x_data,y_data,train_size = 0.75,shuffle=False)
 
-
-
-
-x_df = np.concatenate((x_train,x_augumented))
-y_df = np.concatenate((y_train,y_augumented))
-# print(x_df.shape) #(64000, 28, 28, 1)
-
-xy_df3 = test_datagen.flow(x_df,y_df,
-                       batch_size=augument_size,shuffle=False)
-
-np.save('C:\_data\_save\_train_x.npy',arr=xy_df3[0][0])
-np.save('C:\_data\_save\_train_y.npy',arr=xy_df3[0][1])
-np.save('C:\_data\_save\_test_x.npy',arr=x_test)
-np.save('C:\_data\_save\_test_y.npy',arr=y_test)
+np.save('D:\study_data\_save\_npy\_train_x2.npy',arr=x_train)
+np.save('D:\study_data\_save\_npy\_train_y2.npy',arr=y_train)
+np.save('D:\study_data\_save\_npy\_test_x2.npy',arr=x_test)
+np.save('D:\study_data\_save\_npy\_test_y2.npy',arr=y_test)
 
 
 

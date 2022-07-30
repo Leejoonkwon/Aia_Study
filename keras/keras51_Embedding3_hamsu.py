@@ -73,6 +73,8 @@ dense4 = Dense(10,activation='relu')(dense3)
 output1 = Dense(1,activation='sigmoid')(dense4)
 model = Model(inputs=input1, outputs=output1)
 model.summary()
+# Total params: 1,381
+# Trainable params: 1,381
 '''
 #3. 컴파일, 훈련
 model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['acc'])
