@@ -14,7 +14,7 @@ df.iloc
 data = df.drop(['순위','artist'],axis=1)
 
 data = np.array(data)
-# 가수,장르,타이틀,가사
+# 가수,장르,타이틀,가사 분석해서 감정 파악
 print(data.shape) #(900, 2)
 print(data)
 
