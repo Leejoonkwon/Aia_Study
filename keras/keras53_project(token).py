@@ -16,7 +16,7 @@ data = df.drop(['순위','artist'],axis=1)
 data = np.array(data)
 # 가수,장르,타이틀,가사 분석해서 감정 파악
 # 이미지 보고 예측된 감정과 매칭해서 노래 추천하기
-# 이미지는 테스트 ok 
+# 이미지는 테스트 ok  토크나이징이 문제
 print(data.shape) #(900, 2)
 print(data)
 
