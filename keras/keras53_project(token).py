@@ -16,6 +16,7 @@ data = df.drop(['순위','artist'],axis=1)
 data = np.array(data)
 
 print(data.shape) #(900, 4)
+print(data.shape) #(900, 4)
 
 data = data.reshape(1800,)
 print(data.shape) #(1800,)
