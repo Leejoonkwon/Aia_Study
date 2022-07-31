@@ -36,23 +36,7 @@ y = xy_train[0][1]
 print(y.shape)
 print(x.shape)
 
-
-# np.save('D:\study_data\_save\_npy\\train_x.npy',arr=x)
-# np.save('D:\study_data\_save\_npy\\train_y.npy',arr=y)
-
-
-# x = np.load('D:\study_data\_save\_npy\\train_x.npy')
-# y = np.load('D:\study_data\_save\_npy\\train_y.npy')
-
-# print(x.shape) #(28872, 48, 48, 1)
-# print(y.shape) #(28872, 21)
-
-# print(xy_train[0][0].shape) #(28872, 150, 150, 1)
-
-# x2 = x[28708:] # 직접 모은 데이터
-# y2 = y[28708:] # 직접 모은 데이터
-
-augument_size = 2500
+augument_size = 2385
 
 randidx = np.random.randint(x.shape[0],size=augument_size)
 x_augumented = x[randidx].copy()
@@ -61,34 +45,23 @@ y_augumented = y[randidx].copy()
 # print(y_augumented.shape) #(164, 21)
 
 x_data = train_datagen.flow(
-    np.tile(x_augumented[0].reshape(100*100*1),15000).reshape(-1,100,100,1), # x
-    np.tile(y_augumented[0].reshape(21*1),15000).reshape(-1,21) ,# y 
-    batch_size=15000,
-    shuffle=True)
-y_data = train_datagen.flow(
-    np.tile(x[0].reshape(100*100*1),15000).reshape(-1,100,100,1), # x
-    np.tile(y[0].reshape(21*1),15000).reshape(-1,21) ,# y 
-    batch_size=15000,
+    np.tile(x_augumented[0].reshape(100*100*1),40000).reshape(-1,100,100,1), # x
+    np.tile(y_augumented[0].reshape(21*1),40000).reshape(-1,21) ,# y 
+    batch_size=40000,
     shuffle=True)
 
-# print(x_data[0][0].shape) # (20000, 100, 100, 1)
-# print(x_data[0][1].shape) # (20000, 21)
-# print(y_data[0][0].shape) # (20000, 100, 100, 1)
-# print(y_data[0][1].shape) # (20000, 21)
 
-
-
-x_data1 = np.concatenate((x_data[0][0],y_data[0][0])) # 48872 행이네 
-y_data1 = np.concatenate((x_data[0][1],y_data[0][1]))
-print(x_data1.shape)    # (33872, 100, 100, 1)
-print(y_data1.shape)    # (33872, 21)
+x_data1 = np.concatenate((x_data[0][0],x)) # 48872 행이네 
+y_data1 = np.concatenate((x_data[0][1],y))
+# print(x_data1.shape)    # (22385, 100, 100, 1)
+# print(y_data1.shape)    # (22385, 21)
 # [실습]
 
 x_train,x_test,y_train,y_test = train_test_split(x_data1,y_data1,train_size=0.8,shuffle=True,random_state=100)
-np.save('D:\study_data\_save\_npy\_train_x9.npy',arr=x_train)
-np.save('D:\study_data\_save\_npy\_train_y9.npy',arr=y_train)
-np.save('D:\study_data\_save\_npy\_test_x9.npy',arr=x_test)
-np.save('D:\study_data\_save\_npy\_test_y9.npy',arr=y_test)
+np.save('D:\study_data\_save\_npy\_train_x10.npy',arr=x_train)
+np.save('D:\study_data\_save\_npy\_train_y10.npy',arr=y_train)
+np.save('D:\study_data\_save\_npy\_test_x10.npy',arr=x_test)
+np.save('D:\study_data\_save\_npy\_test_y10.npy',arr=y_test)
 
 
 
