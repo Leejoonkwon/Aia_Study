@@ -7,17 +7,18 @@ from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping
-path = 'C:\Study\Study\keras/' # ".은 현재 폴더"
+from keras.preprocessing.text import Tokenizer
+
+
+path = 'D:\study_data\_data/' # ".은 현재 폴더"
 df = pd.read_csv(path + 'music.csv'
                        )
-df.iloc
-data = df.drop(['순위','artist'],axis=1)
 
-data = np.array(data)
+print(df.info()) 
+print(df.describe) #[400 rows x 4 columns]
 
-print(data.shape) #(900, 2)
-print(data)
-
-data = data.reshape(1800,)
-print(data.shape) #(1800,)
+token = Tokenizer(oov_token="<OOV>") #oov = out of vocabulary 
+token.fit_on_texts(df)
+x = token.texts_to_sequences(df)
+print(x[2][2])
 

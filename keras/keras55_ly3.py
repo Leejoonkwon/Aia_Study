@@ -40,3 +40,6 @@ for i in number:
     LYRIC.append(lyric.text)
 df=pd.DataFrame({"제목":title2,"가수":singer2,"가사":LYRIC})
 df.to_excel("멜론TOP50_가사8.xlsx",  encoding='utf-8')    
+
+# //*[@id="lst50"]/td[4]/div/a/span
+# //*[@id="lst50"]/td[4]/div/a/span
