@@ -20,7 +20,7 @@ data = np.array(data)
 # 토크나이징 하지 말고 라벨인코딩?
 # 그래도 되나? 이걸 ..
 print(data.shape) #(900, 4)
-print(data)
+
 
 
 data = data.reshape(1800,)
