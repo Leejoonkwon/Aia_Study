@@ -19,7 +19,7 @@ data = np.array(data)
 # 이미지는 테스트 ok  토크나이징이 문제 어쩌지..
 # 토크나이징 하지 말고 라벨인코딩?
 # 그래도 되나? 이걸 ..
-print(data.shape) #(900, 1)
+print(data.shape) #(900, 4)
 print(data)
 
 data = data.reshape(1800,)
