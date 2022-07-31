@@ -25,6 +25,6 @@ print(data)
 
 data = data.reshape(1800,)
 print(data.shape) #(1800,)
-print(data.shape) #(1800,)
+print(data.shape) #(900,)
 #
 
