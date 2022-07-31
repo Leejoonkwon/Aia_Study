@@ -23,7 +23,7 @@ print(data.shape) #(900, 4)
 
 
 
-data = data.reshape(1800,)
+# data = data.reshape(1800,)
 print(data.shape) #(1800,)
 
 
