@@ -17,8 +17,17 @@ df = pd.read_csv(path + 'music.csv'
 print(df.info()) 
 print(df.describe) #[400 rows x 4 columns]
 
+<<<<<<< HEAD
 token = Tokenizer(oov_token="<OOV>") #oov = out of vocabulary 
 token.fit_on_texts(df)
 x = token.texts_to_sequences(df)
 print(x[2][2])
+=======
+print(data.shape) #(900, 4)
+print(data.shape) #(900, 4)
+
+data = data.reshape(1800,)
+print(data.shape) #(1800,)
+>>>>>>> d8f89b0b8e5a222ae63e2cbaa131e3ca55357985
+
 
