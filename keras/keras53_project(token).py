@@ -21,6 +21,8 @@ data = np.array(data)
 # 그래도 되나? 이걸 ..
 print(data.shape) #(900, 4)
 print(data)
+print(data.shape) #(900, 4)
+print(data)
 
 data = data.reshape(1800,)
 print(data.shape) #(1800,)
