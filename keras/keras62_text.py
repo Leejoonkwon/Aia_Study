@@ -12,13 +12,34 @@ from nltk.tokenize import sent_tokenize
 
 xy = pd.read_table("D:/study_data/naver_shopping.txt")
 
-print(xy)# [199999 rows x 2 columns]
+# print(xy)# [199999 rows x 2 columns]
 
 x = xy['document']
 y = xy['label']
-# print(train_data.shape)  #(14000, 2)
-# print(train_data['document'].nunique(), train_data['label'].nunique()) # 13999 4
-# print(train_data['label'].value_counts().plot(kind = 'bar'))
-# print(train_data.groupby('label').size().reset_index(name = 'count'))
-# print(train_data.isnull().sum())
-print(x)
+
+# print(x)
+token = Tokenizer(oov_token="<OOV>") #oov = out of vocabulary 
+# df_1 = df['lyric']
+
+token.fit_on_texts(x)
+x = token.texts_to_sequences(x)
+word_size = len(token.word_index)
+# print(token.word_index) #
+print("wored_size :",word_size) # 단어 사전의 갯수 : 364926
+print("뉴스기사의 최대길이 :",max(len(i) for i in x_train))         #뉴스기사의 최대길이 : 2376
+print("뉴스기사의 평균길이 :",sum(map(len,x_train)) / len(x_train)) #뉴스기사의 평균길이 : 145.5398574927633
+'''
+print(len(x[2])) #[0] 175 #[1] 113 #[2] 182
+from keras.preprocessing.sequence import pad_sequences
+pad_x =pad_sequences(x,padding='pre',maxlen=170)
+print(pad_x.shape) #(400, 170)
+
+le = LabelEncoder()
+df['Genre'] = le.fit_transform(df['Genre'])
+y = df['Genre']
+
+print(np.unique(pad_x,return_counts=True)) #15238
+pad_x = pad_x.reshape(400,170,1)
+
+
+'''
