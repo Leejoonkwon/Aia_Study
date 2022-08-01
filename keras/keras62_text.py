@@ -25,9 +25,10 @@ token.fit_on_texts(x)
 x = token.texts_to_sequences(x)
 word_size = len(token.word_index)
 # print(token.word_index) #
+x_train,x_test,y_trian,y_test = train_test_split(x,y,train_size=0.8,shuffle=True,random_state=100)
 print("wored_size :",word_size) # 단어 사전의 갯수 : 364926
-print("뉴스기사의 최대길이 :",max(len(i) for i in x_train))         #뉴스기사의 최대길이 : 2376
-print("뉴스기사의 평균길이 :",sum(map(len,x_train)) / len(x_train)) #뉴스기사의 평균길이 : 145.5398574927633
+print("뉴스기사의 최대길이 :",max(len(i) for i in x_train))         #뉴스기사의 최대길이 : 47
+print("뉴스기사의 평균길이 :",sum(map(len,x_train)) / len(x_train)) #뉴스기사의 평균길이 : 8.678922993268708
 '''
 print(len(x[2])) #[0] 175 #[1] 113 #[2] 182
 from keras.preprocessing.sequence import pad_sequences

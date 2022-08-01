@@ -7,14 +7,13 @@ import re
 import pandas as pd
 
 # title=driver.find_elements_by_class_name
-driver.get("https://www.melon.com/mymusic/dj/mymusicdjplaylistview_inform.htm?plylstSeq=403014132#params%5BplylstSeq%5D=403014132&po=pageObj&startIndex=1")
+driver.get("https://www.melon.com/chart/week/index.htm?classCd=GN0800")
 title=driver.find_elements(By.CLASS_NAME,'ellipsis.rank01')
 				
 title2=[]
 for i in title:
     title2.append(i.text)
 
-del title2[0]
 del title2[50:]
 
 singer=driver.find_elements(By.CLASS_NAME,'ellipsis.rank02')
@@ -23,10 +22,9 @@ for i in singer:
     singer2.append(i.text)
 
 
-del singer2[0]
 del singer2[50:]
 
-songTagList = driver.find_elements(By.XPATH,'//*[@id="frm"]/div/table/tbody/tr[1]/td[7]/div/button')
+songTagList = driver.find_elements(By.ID,'lst50')
 
 number=[]
 for i in songTagList:

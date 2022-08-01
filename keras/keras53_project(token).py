@@ -10,24 +10,29 @@ from keras.preprocessing.text import Tokenizer
 from sklearn.preprocessing import LabelEncoder
 from nltk.tokenize import sent_tokenize
 
-path = 'D:\study_data\_data/' # ".은 현재 폴더"
-df = pd.read_csv(path + 'music.csv'
+path = 'D:\study_data/' # ".은 현재 폴더"
+df = pd.read_csv(path + 'music2.csv'
                        )
 from random import *
 # print(df.info()) 
 # print(df.describe) #[400 rows x 4 columns]
 # token1 = sent_tokenize()
-is_bal = df['Genre'] == '발라드'
+# is_bal = df['Genre'] == '발라드'
 
-# 조건를 충족하는 데이터를 필터링하여 새로운 변수에 저장합니다.
-bal = df[is_bal]
-i = randrange(40)  # 0부터 9 사이의 임의의 정수
-print(i)
-bal = '{} - {}'.format(bal['title'][i],bal['artist'][i])
-# 결과를 출력합니다.
-print(bal)
-
+# # 조건를 충족하는 데이터를 필터링하여 새로운 변수에 저장합니다.
+# bal = df[is_bal]
+# i = randrange(40)  # 0부터 9 사이의 임의의 정수
+# print(i)
+# bal = '{} - {}'.format(bal['title'][i],bal['artist'][i])
+# # 결과를 출력합니다.
+# print(bal)
+print(df.info()) #400
+print(np.unique(df['Genre'],return_counts=True))
+#'댄스', '랩,힙합', '록,메탈', '발라드', '알앤비,소울', '인디', '트로트', '포크,블루스'
 '''
+print("가사의 최대길이 :",max(len(i) for i in df['lyric']))         #2623
+print("가사의 평균길이 :",sum(map(len,df['lyric'])) / len(df['lyric']))# 717.3975
+
 token = Tokenizer(oov_token="<OOV>") #oov = out of vocabulary 
 df_1 = df['lyric']
 

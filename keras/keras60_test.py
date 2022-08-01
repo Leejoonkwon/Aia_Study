@@ -1,4 +1,5 @@
 
+from dataclasses import replace
 import time
 import numpy as np      
 import pandas as pd
@@ -8,8 +9,8 @@ from keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Conv2D,Flatten,Dense,MaxPool2D,Dropout
 
-path = 'D:\study_data\_data/' # ".은 현재 폴더"
-df = pd.read_csv(path + 'music.csv'
+path = 'D:\study_data/' # ".은 현재 폴더"
+df = pd.read_csv(path + 'music2.csv'
                        )
 
 x_train = np.load('D:\study_data\_save\_npy\_train_x10.npy')
@@ -42,8 +43,6 @@ model.add(Dense(21,activation='softmax'))
 model.load_weights("D:\study_data\_save\keras60_project4.h5")
 start_time = time.time()
 #3. 컴파일,훈련
-# filepath = './_test/'
-# filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 earlyStopping = EarlyStopping(monitor='val_loss', patience=10, mode='min', 
                               verbose=1,restore_best_weights=True)
 # mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
@@ -68,36 +67,64 @@ y_predict = model.predict(x_data)
 y_predict = np.argmax(y_predict,axis=1)
 print('y_predict :',y_predict) 
 from random import *
+is1 = df['Genre'] == '발라드'
+is2 = df['Genre'] == '댄스'
+is3 = df['Genre'] == '랩,힙합'
+is4 = df['Genre'] == '알앤비,소울'
+is5 = df['Genre'] == '인디'
+is6 = df['Genre'] == '록,메탈'
+is7 = df['Genre'] == '트로트'
+is8 = df['Genre'] == '포크,블루스'
+is_1 = df[is1]
+is_2 = df[is2]
+is_3 = df[is3]
+is_4 = df[is4]
+is_5 = df[is5]
+is_6 = df[is6]
+is_7 = df[is7]
+is_8 = df[is8]
+# print(is_1,is_2)
 
-is_bal = df['Genre'] == '발라드'
+i = randrange(50)  
+bal = '{} - {}'.format(is_1['title'][i],is_1['artist'][i])
+i = randrange(50,100)  
+dan = '{} - {}'.format(is_2['title'][i],is_2['artist'][i])
+i = randrange(100,150)  
+rap = '{} - {}'.format(is_3['title'][i],is_3['artist'][i])
+i = randrange(150,200)  
+soul = '{} - {}'.format(is_4['title'][i],is_4['artist'][i])
+i = randrange(200,250)  
+indy = '{} - {}'.format(is_5['title'][i],is_5['artist'][i])
+i = randrange(250,300)  
+rock = '{} - {}'.format(is_6['title'][i],is_6['artist'][i])
+i = randrange(300,350)  
+tro = '{} - {}'.format(is_7['title'][i],is_7['artist'][i])
+i = randrange(350,400)  
+blues = '{} - {}'.format(is_8['title'][i],is_8['artist'][i])
 
-# 조건를 충족하는 데이터를 필터링하여 새로운 변수에 저장합니다.
-bal = df[is_bal]
-i = randrange(40)  # 0부터 39 사이의 임의의 정수
-print(i)
-bal = '{} - {}'.format(bal['title'][i],bal['artist'][i])
+
 # 결과를 출력합니다.
-if y_predict[0]   ==   1  : print('분노한 표정-추천 노래 :',bal)
-elif y_predict[0] ==   2  : print('혐오하는 표정-추천 노래 :',bal)
-elif y_predict[0] ==   3  : print('공포스러워하는 표정-추천 노래 :',bal)
-elif y_predict[0] ==   4  : print('행복해하는 표정-추천 노래 :',bal)
-elif y_predict[0] ==   5  : print('무표정-추천 노래 :',bal)
-elif y_predict[0] ==   6  : print('슬픈 표정-추천 노래 :',bal)
-elif y_predict[0] ==   7  : print('놀라워하는 표정-추천 노래 :',bal)  
-elif y_predict[0] ==   8  : print('불안한 표정-추천 노래 :',bal)
-elif y_predict[0] ==   9  : print('감동받은 표정-추천 노래 :',bal)
-elif y_predict[0] ==   10 : print('지루한 표정-추천 노래 :',bal)
-elif y_predict[0] ==   11 : print('의기양양한 표정-추천 노래 :',bal)
-elif y_predict[0] ==   12 : print('실망한 표정-추천 노래 :',bal)
-elif y_predict[0] ==   13 : print('의심하는 표정-추천 노래 :',bal)  
-elif y_predict[0] ==   14 : print('흥미로운 표정-추천 노래 :',bal)
-elif y_predict[0] ==   15 : print('죄책감 표정-추천 노래 :',bal)
-elif y_predict[0] ==   16 : print('질투 표정-추천 노래 :',bal)
-elif y_predict[0] ==   17 : print('외로운 표정-추천 노래 :',bal)
-elif y_predict[0] ==   18 : print('만족한 표정-추천 노래 :',bal)
-elif y_predict[0] ==   19 : print('진지한 표정-추천 노래 :',bal)  
-elif y_predict[0] ==   20 : print('억울한 표정-추천 노래 :',bal)
-elif y_predict[0] ==   21 : print('승리한 표정-추천 노래 :',bal)  
+if y_predict[0]   ==   0  : print('분노한 표정-추천 노래 :',rap)
+elif y_predict[0] ==   1  : print('혐오하는 표정-추천 노래 :',rap)
+elif y_predict[0] ==   2  : print('공포스러워하는 표정-추천 노래 :',bal)
+elif y_predict[0] ==   3  : print('행복해하는 표정-추천 노래 :',tro)
+elif y_predict[0] ==   4  : print('무표정-추천 노래 :',soul)
+elif y_predict[0] ==   5  : print('슬픈 표정-추천 노래 :',blues)
+elif y_predict[0] ==   6  : print('놀라워하는 표정-추천 노래 :',dan)  
+elif y_predict[0] ==   7  : print('불안한 표정-추천 노래 :',indy)
+elif y_predict[0] ==   8  : print('감동받은 표정-추천 노래 :',tro)
+elif y_predict[0] ==   9  : print('지루한 표정-추천 노래 :',indy)
+elif y_predict[0] ==   10 : print('자신감넘치는  표정-추천 노래 :',rock)
+elif y_predict[0] ==   11 : print('실망한 표정-추천 노래 :',blues)
+elif y_predict[0] ==   12 : print('의심하는 표정-추천 노래 :',bal)  
+elif y_predict[0] ==   13 : print('흥미로운 표정-추천 노래 :',rock)
+elif y_predict[0] ==   14 : print('죄책감 표정-추천 노래 :',bal)
+elif y_predict[0] ==   15 : print('질투 표정-추천 노래 :',blues)
+elif y_predict[0] ==   16 : print('외로운 표정-추천 노래 :',indy)
+elif y_predict[0] ==   17 : print('만족한 표정-추천 노래 :',dan)
+elif y_predict[0] ==   18 : print('진지한 표정-추천 노래 :',soul)  
+elif y_predict[0] ==   19 : print('억울한 표정-추천 노래 :',blues)
+elif y_predict[0] ==   20 : print('승리한 표정-추천 노래 :',rock)  
 
 
 #### 증폭 후 데이터 3만개 일때
