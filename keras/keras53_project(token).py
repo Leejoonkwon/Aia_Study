@@ -22,13 +22,18 @@ df_1 = df['lyric']
 
 token.fit_on_texts(df_1)
 x = token.texts_to_sequences(df_1)
-print(token.word_index)
+# print(token.word_index)
+word_size = len(token.word_index)
+# print("wored_size :",word_size) #단어 사전의 갯수 : 15237
+print(len(x[2])) #[0] 175 #[1] 113 #[2] 182
+from keras.preprocessing.sequence import pad_sequences
+pad_x =pad_sequences(x,padding='pre',maxlen=170)
+pr
 '''
 le = LabelEncoder()
 df['Genre'] = le.fit_transform(df['Genre'])
 y = df['Genre']
 
-print(token.word_index)
 word_size = len(token.word_index)
 print("wored_size :",word_size) #단어 사전의 갯수 : 15237
 from keras.preprocessing.sequence import pad_sequences
