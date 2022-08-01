@@ -17,13 +17,22 @@ train_datagen = ImageDataGenerator(
 )
 test_datagen = ImageDataGenerator(
     rescale=1./255,)
-    
+xy_data = test_datagen.flow_from_directory(
+    'D:\study_data\project',
+    target_size=(100,100),
+    class_mode='categorical',
+    color_mode='grayscale',
+    batch_size=8,
+    shuffle=False,) 
 # x_augument = x_train[randidx].copy()
 # y_augument = y_train[randidx].copy()
 # x_10_train = x_train[randidx]
 # print(x_augument.shape)
+x_data = xy_data[0][0]
+print(x_data.shape)
+np.save('D:\study_data\_save\_npy\_train_x12.npy',arr=x_data)
 
-      
+'''
 xy_train= train_datagen.flow_from_directory(
     'D:\study_data\\train',
     target_size=(100,100),
@@ -62,7 +71,7 @@ np.save('D:\study_data\_save\_npy\_train_x10.npy',arr=x_train)
 np.save('D:\study_data\_save\_npy\_train_y10.npy',arr=y_train)
 np.save('D:\study_data\_save\_npy\_test_x10.npy',arr=x_test)
 np.save('D:\study_data\_save\_npy\_test_y10.npy',arr=y_test)
-
+'''
 
 
 # # 1. x_augumented 10개와 x_train 10개를 비교하는 이미지 출력할 것

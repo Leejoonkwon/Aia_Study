@@ -13,10 +13,21 @@ from nltk.tokenize import sent_tokenize
 path = 'D:\study_data\_data/' # ".은 현재 폴더"
 df = pd.read_csv(path + 'music.csv'
                        )
-
-print(df.info()) 
-print(df.describe) #[400 rows x 4 columns]
+from random import *
+# print(df.info()) 
+# print(df.describe) #[400 rows x 4 columns]
 # token1 = sent_tokenize()
+is_bal = df['Genre'] == '발라드'
+
+# 조건를 충족하는 데이터를 필터링하여 새로운 변수에 저장합니다.
+bal = df[is_bal]
+i = randrange(40)  # 0부터 9 사이의 임의의 정수
+print(i)
+bal = '{} - {}'.format(bal['title'][i],bal['artist'][i])
+# 결과를 출력합니다.
+print(bal)
+
+'''
 token = Tokenizer(oov_token="<OOV>") #oov = out of vocabulary 
 df_1 = df['lyric']
 
@@ -28,20 +39,45 @@ word_size = len(token.word_index)
 print(len(x[2])) #[0] 175 #[1] 113 #[2] 182
 from keras.preprocessing.sequence import pad_sequences
 pad_x =pad_sequences(x,padding='pre',maxlen=170)
-pr
-'''
+print(pad_x.shape) #(400, 170)
+
 le = LabelEncoder()
 df['Genre'] = le.fit_transform(df['Genre'])
 y = df['Genre']
 
-word_size = len(token.word_index)
-print("wored_size :",word_size) #단어 사전의 갯수 : 15237
-from keras.preprocessing.sequence import pad_sequences
-pad_x =pad_sequences(x,padding='pre',maxlen=5)
-print(np.unique(pad_x,return_counts=True))
-print(pad_x.shape)
+print(np.unique(pad_x,return_counts=True)) #15238
+pad_x = pad_x.reshape(400,170,1)
 
 
-x_train,x_test,y_train,y_test= train_test_split(x_data,y_data,train_size=0.8,shuffle=True,random_state=100)
-print(x_train)
+x_train,x_test,y_train,y_test= train_test_split(pad_x,y,train_size=0.8,shuffle=True,random_state=100)
+from keras.utils.np_utils import to_categorical
+y_train = to_categorical(y_train)
+y_test = to_categorical(y_test)
+print(y_train.shape,y_test.shape) #(320, 8) (80, 8)
+
+from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.layers import LSTM,Dense,Embedding
+#Embedding이란 원핫 인코딩 필요없이 문자간 상관 관계를 고려해 벡터를 부여한다.그리고 Embedding은 인풋 레이어에서 시작하며 
+#총 개수를 input_dim으로 한다.
+
+model = Sequential()
+model.add(Embedding(input_dim=15238,output_dim=10,input_length=170)) #단어사전의 갯수 * output_dim(아우풋 노드) =파라미터
+model.add(LSTM(32))
+model.add(Dense(8,activation='softmax'))
+model.summary() #Total params: 5,847
+
+#3. 컴파일, 훈련
+model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['acc'])
+model.fit(x_train,y_train,epochs=100,batch_size=100)
+
+#4. 평가, 예측
+acc = model.evaluate(x_test,y_test)[1]
+print('acc :',acc)
+y_predict = model.predict(x_test)
+y_predict = np.argmax(y_predict,axis=1)
+y_test = np.argmax(y_test,axis=1)
+
+from sklearn.metrics import accuracy_score
+acc = accuracy_score(y_test, y_predict)
+print('acc 스코어 :', acc)
 '''
