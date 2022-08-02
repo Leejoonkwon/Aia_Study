@@ -16,7 +16,9 @@ train_datagen = ImageDataGenerator(
     shear_range=0.7,
     fill_mode='nearest'
 )
-
+test_datagen = ImageDataGenerator(
+    rescale=1./255,
+)
 augument_size = 100
 
 print(x_train[0].shape)  #  (28,28)
@@ -24,12 +26,19 @@ print(x_train[0].reshape(28*28).shape)  #  (784,)
 print(np.tile(x_train[0].reshape(28*28),augument_size).reshape(-1,28,28,1).shape)
 # np.tile 의 기능은 쌓는 것이다. (x,y)라면 y만큼 x를 반복하며 쌓는 것이다.
 
-x_data = train_datagen.flow(
+x_data = test_datagen.flow(
     np.tile(x_train[0].reshape(28*28),augument_size).reshape(-1,28,28,1), # x
     np.zeros(augument_size) ,# y 
     batch_size=augument_size,
     shuffle=True)#.next()
 
+import matplotlib.pyplot as plt
+plt.figure(figsize=(7,7))
+for i in range(49):
+    plt.subplot(7,7,i+1)
+    plt.axis('off')
+    plt.imshow(x_data[0][0][i],cmap='gray')
+plt.show() 
 ##################next() 를 쓸 경우########################
 # x_data[0]                   첫번째 배치값
 # x_data[0][0]                x 값
@@ -49,10 +58,4 @@ x_data = train_datagen.flow(
 # print(x_data[0][1].shape)  #(100,) y 값
 
 
-import matplotlib.pyplot as plt
-plt.figure(figsize=(7,7))
-for i in range(49):
-    plt.subplot(7,7,i+1)
-    plt.axis('off')
-    plt.imshow(x_data[0][0][i],cmap='gray')
-plt.show() 
+

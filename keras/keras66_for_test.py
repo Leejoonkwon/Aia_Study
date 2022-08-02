@@ -11,10 +11,10 @@ from tensorflow.python.keras.layers import Conv2D,Flatten,Dense,MaxPool2D,Dropou
 path = 'D:\study_data\_data/' # ".은 현재 폴더"
 df = pd.read_csv(path + 'music.csv'
                        )
-x_train = np.load('D:\study_data\_save\_npy\_train_x9.npy')
-y_train = np.load('D:\study_data\_save\_npy\_train_y9.npy')
-x_test = np.load('D:\study_data\_save\_npy\_test_x9.npy')
-y_test = np.load('D:\study_data\_save\_npy\_test_y9.npy')
+x_train = np.load('D:\study_data\_save\_npy\_train_x10.npy')
+y_train = np.load('D:\study_data\_save\_npy\_train_y10.npy')
+x_test = np.load('D:\study_data\_save\_npy\_test_x10.npy')
+y_test = np.load('D:\study_data\_save\_npy\_test_y10.npy')
 
 #2. 모델 
 
