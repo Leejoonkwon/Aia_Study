@@ -33,8 +33,9 @@ model.add(Dropout(0.3))
 model.add(Dense(256, activation='relu'))
 model.add(Dropout(0.3))
 model.add(Dense(21,activation='softmax'))
+
 # model.summary()
-model.load_weights("D:\study_data\_save\keras60_project5.h5")
+# model.load_weights("D:\study_data\_save\keras60_project5.h5")
 start_time = time.time()
 #3. 컴파일,훈련
 earlyStopping = EarlyStopping(monitor='val_loss', patience=10, mode='min', 
@@ -126,27 +127,7 @@ elif y_predict[0] ==   19 : print('억울한 표정-추천 노래 :',blues)
 elif y_predict[0] ==   20 : print('승리한 표정-추천 노래 :',rock)  
 
 
-#### 증폭 후 데이터 3만개 일때
-# loss : [1.3046691417694092, 0.507749080657959]
-# 걸린 시간 : 168.37035512924194
-# y_predict : (6775,)
-# acc 스코어 : 0.5077490774907749
 
-##########VGG16 적용 데이터 2만장일 때
-# loss : [0.3138679265975952, 0.9046236276626587]
-# 걸린 시간 : 92.63064312934875
-# y_predict : (4477,)
-# acc 스코어 : 0.9046236318963592
-##########VGG16 적용 데이터 3만장일 때
-# loss : [0.2217244803905487, 0.9342288374900818]
-# 걸린 시간 : 129.7907133102417
-# y_predict : (6477,)
-# acc 스코어 : 0.934228809634089
-##########VGG16 적용 데이터 4만장일 때
-# loss : [0.17270071804523468, 0.9478589296340942]
-# 걸린 시간 : 169.3062162399292
-# y_predict : (8477,)
-# acc 스코어 : 0.947
 
 
 

@@ -17,25 +17,37 @@ y_train = np.load('D:\study_data\_save\_npy\_train_y10.npy')
 x_test = np.load('D:\study_data\_save\_npy\_test_x10.npy')
 y_test = np.load('D:\study_data\_save\_npy\_test_y10.npy')
 
+from tensorflow.keras.applications import VGG16
+import numpy as np
+from tensorflow.keras.layers import GlobalAveragePooling2D, Dense
+from tensorflow.keras.models import Model
+model = VGG16(input_shape=(100, 100, 3), include_top=False, weights='imagenet')
+output = model.output
+x = GlobalAveragePooling2D()(output)
+x = Dense(50, activation='relu')(x)
+output = Dense(21, activation='softmax', name='output')(x)
+
+model = VGG16()
+model.summary()
 #2. 모델 
+'''
+# model = Sequential()
+# model.add(Conv2D(input_shape=(100, 100, 1), kernel_size=(3, 3), filters=32, padding='same', activation='relu'))
+# model.add(Conv2D(kernel_size=(3, 3), filters=64, padding='same', activation='relu'))
+# model.add(MaxPool2D((2, 2)))
+# model.add(Dropout(0.5))
 
-model = Sequential()
-model.add(Conv2D(input_shape=(100, 100, 1), kernel_size=(3, 3), filters=32, padding='same', activation='relu'))
-model.add(Conv2D(kernel_size=(3, 3), filters=64, padding='same', activation='relu'))
-model.add(MaxPool2D((2, 2)))
-model.add(Dropout(0.5))
+# model.add(Conv2D(kernel_size=(3, 3), filters=128, padding='same', activation='relu'))
+# model.add(Conv2D(kernel_size=(3, 3), filters=256, padding='valid', activation='relu'))
+# model.add(MaxPool2D((2, 2)))
+# model.add(Dropout(0.5))
 
-model.add(Conv2D(kernel_size=(3, 3), filters=128, padding='same', activation='relu'))
-model.add(Conv2D(kernel_size=(3, 3), filters=256, padding='valid', activation='relu'))
-model.add(MaxPool2D((2, 2)))
-model.add(Dropout(0.5))
-
-model.add(Flatten())
-model.add(Dense(512, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(256, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(21,activation='softmax'))
+# model.add(Flatten())
+# model.add(Dense(512, activation='relu'))
+# model.add(Dropout(0.5))
+# model.add(Dense(256, activation='relu'))
+# model.add(Dropout(0.5))
+# model.add(Dense(21,activation='softmax'))
 # model.summary()
 
 
@@ -147,8 +159,7 @@ elif y_predict[0] ==   20 : print('승리한 표정-추천 노래 :',rock)
 # 걸린 시간 : 169.3062162399292
 # y_predict : (8477,)
 # acc 스코어 : 0.947
-
-
+'''
 
 
 
