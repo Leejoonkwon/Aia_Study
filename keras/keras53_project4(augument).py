@@ -11,20 +11,18 @@ train_datagen = ImageDataGenerator(
     fill_mode='nearest')
 test_datagen = ImageDataGenerator(
     rescale=1./255,)
-target_size = 48
+target_size = 96
 xy_train= train_datagen.flow_from_directory(
     'D:\study_data\project\\train',
     target_size=(target_size,target_size),
     class_mode='categorical',
-    color_mode='grayscale',
-        batch_size=28709,
+            batch_size=28709,
     shuffle=True,) # 28709
 xy_test = test_datagen.flow_from_directory(
     'D:\study_data\project\\test',
     target_size=(target_size,target_size),
     class_mode='categorical',
-    color_mode='grayscale',
-        batch_size=10000,
+          batch_size=10000,
     shuffle=False,) # 7178
 # np.save('D:\study_data\_save\_npy\_train_x17.npy',arr=xy_test[0][0])
 
