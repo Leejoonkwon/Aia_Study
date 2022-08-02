@@ -3,10 +3,7 @@ from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping
 from sklearn.metrics import accuracy_score
-import matplotlib
-import matplotlib.pyplot as plt
-matplotlib.rcParams['font.family']='Malgun Gothic'
-matplotlib.rcParams['axes.unicode_minus']=False
+
 import tensorflow as tf
 tf.random.set_seed(66)
 
@@ -121,16 +118,20 @@ acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
 end_time = time.time() - start_time
 print("걸린시간 :",end_time)
-# plt.figure(figsize=(9,6))
-# plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
-# plt.plot(hist.history['val_loss'],marker='.',c='blue',label='val_loss')
-# plt.grid()
-# plt.title('영어싫어') #맥플러립 한글 깨짐 현상 알아서 해결해라 
-# plt.ylabel('loss')
-# plt.xlabel('epochs')
-# # plt.legend(loc='upper right')
-# plt.legend()
-# plt.show()
+import matplotlib
+import matplotlib.pyplot as plt
+matplotlib.rcParams['font.family']='Malgun Gothic'
+matplotlib.rcParams['axes.unicode_minus']=False
+plt.figure(figsize=(9,6))
+plt.plot(hist.history['loss'],marker='.',c='red',label='loss') #순차적으로 출력이므로  y값 지정 필요 x
+plt.plot(hist.history['val_loss'],marker='.',c='blue',label='val_loss')
+plt.grid()
+plt.title('평가표') #맥플러립 한글 깨짐 현상 알아서 해결해라 
+plt.ylabel('loss')
+plt.xlabel('epochs')
+# plt.legend(loc='upper right')
+plt.legend()
+plt.show()
 ##################
 #1. 스케일러 하기전
 # acc 스코어 :  1.0

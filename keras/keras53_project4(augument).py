@@ -11,7 +11,7 @@ train_datagen = ImageDataGenerator(
     fill_mode='nearest')
 test_datagen = ImageDataGenerator(
     rescale=1./255,)
-target_size = 96
+target_size = 48
 xy_train= train_datagen.flow_from_directory(
     'D:\study_data\project\\train',
     target_size=(target_size,target_size),
@@ -25,14 +25,29 @@ xy_test = test_datagen.flow_from_directory(
           batch_size=10000,
     shuffle=False,) # 7178
 # np.save('D:\study_data\_save\_npy\_train_x17.npy',arr=xy_test[0][0])
+# x = xy_train[0][0]
+# y = xy_train[0][1]
+# x1 = x[:435]
+# y1 = y[:435]
+# augument_size = 3000
+# randidx = np.random.randint(x1.shape[0],size=augument_size)
+
+# x_augumented = x[randidx].copy()
+# y_augumented = y[randidx].copy()
+
+# x_augumented = train_datagen.flow(x_augumented,y_augumented,
+#                                   batch_size=augument_size,shuffle=False)
+    
+# # print(x_augumented,x_augumented.shape) #(40000, 28, 28, 1)
+# x_train = np.concatenate((x,x_augumented[0][0])) # 소괄호() 1개와  소괄호(()) 2개의 차이를 공부해라!
+# y_train = np.concatenate((y,y_augumented)) 
 
 
 
-
-np.save('D:\study_data\_save\_npy\_train_x10.npy',arr=xy_train[0][0])
-np.save('D:\study_data\_save\_npy\_train_y10.npy',arr=xy_train[0][1])
-np.save('D:\study_data\_save\_npy\_test_x10.npy',arr=xy_test[0][0])
-np.save('D:\study_data\_save\_npy\_test_y10.npy',arr=xy_test[0][1])
+np.save('D:\study_data\_save\_npy\_train_x11.npy',arr=xy_train[0][0])
+np.save('D:\study_data\_save\_npy\_train_y11.npy',arr=xy_train[0][1])
+np.save('D:\study_data\_save\_npy\_test_x11.npy',arr=xy_test[0][0])
+np.save('D:\study_data\_save\_npy\_test_y11.npy',arr=xy_test[0][1])
 
 
 
