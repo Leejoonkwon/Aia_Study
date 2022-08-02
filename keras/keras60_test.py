@@ -1,5 +1,4 @@
 
-from dataclasses import replace
 import time
 import numpy as np      
 import pandas as pd
@@ -40,7 +39,7 @@ model.add(Dense(21,activation='softmax'))
 # model.summary()
 
 
-model.load_weights("D:\study_data\_save\keras60_project4.h5")
+# model.load_weights("D:\study_data\_save\keras60_project4.h5")
 start_time = time.time()
 #3. 컴파일,훈련
 earlyStopping = EarlyStopping(monitor='val_loss', patience=10, mode='min', 
@@ -50,10 +49,10 @@ earlyStopping = EarlyStopping(monitor='val_loss', patience=10, mode='min',
 #                       filepath="".join([filepath,'k24_', date, '_', filename])
 #                     )
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-# hist = model.fit(x_train,y_train,epochs=50,verbose=2,
-#                  validation_split=0.25,
-#                  callbacks=[earlyStopping]
-#                  ,batch_size=500)
+hist = model.fit(x_train,y_train,epochs=10,verbose=2,
+                 validation_split=0.25,
+                 callbacks=[earlyStopping])
+                 
 # model.save_weights("D:\study_data\_save\keras60_project4.h5")
 # model.save_weights("./_save/keras23_5_save_weights1.h5")
 

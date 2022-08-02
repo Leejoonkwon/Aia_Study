@@ -41,11 +41,19 @@ xy_test = test_datagen.flow_from_directory(
     class_mode='binary',
     shuffle=True,
     ) # Found 120 images belonging to 2 classes.
+import matplotlib.pyplot as plt
+plt.figure(figsize=(7,7))
+for i in range(49):
+    plt.subplot(7,7,i+1)
+    plt.axis('off')
+    plt.imshow(xy_train[0][0][i],cmap='gray')
+plt.show() 
+################
 # print(xy_train[0].shape)  # 160장을 batch 5로 잘라서 32장이므로  최대인수 31이다 
 # # (5, 150, 150, 3)  흑백또한 컬러 안에 있으므로 마지막 컬럼이 3이다. color_mode 에서 'graysclae'로 흑백을 지정해주지 않으면 기본값은은 칼라(3)다.
 # print(xy_train[1].shape)  # 160장을 batch 5로 잘라서 32장이므로  최대인수 31이다 
 # #xy로 묶었기 때문에 나온 값이 [0]의 값은 x값이고 [1]의 값은 y값이다.
-print(xy_train[31][0],xy_train[31][0].shape) #[0](5, 200, 200, 3) #[1] (5,)
+# print(xy_train[31][0],xy_train[31][0].shape) #[0](5, 200, 200, 3) #[1] (5,)
 # print(type(xy_train)) 
 # print(type(xy_train[0])) # <class 'tuple'> 변경할 수 없는 list 형태의 데이터 구성 
 # print(type(xy_train[0][0])) # <class 'numpy.ndarray'>
