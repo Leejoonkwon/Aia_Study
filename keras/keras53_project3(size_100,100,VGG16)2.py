@@ -4,6 +4,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D, Flatten
 from tensorflow.python.keras.layers import Dense, Dropout, Input
 from tensorflow.python.keras.models import Model
+from tensorflow.keras.layers import GlobalAveragePooling2D
 import numpy as np
 from keras import models, layers
 from keras import Input
@@ -22,7 +23,7 @@ pre_trained_vgg.summary()
 
 additional_model = models.Sequential()
 additional_model.add(pre_trained_vgg)
-additional_model.add(layers.Flatten())
+additional_model.add(GlobalAveragePooling2D())
 additional_model.add(layers.Dense(128, activation='relu'))
 additional_model.add(layers.Dense(128, activation='relu'))
 additional_model.add(layers.Dense(64, activation='relu'))
