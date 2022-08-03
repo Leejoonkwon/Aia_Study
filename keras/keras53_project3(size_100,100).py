@@ -23,17 +23,15 @@ print(x_test.shape,y_test.shape) #(7178, 48, 48, 3) (7178, 7)
 
 #2. 모델 
 model = Sequential()
-model.add(Conv2D(input_shape=(85, 85, 3), kernel_size=(3, 3), filters=32, 
+model.add(Conv2D(input_shape=(70, 70, 3), kernel_size=(3, 3), filters=32, 
                  padding='same', activation='relu'))
 model.add(Conv2D(kernel_size=(3, 3), filters=64, padding='same', activation='relu'))
 model.add(MaxPool2D((2, 2)))
 model.add(Dropout(0.3))
-
 model.add(Conv2D(kernel_size=(3, 3), filters=128, padding='same', activation='relu'))
 model.add(Conv2D(kernel_size=(3, 3), filters=256, padding='valid', activation='relu'))
 model.add(MaxPool2D((2, 2)))
 model.add(Dropout(0.3))
-
 model.add(Flatten())
 model.add(Dense(512, activation='relu'))
 model.add(Dropout(0.3))
@@ -52,9 +50,9 @@ earlyStopping = EarlyStopping(monitor='val_loss', patience=10, mode='min',
 #                       filepath="".join([filepath,'k24_', date, '_', filename])
 #                     )
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-hist = model.fit(x_train,y_train,epochs=10,verbose=2,
+hist = model.fit(x_train,y_train,epochs=2,verbose=2,
                  validation_split=0.25,
-                 batch_size=5,
+                 batch_size=2,
                  callbacks=[earlyStopping])
                  
 model.save_weights("D:\study_data\_save\keras60_project7.h5")
@@ -66,7 +64,9 @@ print('loss :', loss)
 end_time = time.time()-start_time
 print("걸린 시간 :",end_time)
 
-y_predict = model.predict(x_data)
+# y_predict = model.predict(x_data)
+y_predict = model.predict(x_test)
+
 y_predict = np.argmax(y_predict,axis=1)
 y_test = np.argmax(y_test,axis=1)
 # print('y_predict :',y_predict) 

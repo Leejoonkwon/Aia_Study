@@ -19,7 +19,7 @@ y_test = np.load('D:\study_data\_save\_npy\_test_y5.npy')
 #2. 모델 
 
 model = Sequential()
-model.add(Conv2D(input_shape=(85, 85, 1), kernel_size=(3, 3), filters=32, padding='same', activation='relu'))
+model.add(Conv2D(input_shape=(75, 75, 3), kernel_size=(3, 3), filters=32, padding='same', activation='relu'))
 model.add(Conv2D(kernel_size=(3, 3), filters=64, padding='same', activation='relu'))
 model.add(MaxPool2D((2, 2)))
 model.add(Dropout(0.5))
@@ -38,7 +38,7 @@ model.add(Dense(21,activation='softmax'))
 model.summary()
 
 
-model.load_weights("D:\study_data\_save\keras53_project2.h5")
+# model.load_weights("D:\study_data\_save\keras53_project2.h5")
 start_time = time.time()
 #3. 컴파일,훈련
 # filepath = './_test/'
@@ -50,10 +50,10 @@ earlyStopping = EarlyStopping(monitor='val_loss', patience=10, mode='min',
 #                       filepath="".join([filepath,'k24_', date, '_', filename])
 #                     )
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-# hist = model.fit(x_train,y_train,epochs=10,verbose=2,
-#                  validation_split=0.25,
-#                  callbacks=[earlyStopping])
-# model.save_weights("D:\study_data\_save\keras53_project2.h5")
+hist = model.fit(x_train,y_train,epochs=10,verbose=2,
+                 validation_split=0.25,
+                 callbacks=[earlyStopping])
+model.save_weights("D:\study_data\_save\keras53_project5.h5")
 # model.save_weights("./_save/keras23_5_save_weights1.h5")
 
 #4. 평가,예측

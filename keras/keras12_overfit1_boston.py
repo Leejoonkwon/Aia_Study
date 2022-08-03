@@ -17,8 +17,7 @@ x_train, x_test ,y_train, y_test = train_test_split(
 # print(datasets.feature_names)
 # print(datasets.DESCR)
 
- [:-1]
- [:2:]
+
 #2. 모델구성
 model = Sequential()
 model.add(Dense(100,input_dim=13))
