@@ -13,17 +13,17 @@ df = pd.read_csv(path + 'music2.csv'
 x_data = np.load('D:\study_data\_save\_npy\_train_x18.npy')
 print(x_data.shape)
 
-x_train = np.load('D:\study_data\_save\_npy\_train_x11.npy')
-y_train = np.load('D:\study_data\_save\_npy\_train_y11.npy')
-x_test = np.load('D:\study_data\_save\_npy\_test_x11.npy')
-y_test = np.load('D:\study_data\_save\_npy\_test_y11.npy')
+x_train = np.load('D:\study_data\_save\_npy\_train_x5.npy')
+y_train = np.load('D:\study_data\_save\_npy\_train_y5.npy')
+x_test = np.load('D:\study_data\_save\_npy\_test_x5.npy')
+y_test = np.load('D:\study_data\_save\_npy\_test_y5.npy')
 print(x_train.shape,y_train.shape)
 print(x_test.shape,y_test.shape) #(7178, 48, 48, 3) (7178, 7)
 
 
 #2. 모델 
 model = Sequential()
-model.add(Conv2D(input_shape=(48, 48, 3), kernel_size=(3, 3), filters=32, padding='same', activation='relu'))
+model.add(Conv2D(input_shape=(150, 150, 1), kernel_size=(3, 3), filters=32, padding='same', activation='relu'))
 model.add(Conv2D(kernel_size=(3, 3), filters=64, padding='same', activation='relu'))
 model.add(MaxPool2D((2, 2)))
 model.add(Dropout(0.3))
@@ -69,9 +69,9 @@ y_predict = np.argmax(y_predict,axis=1)
 y_test = np.argmax(y_test,axis=1)
 # print('y_predict :',y_predict) 
 # print('y_predict :', y_predict.shape) #y_predict : (50,)
-# from sklearn.metrics import accuracy_score
-# acc = accuracy_score(y_test, y_predict)
-# print('acc 스코어 :', acc)
+from sklearn.metrics import accuracy_score
+acc = accuracy_score(y_test, y_predict)
+print('acc 스코어 :', acc)
 from random import *
 is1 = df['Genre'] == '발라드'
 is2 = df['Genre'] == '댄스'
