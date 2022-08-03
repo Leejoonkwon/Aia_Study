@@ -15,7 +15,7 @@ x_test = np.load('D:\study_data\_save\_npy\_test_x5.npy')
 y_test = np.load('D:\study_data\_save\_npy\_test_y5.npy')
 # print(x_train.shape) #(28709, 48, 48, 6)
 
-# 
+
 
 
 from keras.applications.resnet import ResNet50
