@@ -22,5 +22,6 @@ model.fit(x_train,y_train)
 results = model.score(x_test,y_test) #분류 모델과 회귀 모델에서 score를 쓰면 알아서 값이 나온다 
 #ex)분류는 ACC 회귀는 R2스코어
 print("results :",results)
-
+########### ML
+# results : 0.9555555555555556
 
