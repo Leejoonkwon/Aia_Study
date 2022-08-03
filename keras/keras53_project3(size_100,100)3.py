@@ -11,15 +11,15 @@ from tensorflow.python.keras.layers import Conv2D,Flatten,Dense,MaxPool2D,Dropou
 path = 'D:\study_data\_data/' # ".은 현재 폴더"
 df = pd.read_csv(path + 'music.csv'
                        )
-x_train = np.load('D:\study_data\_save\_npy\_train_x9.npy')
-y_train = np.load('D:\study_data\_save\_npy\_train_y9.npy')
-x_test = np.load('D:\study_data\_save\_npy\_test_x9.npy')
-y_test = np.load('D:\study_data\_save\_npy\_test_y9.npy')
+x_train = np.load('D:\study_data\_save\_npy\_train_x5.npy')
+y_train = np.load('D:\study_data\_save\_npy\_train_y5.npy')
+x_test = np.load('D:\study_data\_save\_npy\_test_x5.npy')
+y_test = np.load('D:\study_data\_save\_npy\_test_y5.npy')
 
 #2. 모델 
 
 model = Sequential()
-model.add(Conv2D(input_shape=(100, 100, 1), kernel_size=(3, 3), filters=32, padding='same', activation='relu'))
+model.add(Conv2D(input_shape=(85, 85, 1), kernel_size=(3, 3), filters=32, padding='same', activation='relu'))
 model.add(Conv2D(kernel_size=(3, 3), filters=64, padding='same', activation='relu'))
 model.add(MaxPool2D((2, 2)))
 model.add(Dropout(0.5))

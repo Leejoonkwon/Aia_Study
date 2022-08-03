@@ -21,16 +21,16 @@ y_test = np.load('D:\study_data\_save\_npy\_test_y5.npy')
 
 
 from keras.applications.vgg16 import VGG16
-pre_trained_vgg = VGG16(weights='imagenet', include_top=False, input_shape=(96,96,3))
+pre_trained_vgg = VGG16(weights='imagenet', 
+    include_top=False, input_shape=(75,75,3))
 pre_trained_vgg.trainable = False
-pre_trained_vgg.summary()
 additional_model = models.Sequential()
 additional_model.add(pre_trained_vgg)
 additional_model.add(Flatten())
-additional_model.add(layers.Dense(128, activation='relu'))
-additional_model.add(layers.Dense(128, activation='relu'))
-additional_model.add(layers.Dense(64, activation='relu'))
-additional_model.add(layers.Dense(7, activation='softmax'))
+additional_model.add(layers.Dense(128,activation='relu'))
+additional_model.add(layers.Dense(128,activation='relu'))
+additional_model.add(layers.Dense(64,activation='relu'))
+additional_model.add(layers.Dense(7,activation='softmax'))
 
 
 #3. 컴파일,훈련
@@ -38,7 +38,7 @@ import time
 start_time = time.time()
 additional_model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
 hist = additional_model.fit(x_train,y_train,epochs=10,verbose=2,
-                 validation_split=0.3,batch_size=5)
+                 validation_split=0.3,batch_size=2)
 
 #4. 평가,예측
 loss = additional_model.evaluate(x_test, y_test)

@@ -13,8 +13,13 @@ y_data  = [0, 1, 1, 0] #(4,)
 # model = LinearSVC() 
 # model = Perceptron()
 model = Sequential()
-model.add(Dense(1,input_dim=2,activation='sigmoid'))
-
+model.add(Dense(10,input_dim=2,activation='relu'))
+model.add(Dense(10,activation='relu'))
+model.add(Dense(10,activation='relu'))
+model.add(Dense(10,activation='relu'))
+model.add(Dense(10,activation='relu'))
+model.add(Dense(10,activation='relu'))
+model.add(Dense(1,activation='sigmoid'))
 #3. 컴파일, 훈련
 
 model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['acc'])
@@ -26,11 +31,5 @@ print("metrics.score :",results)
 y_predict = model.predict(x_data)
 print(x_data,"의 예측결과",y_predict[0])
 
-# results = model.score(x_data,y_data)
-# print("model.score :",results)
-
-# acc = accuracy_score(y_data,y_predict)
-# print("acc score :",acc)
-
-# # model.score : 1.0
-# acc score : 1.0
+# metrics.score : [0.1372033804655075, 1.0]
+# [[0, 0], [0, 1], [1, 0], [1, 1]] 의 예측결과 [0.06781906]

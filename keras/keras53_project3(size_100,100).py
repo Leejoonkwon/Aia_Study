@@ -23,7 +23,8 @@ print(x_test.shape,y_test.shape) #(7178, 48, 48, 3) (7178, 7)
 
 #2. 모델 
 model = Sequential()
-model.add(Conv2D(input_shape=(150, 150, 1), kernel_size=(3, 3), filters=32, padding='same', activation='relu'))
+model.add(Conv2D(input_shape=(85, 85, 3), kernel_size=(3, 3), filters=32, 
+                 padding='same', activation='relu'))
 model.add(Conv2D(kernel_size=(3, 3), filters=64, padding='same', activation='relu'))
 model.add(MaxPool2D((2, 2)))
 model.add(Dropout(0.3))
@@ -53,6 +54,7 @@ earlyStopping = EarlyStopping(monitor='val_loss', patience=10, mode='min',
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
 hist = model.fit(x_train,y_train,epochs=10,verbose=2,
                  validation_split=0.25,
+                 batch_size=5,
                  callbacks=[earlyStopping])
                  
 model.save_weights("D:\study_data\_save\keras60_project7.h5")
@@ -72,6 +74,7 @@ y_test = np.argmax(y_test,axis=1)
 from sklearn.metrics import accuracy_score
 acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
+'''
 from random import *
 is1 = df['Genre'] == '발라드'
 is2 = df['Genre'] == '댄스'
@@ -117,7 +120,7 @@ elif y_predict ==   3  : print('행복해하는 표정-추천 노래 :',tro,dan)
 elif y_predict ==   4  : print('무표정-추천 노래 :',soul)
 elif y_predict ==   5  : print('슬픈 표정-추천 노래 :',blues)
 elif y_predict ==   6  : print('놀라워하는 표정-추천 노래 :',dan)  
-
+'''
 
 
 

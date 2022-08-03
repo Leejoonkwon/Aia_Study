@@ -19,8 +19,8 @@ y_test = np.load('D:\study_data\_save\_npy\_test_y11.npy')
 
 
 from keras.applications.resnet import ResNet50
-pre_trained_Res = ResNet50(
-                           include_top=False, input_shape=(48,48,3))
+pre_trained_Res = ResNet50(weights='imagenet',
+                           include_top=False, input_shape=(75,75,3))
 pre_trained_Res.trainable = False
 pre_trained_Res.summary()
 additional_model = models.Sequential()

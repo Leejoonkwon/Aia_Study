@@ -11,7 +11,7 @@ train_datagen = ImageDataGenerator(
     fill_mode='nearest')
 test_datagen = ImageDataGenerator(
     rescale=1./255,)
-target_size = 90
+target_size = 75
 xy_train= test_datagen.flow_from_directory(
     'D:\study_data\project\\train',
     target_size=(target_size,target_size),
