@@ -16,15 +16,15 @@ import matplotlib
 matplotlib.rcParams['font.family']='Malgun Gothic'
 matplotlib.rcParams['axes.unicode_minus']=False
 #1. 데이터
-path = './_data/kaggle_house/' # ".은 현재 폴더"
+path = 'D:\study_data\_data\_csv\kaggle_house/' # ".은 현재 폴더"
 train_set = pd.read_csv(path + 'train.csv',
                         index_col=0)
 test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
                        index_col=0)
 drop_cols = ['Alley', 'PoolQC', 'Fence', 'MiscFeature']
 test_set.drop(drop_cols, axis = 1, inplace =True)
-submission = pd.read_csv(path + 'submission.csv',#예측에서 쓸거야!!
-                       index_col=0)
+# submission = pd.read_csv(path + 'submission.csv',#예측에서 쓸거야!!
+#                        index_col=0)
 print(train_set)
 
 print(train_set.shape) #(1459, 10)
@@ -81,8 +81,8 @@ print(y.shape) # (1460,)
 print(x_train.shape) #(1299, 75)
 print(x_test.shape) #(161, 75)
 
-x_train = x_train.reshape(1299,75,1)
-x_test = x_test.reshape(161, 75,1)
+# x_train = x_train.reshape(1299,75,1)
+# x_test = x_test.reshape(161, 75,1)
 
 
 #2. 모델구성
@@ -113,3 +113,5 @@ print("results :",results)
 # r2스코어 : -5.1708929443024685
 # 걸린 시간 : 5.403209924697876
 
+########### ML 시
+# results : -3.640761034476303

@@ -12,7 +12,7 @@ from sklearn.svm import LinearSVC
 from sklearn.svm import LinearSVR 
 
 #1. 데이터
-path = './_data/kaggle_bike/' # ".은 현재 폴더"
+path = 'D:\study_data\_data\_csv\kaggle_bike/' # ".은 현재 폴더"
 train_set = pd.read_csv(path + 'train.csv',
                         index_col=0)
 print(train_set)
@@ -64,8 +64,8 @@ print(test_set)
 print(x_train) #(10330, 8)
 print(x_test) #(556, 8)
 
-x_train = x_train.reshape(10330, 8,1)
-x_test = x_test.reshape(556, 8,1)
+# x_train = x_train.reshape(10330, 8,1)
+# x_test = x_test.reshape(556, 8,1)
 
 
 #2. 모델구성
@@ -104,3 +104,6 @@ print("results :",results)
 # loss : 100.57544708251953
 # r2스코어 : 0.3071249407330422
 # 걸린 시간 : 4.462159633636475
+
+######### ML시
+# results : 0.2862669226040482

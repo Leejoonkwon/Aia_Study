@@ -30,9 +30,9 @@ x_test = scaler.transform(x_test)
 print(x_train.shape) #(16512, 8)
 print(x_test.shape) #(16512, 8)
 
-x_train = x_train.reshape(16512, 4,2,1)
-x_test = x_test.reshape(4128, 4,2,1)
-# print(datasets.feature_names)
+# x_train = x_train.reshape(16512, 4,2,1)
+# x_test = x_test.reshape(4128, 4,2,1)
+# # print(datasets.feature_names)
 # print(datasets.DESCR)
 
 
@@ -58,4 +58,6 @@ print("results :",results)
 # loss : 0.3301199674606323
 # r2스코어 : 0.8126296639125675
 
+########## ML시
+# results : 0.5825655411511248
 

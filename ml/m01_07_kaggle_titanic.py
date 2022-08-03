@@ -24,7 +24,7 @@ matplotlib.rcParams['axes.unicode_minus']=False
 
 #1.데이터
 
-path = './_data/kaggle_titanic/' # ".은 현재 폴더"
+path = 'D:\study_data\_data\_csv\\titanic/' # ".은 현재 폴더"
 train_set = pd.read_csv(path + 'train.csv',
                         )
 test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
@@ -247,5 +247,5 @@ print("results :",results)
 # loss : [0.9520659446716309, 0.8026905655860901]
 # acc 스코어 : 0.5695067264573991
 
-# 확인
-
+############# ML시
+# results : 0.7283950617283951

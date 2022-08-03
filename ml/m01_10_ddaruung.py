@@ -16,7 +16,7 @@ import pandas as pd
 from sklearn.svm import LinearSVC 
 from sklearn.svm import LinearSVR 
 #1. 데이터
-path = './_data/ddarung/' # ".은 현재 폴더"
+path = 'D:\study_data\_data\_csv\_ddarung/' # ".은 현재 폴더"
 train_set = pd.read_csv(path + 'train.csv',
                         index_col=0)
 print(train_set)
@@ -59,13 +59,13 @@ scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 scaler.transform(x_train)
 x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
-print(y)
-print(y.shape) # (1459,)
-print(x_train.shape) #(1340, 9)
-print(x_test.shape) #(119, 9)
+# print(y)
+# print(y.shape) # (1459,)
+# print(x_train.shape) #(1340, 9)
+# print(x_test.shape) #(119, 9)
 
-x_train = x_train.reshape(1340, 9,1)
-x_test = x_test.reshape(119, 9,1)
+# x_train = x_train.reshape(1340, 9,1)
+# x_test = x_test.reshape(119, 9,1)
 
 
 #2. 모델구성
@@ -96,6 +96,6 @@ print("results :",results)
 # r2스코어 : 0.6906502078203851
 # 걸린 시간 : 45.9051148891449
 
-
-
+############ ML 시
+# results : 0.5387474246360466
 
