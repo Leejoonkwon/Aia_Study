@@ -12,19 +12,28 @@ train_datagen = ImageDataGenerator(
 test_datagen = ImageDataGenerator(
     rescale=1./255,)
 target_size = 48
-xy_train= train_datagen.flow_from_directory(
-    'D:\study_data\project\\train',
+# xy_train= test_datagen.flow_from_directory(
+#     'D:\study_data\project\\train',
+#     target_size=(target_size,target_size),
+#     class_mode='categorical',
+#     # color_mode='grayscale',
+#     batch_size=28709,
+#     shuffle=True,) # 28709
+# xy_test = test_datagen.flow_from_directory(
+#     'D:\study_data\project\\test',
+#     target_size=(target_size,target_size),
+#     class_mode='categorical',
+#     batch_size=10000,
+#     # color_mode='grayscale',
+#     shuffle=False) # 7178
+xy_test2 = test_datagen.flow_from_directory(
+    'D:\study_data\\test2',
     target_size=(target_size,target_size),
     class_mode='categorical',
-            batch_size=28709,
-    shuffle=True,) # 28709
-xy_test = test_datagen.flow_from_directory(
-    'D:\study_data\project\\test',
-    target_size=(target_size,target_size),
-    class_mode='categorical',
-          batch_size=10000,
-    shuffle=False,) # 7178
-# np.save('D:\study_data\_save\_npy\_train_x17.npy',arr=xy_test[0][0])
+    batch_size=10000,
+    # color_mode='grayscale',
+    shuffle=False) # 7178
+np.save('D:\study_data\_save\_npy\_train_x18.npy',arr=xy_test2[0][0])
 # x = xy_train[0][0]
 # y = xy_train[0][1]
 # x1 = x[:435]
@@ -44,10 +53,10 @@ xy_test = test_datagen.flow_from_directory(
 
 
 
-np.save('D:\study_data\_save\_npy\_train_x11.npy',arr=xy_train[0][0])
-np.save('D:\study_data\_save\_npy\_train_y11.npy',arr=xy_train[0][1])
-np.save('D:\study_data\_save\_npy\_test_x11.npy',arr=xy_test[0][0])
-np.save('D:\study_data\_save\_npy\_test_y11.npy',arr=xy_test[0][1])
+# np.save('D:\study_data\_save\_npy\_train_x11.npy',arr=xy_train[0][0])
+# np.save('D:\study_data\_save\_npy\_train_y11.npy',arr=xy_train[0][1])
+# np.save('D:\study_data\_save\_npy\_test_x11.npy',arr=xy_test[0][0])
+# np.save('D:\study_data\_save\_npy\_test_y11.npy',arr=xy_test[0][1])
 
 
 

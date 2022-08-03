@@ -19,16 +19,19 @@ y_test = np.load('D:\study_data\_save\_npy\_test_y11.npy')
 
 
 from keras.applications.resnet import ResNet50
-pre_trained_Res = ResNet50(weights='imagenet', include_top=False, input_shape=(48,48,3),classes=7)
+pre_trained_Res = ResNet50(
+                           include_top=False, input_shape=(48,48,3))
+pre_trained_Res.trainable = False
 pre_trained_Res.summary()
-
 additional_model = models.Sequential()
 additional_model.add(pre_trained_Res)
-additional_model.add(GlobalAveragePooling2D())
+additional_model.add(Flatten())
 additional_model.add(layers.Dense(128, activation='relu'))
 additional_model.add(layers.Dense(128, activation='relu'))
 additional_model.add(layers.Dense(64, activation='relu'))
 additional_model.add(layers.Dense(7, activation='softmax'))
+
+
 
 # additional_model.summary()
 
@@ -37,7 +40,7 @@ additional_model.add(layers.Dense(7, activation='softmax'))
 import time
 start_time = time.time()
 additional_model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-hist = additional_model.fit(x_train,y_train,epochs=20,verbose=2,
+hist = additional_model.fit(x_train,y_train,epochs=8,verbose=2,
                  validation_split=0.25,batch_size=100)
                 
                  
@@ -45,14 +48,17 @@ hist = additional_model.fit(x_train,y_train,epochs=20,verbose=2,
 loss = additional_model.evaluate(x_test, y_test)
 print('loss :', loss)
 end_time = time.time()-start_time
+print("걸린 시간 :",end_time)
+
 y_predict = additional_model.predict(x_test)
 y_predict = np.argmax(y_predict,axis=1)
 y_test = np.argmax(y_test,axis=1)
-print('y_predict :',y_predict)
+# print('y_predict :',y_predict)
 from sklearn.metrics import accuracy_score
 acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
-print("걸린 시간 :",end_time)
+
+'''
 import matplotlib
 import matplotlib.pyplot as plt
 matplotlib.rcParams['font.family']='Malgun Gothic'
@@ -67,4 +73,4 @@ plt.xlabel('epochs')
 # plt.legend(loc='upper right')
 plt.legend()
 plt.show()
-
+'''
