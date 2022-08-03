@@ -1,13 +1,14 @@
 import numpy as np 
 from sklearn.svm    import LinearSVC
 from sklearn.metrics import accuracy_score 
-
+from sklearn.linear_model import Perceptron
 #1. 데이터
 x_data  = [[0,0],[0,1],[1,0],[1,1]] #(4,2) # AND게이트는 논리곱을 구현하는 기본 디지털 논리 게이트
 y_data  = [0, 0, 0, 1] #(4,)
 
 #2. 모델 
-model = LinearSVC() 
+# model = LinearSVC() 
+model = Perceptron()
 
 #3. 훈련
 model.fit(x_data,y_data)
