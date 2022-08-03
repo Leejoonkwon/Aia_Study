@@ -17,7 +17,7 @@ y_test = np.load('D:\study_data\_save\_npy\_test_y5.npy')
 
 
 
-#####
+########
 from keras.applications.resnet import ResNet50
 pre_trained_Res = ResNet50(weights='imagenet',
                            include_top=False, input_shape=(70,70,3))
