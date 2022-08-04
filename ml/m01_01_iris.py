@@ -80,7 +80,7 @@ model = LinearSVC() # DL과 다르게 단층 레이어  구성으로 연산에 �
 #                 verbose=2
 #                 )
 #다중 분류 모델은 'categorical_crossentropy'만 사용한다 !!!!
-model.fit(x_train,y_train)
+model.fit(x_train,y_train) ###
 
 
 #4.  평가,예측
