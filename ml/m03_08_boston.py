@@ -1,12 +1,54 @@
 #2. 모델 구성
-##### 분류 모데ㅐㄹ 
-from sklearn.svm import LinearSVC,SVC
-from sklearn.linear_model import Perceptron
-from sklearn.linear_model import LinearRegression 
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_boston
+from tensorflow.python.keras.callbacks import EarlyStopping
+import matplotlib.pyplot as plt
+import matplotlib
+# matplotlib.rcParams['font.family']='Malgun Gothic'
+# matplotlib.rcParams['axes.unicode_minus']=False
+import time
+from sklearn.svm import LinearSVC
+
+#1. 데이터
+datasets = load_boston()
+x = datasets.data #데이터를 리스트 형태로 불러올 때 함
+y = datasets.target
+x_train, x_test ,y_train, y_test = train_test_split(
+          x, y, train_size=0.75,shuffle=True,random_state=100)
+from tqdm import tqdm
+from sklearn.svm import LinearSVC,SVC,SVR
+from sklearn.linear_model import Perceptron ,LogisticRegression 
+#LogisticRegression은 유일하게 Regression이름이지만 분류 모델이다.
 
 #LogisticRegression은 유일하게 Regression이름이지만 분류 모델이다.
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor #공부하자 
 from sklearn.ensemble import RandomForestRegressor #공부하자 
 from sklearn.linear_model import LogisticRegression 
-model = LinearSVC() # DL과 다르게 단층 레이어  구성으로 연산에 걸리는 시간을 비교할 수 없다.
+def models(model):
+    if model == 'knn':
+        mod = KNeighborsRegressor()
+    elif model == 'svr':
+        mod = SVR()
+    elif model == 'tree':
+        mod =  DecisionTreeRegressor()
+    elif model == 'forest':
+        mod =  RandomForestRegressor()
+    return mod
+model_list = ['knn', 'svr',  'tree', 'forest']
+empty_list = [] #empty list for progress bar in tqdm library
+for model in tqdm(model_list, desc = 'Models are training and predicting ... '):
+    empty_list.append(model) # fill empty_list to fill progress bar
+    #classifier
+    clf = models(model)
+    #Training
+    clf.fit(x_train, y_train) 
+    #Predict
+    result = clf.score(x_test,y_test)
+    pred = clf.predict(x_test) 
+    print('{}-{}'.format(model,result))
+
+# knn-0.44371014889060933
+# svr-0.2060097280934967 
+# tree-0.7598265665684787
+# forest-0.8817271234480091

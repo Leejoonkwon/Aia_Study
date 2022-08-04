@@ -39,6 +39,9 @@ for model in tqdm(model_list, desc = 'Models are training and predicting ... '):
     result = clf.score(x_test,y_test)
     pred = clf.predict(x_test) 
     print('{}-{}'.format(model,result))
-########### ML
-# results : 0.9555555555555556
-
+    
+    
+# knn-0.9888888888888889
+# svc-1.0
+# tree-0.8222222222222222
+# forest-0.9777777777777777

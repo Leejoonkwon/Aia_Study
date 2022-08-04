@@ -77,7 +77,7 @@ from sklearn.linear_model import LogisticRegression
 def models(model):
     if model == 'knn':
         mod = KNeighborsRegressor()
-    elif model == 'svc':
+    elif model == 'svr':
         mod = SVR()
     elif model == 'tree':
         mod =  DecisionTreeRegressor()
