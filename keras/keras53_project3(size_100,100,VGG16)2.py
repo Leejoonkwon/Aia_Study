@@ -11,26 +11,26 @@ import numpy as np
 from keras import models, layers
 from keras import Input
 from keras.models import Model
-x_train = np.load('D:\study_data\_save\_npy\_train_x11.npy')
-y_train = np.load('D:\study_data\_save\_npy\_train_y11.npy')
-x_test = np.load('D:\study_data\_save\_npy\_test_x11.npy')
-y_test = np.load('D:\study_data\_save\_npy\_test_y11.npy')
+x_train = np.load('D:\study_data\_save\_npy\_train_x5.npy')
+y_train = np.load('D:\study_data\_save\_npy\_train_y5.npy')
+x_test = np.load('D:\study_data\_save\_npy\_test_x5.npy')
+y_test = np.load('D:\study_data\_save\_npy\_test_y5.npy')
 # print(x_train.shape) #(28709, 48, 48, 6)
 
 # 모델 Layer 데이터화
 
 
 from keras.applications.vgg16 import VGG16
-pre_trained_vgg = VGG16(weights='imagenet', include_top=False, input_shape=(48,48,3))
+pre_trained_vgg = VGG16(weights='imagenet', 
+    include_top=False, input_shape=(70,70,3))
 pre_trained_vgg.trainable = False
-pre_trained_vgg.summary()
 additional_model = models.Sequential()
 additional_model.add(pre_trained_vgg)
 additional_model.add(Flatten())
-additional_model.add(layers.Dense(128, activation='relu'))
-additional_model.add(layers.Dense(128, activation='relu'))
-additional_model.add(layers.Dense(64, activation='relu'))
-additional_model.add(layers.Dense(7, activation='softmax'))
+additional_model.add(layers.Dense(128,activation='relu'))
+additional_model.add(layers.Dense(128,activation='relu'))
+additional_model.add(layers.Dense(64,activation='relu'))
+additional_model.add(layers.Dense(7,activation='softmax'))
 
 
 #3. 컴파일,훈련
@@ -38,7 +38,7 @@ import time
 start_time = time.time()
 additional_model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
 hist = additional_model.fit(x_train,y_train,epochs=10,verbose=2,
-                 validation_split=0.3,batch_size=50)
+                 validation_split=0.3,batch_size=10)
 
 #4. 평가,예측
 loss = additional_model.evaluate(x_test, y_test)

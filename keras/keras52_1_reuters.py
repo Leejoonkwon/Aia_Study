@@ -58,10 +58,18 @@ model.fit(x_train,y_train,epochs=10,batch_size=5000)
 loss = model.evaluate(x_test,y_test)
 print('loss :',loss)
 y_predict = model.predict(x_test)
+<<<<<<< HEAD
 y_predict = np.argmax(y_predict,axis=1)
 y_test = np.argmax(y_test,axis=1)
 print('y_predict :',y_predict)
 from sklearn.metrics import accuracy_score
 acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
+=======
+
+print('predict :',y_predict[-1])
+
+print('predict :',np.round(y_predict[-1],0))
+#loss : [3.710134506225586, 0.21104185283184052]
+>>>>>>> ad868492ef77bb5853433422f731463c9cd8d8f8
 

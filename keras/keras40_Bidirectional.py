@@ -29,7 +29,7 @@ model.add(Bidirectional(SimpleRNN(5)))
 model.add(Dense(5,activation='swish')) 
 model.add(Dense(1,activation='swish'))
 model.summary()
-'''
+
 #3. 컴파일, 훈련
 model.compile(loss='mse',optimizer='adam')
 model.fit(x, y, epochs=50)
@@ -47,7 +47,7 @@ print('[8,9,10]의 결과 :',result)
 
 # loss ; 0.002228141063824296
 # [8,9,10]의 결과 : [[10.9396715]]
-'''
+
 
 
 
