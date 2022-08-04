@@ -167,8 +167,25 @@ x = train_set.drop(['Survived'],axis=1) #axis는 컬럼
 
 print(x) #(891, 7)
 y = train_set['Survived']
-x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size=0.95,shuffle=True, random_state=12 ) 
+from sklearn.model_selection import KFold,cross_val_score,cross_val_predict
+import warnings 
+warnings.filterwarnings('ignore')
+x_train, x_test ,y_train, y_test = train_test_split(
+          x, y, train_size=0.8,shuffle=True,random_state=100)
+n_split = 5
+kfold = KFold(n_splits=n_split, shuffle=True, random_state=66)
+from sklearn.preprocessing import MaxAbsScaler,RobustScaler 
+from sklearn.preprocessing import MinMaxScaler,StandardScaler
+# scaler = MinMaxScaler()
+scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+# scaler = RobustScaler()
+scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
+scaler.transform(x_train)
+x_train = scaler.transform(x_train)
+x_test = scaler.transform(x_test)
+
+print(x_test.shape)
 
 #2. 모델 구성
 from sklearn.utils import all_estimators
@@ -186,48 +203,40 @@ for (name,algorithms) in allAlgorithms:
         
         y_predict = model.predict(x_test)
         acc = accuracy_score(y_test,y_predict)
-        print(name,'의 정답률 :',acc)
+        scores = cross_val_score(model, x, y, cv=kfold)
+        # print('{}의 정확도 {}의 ',name,'의 정답률 :',acc)
+        print('{}의 정확도 :{} 검증 평균: {} '.format(name,round(acc,3),round(np.mean(scores),4)))
+       
     except:
-        #continue
-        print(name,'은 안나온 놈!!!')
-# CalibratedClassifierCV 의 정답률 : 0.8
-# CategoricalNB 의 정답률 : 0.7777777777777778
-# ClassifierChain 은 안나온 놈!!!
-# ComplementNB 의 정답률 : 0.7555555555555555
-# DecisionTreeClassifier 의 정답률 : 0.7777777777777778
-# DummyClassifier 의 정답률 : 0.7555555555555555
-# ExtraTreeClassifier 의 정답률 : 0.8
-# ExtraTreesClassifier 의 정답률 : 0.8
-# GaussianNB 의 정답률 : 0.7777777777777778
-# GaussianProcessClassifier 의 정답률 : 0.8666666666666667
-# GradientBoostingClassifier 의 정답률 : 0.8444444444444444
-# HistGradientBoostingClassifier 의 정답률 : 0.8666666666666667
-# KNeighborsClassifier 의 정답률 : 0.7333333333333333
-# LabelPropagation 의 정답률 : 0.8
-# LabelSpreading 의 정답률 : 0.7777777777777778
-# LinearDiscriminantAnalysis 의 정답률 : 0.7777777777777778
-# LinearSVC 의 정답률 : 0.7777777777777778
-# LogisticRegression 의 정답률 : 0.8
-# LogisticRegressionCV 의 정답률 : 0.8
-# MLPClassifier 의 정답률 : 0.8222222222222222
-# MultiOutputClassifier 은 안나온 놈!!!
-# MultinomialNB 의 정답률 : 0.7555555555555555
-# NearestCentroid 의 정답률 : 0.7111111111111111
-# NuSVC 의 정답률 : 0.8444444444444444
-# OneVsOneClassifier 은 안나온 놈!!!
-# OneVsRestClassifier 은 안나온 놈!!!
-# OutputCodeClassifier 은 안나온 놈!!!
-# PassiveAggressiveClassifier 의 정답률 : 0.7555555555555555
-# Perceptron 의 정답률 : 0.7777777777777778
-# QuadraticDiscriminantAnalysis 의 정답률 : 0.8222222222222222
-# RadiusNeighborsClassifier 은 안나온 놈!!!
-# RandomForestClassifier 의 정답률 : 0.8444444444444444
-# RidgeClassifier 의 정답률 : 0.7777777777777778
-# RidgeClassifierCV 의 정답률 : 0.7777777777777778
-# SGDClassifier 의 정답률 : 0.7555555555555555
-# SVC 의 정답률 : 0.8666666666666667
-# StackingClassifier 은 안나온 놈!!!
-# VotingClassifier 은 안나온 놈!!!        
-        
-        
-        
+        continue
+# AdaBoostClassifier의 정확도 :0.81 검증 평균: 0.8002 
+# BaggingClassifier의 정확도 :0.821 검증 평균: 0.7991 
+# BernoulliNB의 정확도 :0.793 검증 평균: 0.7845
+# CalibratedClassifierCV의 정확도 :0.793 검증 평균: 0.7969 
+# DecisionTreeClassifier의 정확도 :0.81 검증 평균: 0.799 
+# DummyClassifier의 정확도 :0.581 검증 평균: 0.6161        
+# ExtraTreeClassifier의 정확도 :0.804 검증 평균: 0.7923 
+# ExtraTreesClassifier의 정확도 :0.804 검증 평균: 0.7957 
+# GaussianNB의 정확도 :0.765 검증 평균: 0.7722
+# GaussianProcessClassifier의 정확도 :0.827 검증 평균: 0.8114
+# GradientBoostingClassifier의 정확도 :0.821 검증 평균: 0.8148
+# HistGradientBoostingClassifier의 정확도 :0.849 검증 평균: 0.8148
+# KNeighborsClassifier의 정확도 :0.81 검증 평균: 0.7867 
+# LabelPropagation의 정확도 :0.816 검증 평균: 0.7991 
+# LabelSpreading의 정확도 :0.827 검증 평균: 0.8002 
+# LinearDiscriminantAnalysis의 정확도 :0.804 검증 평균: 0.7947
+# LinearSVC의 정확도 :0.804 검증 평균: 0.7958 
+# LogisticRegression의 정확도 :0.821 검증 평균: 0.8081 
+# LogisticRegressionCV의 정확도 :0.821 검증 평균: 0.8081 
+# MLPClassifier의 정확도 :0.832 검증 평균: 0.8081 
+# NearestCentroid의 정확도 :0.76 검증 평균: 0.7251
+# NuSVC의 정확도 :0.827 검증 평균: 0.8148 
+# PassiveAggressiveClassifier의 정확도 :0.654 검증 평균: 0.6834
+# Perceptron의 정확도 :0.726 검증 평균: 0.7419 
+# QuadraticDiscriminantAnalysis의 정확도 :0.799 검증 평균: 
+# 0.8002
+# RandomForestClassifier의 정확도 :0.816 검증 평균: 0.8024 
+# RidgeClassifier의 정확도 :0.804 검증 평균: 0.7958 
+# RidgeClassifierCV의 정확도 :0.799 검증 평균: 0.7958 
+# SGDClassifier의 정확도 :0.782 검증 평균: 0.7351 
+# SVC의 정확도 :0.821 검증 평균: 0.8137         
