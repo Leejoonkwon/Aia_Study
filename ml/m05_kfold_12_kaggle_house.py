@@ -65,6 +65,8 @@ print(x.shape) #(1460, 75)
 y = train_set['SalePrice']
 from sklearn.model_selection import KFold,cross_val_score,cross_val_predict
 import warnings 
+from sklearn.metrics import r2_score
+
 warnings.filterwarnings('ignore')
 x_train, x_test ,y_train, y_test = train_test_split(
           x, y, train_size=0.8,shuffle=True,random_state=100)
@@ -82,6 +84,7 @@ x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 
 print(x_test.shape)
+import numpy as np
 
 #2. 모델 구성
 from sklearn.utils import all_estimators

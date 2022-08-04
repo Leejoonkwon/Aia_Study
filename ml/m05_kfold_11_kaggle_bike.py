@@ -47,6 +47,8 @@ print(x.shape) #(10886, 8)
 y = train_set['count']
 from sklearn.model_selection import KFold,cross_val_score,cross_val_predict
 import warnings 
+from sklearn.metrics import r2_score
+
 warnings.filterwarnings('ignore')
 x_train, x_test ,y_train, y_test = train_test_split(
           x, y, train_size=0.8,shuffle=True,random_state=100)
@@ -62,6 +64,7 @@ scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 scaler.transform(x_train)
 x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
+import numpy as np
 
 print(x_test.shape)
 
