@@ -80,7 +80,6 @@ print(y)
 print(y.shape) # (1460,)
 print(x_train.shape) #(1299, 75)
 print(x_test.shape) #(161, 75)
-
 from tqdm import tqdm
 from sklearn.svm import LinearSVC,SVC,SVR
 from sklearn.linear_model import Perceptron ,LogisticRegression 
@@ -94,7 +93,7 @@ from sklearn.linear_model import LogisticRegression
 def models(model):
     if model == 'knn':
         mod = KNeighborsRegressor()
-    elif model == 'svc':
+    elif model == 'svr':
         mod = SVR()
     elif model == 'tree':
         mod =  DecisionTreeRegressor()
