@@ -5,11 +5,6 @@ from tensorflow.python.keras.callbacks import EarlyStopping
 from sklearn.metrics import accuracy_score
 import matplotlib
 import matplotlib.pyplot as plt
-matplotlib.rcParams['font.family']='Malgun Gothic'
-matplotlib.rcParams['axes.unicode_minus']=False
-import tensorflow as tf
-tf.random.set_seed(66)
-from sklearn.svm import LinearSVC #서포트벡터머신 알아서 공부해라 !!!
 #1. 데이터
 datasets = load_iris()
 x = datasets.data
@@ -20,28 +15,43 @@ print(y_train,y_test)
 
 
 #2. 모델 구성
-model = LinearSVC() # DL과 다르게 단층 레이어  구성으로 연산에 걸리는 시간을 비교할 수 없다.
+from sklearn.svm import LinearSVC,SVC
+from sklearn.linear_model import Perceptron ,LogisticRegression 
+#LogisticRegression은 유일하게 Regression이름이지만 분류 모델이다.
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier #공부하자 
+from sklearn.ensemble import RandomForestClassifier #공부하자 
 
+# model = LinearSVC() 
+# model = LogisticRegression() 
+# model = KNeighborsClassifier() 
+# model = DecisionTreeClassifier() 
+model = RandomForestClassifier() 
 
 #3. 컴파일,훈련
 model.fit(x_train,y_train) 
 
 
 #4.  평가,예측
-
 results = model.score(x_test,y_test) #분류 모델과 회귀 모델에서 score를 쓰면 알아서 값이 나온다 
-#ex)분류는 ACC 회귀는 R2스코어
 print("results :",results)
-y_predict = model.predict(x_test)
-# y_test = np.argmax(y_test,axis=1)
-print(y_predict)
-
-# y_predict = np.argmax(y_predict,axis=1)
-# # y_test와 y_predict의  shape가 일치해야한다.
+# y_predict = model.predict(x_test)
 # print(y_predict)
 
+# acc = accuracy_score(y_test, y_predict)
+# print('acc 스코어 :', acc)
 
-acc = accuracy_score(y_test, y_predict)
-print('acc 스코어 :', acc)
+# model = LinearSVC() 
 #acc 스코어 : 0.9736842105263158
 
+# model = LogisticRegression() 
+# results : 0.9473684210526315
+
+# model = KNeighborsClassifier() 
+# results : 0.9736842105263158
+
+# model = DecisionTreeClassifier() 
+# results : 0.9473684210526315
+
+# model = RandomForestClassifier() 
+# results : 0.9473684210526315
