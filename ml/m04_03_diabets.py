@@ -42,7 +42,7 @@ for model in tqdm(model_list, desc = 'Models are training and predicting ... '):
     pred = clf.predict(x_test) 
     print('{}-{}'.format(model,result))
 
-# knn-0.36975907952835774
-# svr-0.19021720314000012
-# tree--0.07117271384360624
-# forest-0.44679527655794804
+# knn-0.009009009009009009
+# svc-0.0
+# tree-0.009009009009009009
+# forest-0.0    

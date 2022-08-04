@@ -1,14 +1,35 @@
-from sklearn.datasets import load_diabetes
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+
+from tensorflow.python.keras.models import Sequential,Model
+from tensorflow.python.keras.layers import Dense,Dropout,Conv2D,Flatten
 from sklearn.model_selection import train_test_split
+from sklearn.datasets import fetch_california_housing
+from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
+import matplotlib.pyplot as plt
+from sklearn.svm import LinearSVC 
+from sklearn.svm import LinearSVR 
+
+
 #1. 데이터
-datasets = load_diabetes()
-x = datasets.data
+datasets = fetch_california_housing()
+x = datasets.data #데이터를 리스트 형태로 불러올 때 함
 y = datasets.target
 x_train, x_test ,y_train, y_test = train_test_split(
-          x, y, train_size=0.75,shuffle=True,random_state=100)
-#2. 모델구성
+          x, y, train_size=0.8,shuffle=True,random_state=100)
+from sklearn.preprocessing import MaxAbsScaler,RobustScaler 
+from sklearn.preprocessing import MinMaxScaler,StandardScaler
+# scaler = MinMaxScaler()
+scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+# scaler = RobustScaler()
+
+scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
+scaler.transform(x_train)
+x_train = scaler.transform(x_train)
+x_test = scaler.transform(x_test)
+# print(x.shape, y.shape) #(506, 13)-> 13개의 피쳐 (506,) 
+print(x_train.shape) #(16512, 8)
+print(x_test.shape) #(16512, 8)
+
 from tqdm import tqdm
 from sklearn.svm import LinearSVC,SVC,SVR
 from sklearn.linear_model import Perceptron ,LogisticRegression 
@@ -41,8 +62,8 @@ for model in tqdm(model_list, desc = 'Models are training and predicting ... '):
     result = clf.score(x_test,y_test)
     pred = clf.predict(x_test) 
     print('{}-{}'.format(model,result))
-
-# knn-0.36975907952835774
-# svr-0.19021720314000012
-# tree--0.07117271384360624
-# forest-0.44679527655794804
+    
+# knn-0.6937192268681903
+# svr-0.7525300692785053
+# tree-0.6370119952499201
+# forest-0.8210802690708264
