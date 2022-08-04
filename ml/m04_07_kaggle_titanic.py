@@ -190,3 +190,44 @@ for (name,algorithms) in allAlgorithms:
     except:
         #continue
         print(name,'은 안나온 놈!!!')
+# CalibratedClassifierCV 의 정답률 : 0.8
+# CategoricalNB 의 정답률 : 0.7777777777777778
+# ClassifierChain 은 안나온 놈!!!
+# ComplementNB 의 정답률 : 0.7555555555555555
+# DecisionTreeClassifier 의 정답률 : 0.7777777777777778
+# DummyClassifier 의 정답률 : 0.7555555555555555
+# ExtraTreeClassifier 의 정답률 : 0.8
+# ExtraTreesClassifier 의 정답률 : 0.8
+# GaussianNB 의 정답률 : 0.7777777777777778
+# GaussianProcessClassifier 의 정답률 : 0.8666666666666667
+# GradientBoostingClassifier 의 정답률 : 0.8444444444444444
+# HistGradientBoostingClassifier 의 정답률 : 0.8666666666666667
+# KNeighborsClassifier 의 정답률 : 0.7333333333333333
+# LabelPropagation 의 정답률 : 0.8
+# LabelSpreading 의 정답률 : 0.7777777777777778
+# LinearDiscriminantAnalysis 의 정답률 : 0.7777777777777778
+# LinearSVC 의 정답률 : 0.7777777777777778
+# LogisticRegression 의 정답률 : 0.8
+# LogisticRegressionCV 의 정답률 : 0.8
+# MLPClassifier 의 정답률 : 0.8222222222222222
+# MultiOutputClassifier 은 안나온 놈!!!
+# MultinomialNB 의 정답률 : 0.7555555555555555
+# NearestCentroid 의 정답률 : 0.7111111111111111
+# NuSVC 의 정답률 : 0.8444444444444444
+# OneVsOneClassifier 은 안나온 놈!!!
+# OneVsRestClassifier 은 안나온 놈!!!
+# OutputCodeClassifier 은 안나온 놈!!!
+# PassiveAggressiveClassifier 의 정답률 : 0.7555555555555555
+# Perceptron 의 정답률 : 0.7777777777777778
+# QuadraticDiscriminantAnalysis 의 정답률 : 0.8222222222222222
+# RadiusNeighborsClassifier 은 안나온 놈!!!
+# RandomForestClassifier 의 정답률 : 0.8444444444444444
+# RidgeClassifier 의 정답률 : 0.7777777777777778
+# RidgeClassifierCV 의 정답률 : 0.7777777777777778
+# SGDClassifier 의 정답률 : 0.7555555555555555
+# SVC 의 정답률 : 0.8666666666666667
+# StackingClassifier 은 안나온 놈!!!
+# VotingClassifier 은 안나온 놈!!!        
+        
+        
+        
