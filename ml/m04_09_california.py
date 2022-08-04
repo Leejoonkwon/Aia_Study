@@ -7,6 +7,7 @@ from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 import matplotlib.pyplot as plt
 from sklearn.svm import LinearSVC 
 from sklearn.svm import LinearSVR 
+from sklearn.metrics import r2_score
 
 
 #1. 데이터
@@ -30,40 +31,79 @@ x_test = scaler.transform(x_test)
 print(x_train.shape) #(16512, 8)
 print(x_test.shape) #(16512, 8)
 
-from tqdm import tqdm
-from sklearn.svm import LinearSVC,SVC,SVR
-from sklearn.linear_model import Perceptron ,LogisticRegression 
-#LogisticRegression은 유일하게 Regression이름이지만 분류 모델이다.
+#2. 모델 구성
+import warnings 
+warnings.filterwarnings('ignore')
+from sklearn.utils import all_estimators
 
-#LogisticRegression은 유일하게 Regression이름이지만 분류 모델이다.
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.tree import DecisionTreeRegressor #공부하자 
-from sklearn.ensemble import RandomForestRegressor #공부하자 
-from sklearn.linear_model import LogisticRegression 
-def models(model):
-    if model == 'knn':
-        mod = KNeighborsRegressor()
-    elif model == 'svr':
-        mod = SVR()
-    elif model == 'tree':
-        mod =  DecisionTreeRegressor()
-    elif model == 'forest':
-        mod =  RandomForestRegressor()
-    return mod
-model_list = ['knn', 'svr',  'tree', 'forest']
-empty_list = [] #empty list for progress bar in tqdm library
-for model in tqdm(model_list, desc = 'Models are training and predicting ... '):
-    empty_list.append(model) # fill empty_list to fill progress bar
-    #classifier
-    clf = models(model)
-    #Training
-    clf.fit(x_train, y_train) 
-    #Predict
-    result = clf.score(x_test,y_test)
-    pred = clf.predict(x_test) 
-    print('{}-{}'.format(model,result))
-    
-# knn-0.6937192268681903
-# svr-0.7525300692785053
-# tree-0.6370119952499201
-# forest-0.8210802690708264
+allAlgorithms = all_estimators(type_filter='regressor')
+# allAlgorithms = all_estimators(type_filter='Regressor')
+
+# print('allAlgorithms :',allAlgorithms)
+print('모델의 갯수 :',len(allAlgorithms)) #모델의 갯수 : 41
+
+for (name,algorithms) in allAlgorithms:
+    try: # for문을 실행하는 와중에 예외 (error)가 발생하면 무시하고 진행 <예외처리>
+        model = algorithms()
+        model.fit(x_train,y_train)
+        
+        y_predict = model.predict(x_test)
+        r2 = r2_score(y_test,y_predict)
+        print(name,'의  r2_score :',r2)
+    except:
+        #continue
+        print(name,'은 안나온 놈!!!')
+# ARDRegression 의  r2_score : 0.6224383871562595
+# AdaBoostRegressor 의  r2_score : 0.3006709758445939
+# BaggingRegressor 의  r2_score : 0.8014298564941571
+# BayesianRidge 의  r2_score : 0.6223160905876419
+# CCA 의  r2_score : 0.5734820077747389
+# DecisionTreeRegressor 의  r2_score : 0.6325465394681307
+# DummyRegressor 의  r2_score : -0.0001669012609140097
+# ElasticNet 의  r2_score : 0.20655232918577715
+# ElasticNetCV 의  r2_score : 0.6221800004919685
+# ExtraTreeRegressor 의  r2_score : 0.640880286505703
+# ExtraTreesRegressor 의  r2_score : 0.8242432669828847
+# GammaRegressor 의  r2_score : 0.39082855313962095
+# GaussianProcessRegressor 의  r2_score : -7311.745047405698
+# GradientBoostingRegressor 의  r2_score : 0.7982915560729515
+# HistGradientBoostingRegressor 의  r2_score : 0.845626866138834
+# HuberRegressor 의  r2_score : 0.6077517759907334
+# IsotonicRegression 은 안나온 놈!!!
+# KNeighborsRegressor 의  r2_score : 0.6937192268681903
+# KernelRidge 의  r2_score : -2.5185626906188934
+# Lars 의  r2_score : 0.6223138107295286
+# LarsCV 의  r2_score : 0.6223138107295286
+# Lasso 의  r2_score : -0.0001669012609140097
+# LassoCV 의  r2_score : 0.6221482727146265
+# LassoLars 의  r2_score : -0.0001669012609140097
+# LassoLarsCV 의  r2_score : 0.6223138107295286
+# LassoLarsIC 의  r2_score : 0.6223138107295286
+# LinearRegression 의  r2_score : 0.6223138107295286
+# LinearSVR 의  r2_score : 0.5816617205854815
+# MLPRegressor 의  r2_score : 0.79095717785086
+# MultiOutputRegressor 은 안나온 놈!!!
+# MultiTaskElasticNet 은 안나온 놈!!!
+# MultiTaskElasticNetCV 은 안나온 놈!!!
+# MultiTaskLasso 은 안나온 놈!!!
+# MultiTaskLassoCV 은 안나온 놈!!!
+# NuSVR 의  r2_score : 0.7533124924810992
+# OrthogonalMatchingPursuit 의  r2_score : 0.49258838196670585
+# OrthogonalMatchingPursuitCV 의  r2_score : 0.6153466329492191
+# PLSCanonical 의  r2_score : 0.4132782496009729
+# PLSRegression 의  r2_score : 0.5478098077273479
+# PassiveAggressiveRegressor 의  r2_score : -1.8819124513189274
+# PoissonRegressor 의  r2_score : 0.4578498155081445
+# RANSACRegressor 의  r2_score : 0.03977291240334535
+# RadiusNeighborsRegressor 은 안나온 놈!!!
+# RandomForestRegressor 의  r2_score : 0.8186214381269212
+# RegressorChain 은 안나온 놈!!!
+# Ridge 의  r2_score : 0.6223151803195337
+# RidgeCV 의  r2_score : 0.6223212296757796
+# SGDRegressor 의  r2_score : 0.6191663473661351
+# SVR 의  r2_score : 0.7525300692785053
+# StackingRegressor 은 안나온 놈!!!
+# TheilSenRegressor 의  r2_score : -0.6064447825769825
+# TransformedTargetRegressor 의  r2_score : 0.6223138107295286
+# TweedieRegressor 의  r2_score : 0.4029164271580993
+# VotingRegressor 은 안나온 놈!!!        
