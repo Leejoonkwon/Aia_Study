@@ -29,20 +29,22 @@ scaler = MinMaxScaler()
 # scaler = StandardScaler()
 # scaler = MaxAbsScaler()
 # scaler = RobustScaler()
-# scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
+scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 # scaler.transform(x_train)
-# x_train = scaler.transform(x_train)
-# x_test = scaler.transform(x_test)
+x_train = scaler.transform(x_train)
+x_test = scaler.transform(x_test)
 #셔플을 False 할 경우 순차적으로 스플릿하다보니 훈련에서는 나오지 않는 값이 생겨 정확도가 떨어진다.
 #디폴트 값인  shuffle=True 를 통해 정확도를 올린다.
 print(y_train,y_test)
-from tqdm import tqdm
+#2. 모델구성
 from sklearn.svm import LinearSVC,SVC
 from sklearn.linear_model import Perceptron ,LogisticRegression 
 #LogisticRegression은 유일하게 Regression이름이지만 분류 모델이다.
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier #공부하자 
 from sklearn.ensemble import RandomForestClassifier #공부하자 
+from sklearn.linear_model import LinearRegression 
+
 def models(model):
     if model == 'knn':
         mod = KNeighborsClassifier()
@@ -52,10 +54,15 @@ def models(model):
         mod =  DecisionTreeClassifier()
     elif model == 'forest':
         mod =  RandomForestClassifier()
+    elif model == 'linear':
+        mod =  LinearRegression ()    
+    elif model == 'linearSVC':
+        mod =  LinearSVC ()       
     return mod
-model_list = ['knn', 'svc',  'tree', 'forest']
+model_list = ['knn', 'svc',  'tree', 'forest','linear','linearSVC']
+cnt = 0
 empty_list = [] #empty list for progress bar in tqdm library
-for model in tqdm(model_list, desc = 'Models are training and predicting ... '):
+for model in (model_list):
     empty_list.append(model) # fill empty_list to fill progress bar
     #classifier
     clf = models(model)
@@ -66,7 +73,9 @@ for model in tqdm(model_list, desc = 'Models are training and predicting ... '):
     pred = clf.predict(x_test) 
     print('{}-{}'.format(model,result))
 
-# knn-0.7037037037037037
-# svc-0.5925925925925926
-# tree-0.8518518518518519
-# forest-1.0    
+# knn-0.8888888888888888
+# svc-0.9629629629629629
+# tree-0.9259259259259259
+# forest-1.0
+# linear-0.8878003396163971
+# linearSVC-0.9629629629629629
