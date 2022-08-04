@@ -39,7 +39,7 @@ from sklearn.linear_model import Perceptron ,LogisticRegression
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor #공부하자 
 from sklearn.ensemble import RandomForestRegressor #공부하자 
-from sklearn.linear_model import LogisticRegression 
+from sklearn.linear_model import LinearRegression 
 def models(model):
     if model == 'knn':
         mod = KNeighborsRegressor()
@@ -49,10 +49,12 @@ def models(model):
         mod =  DecisionTreeRegressor()
     elif model == 'forest':
         mod =  RandomForestRegressor()
+    elif model == 'linear':
+        mod =  LinearRegression ()    
     return mod
-model_list = ['knn', 'svr',  'tree', 'forest']
+model_list = ['knn', 'svr',  'tree', 'forest','linear']
 empty_list = [] #empty list for progress bar in tqdm library
-for model in tqdm(model_list, desc = 'Models are training and predicting ... '):
+for model in (model_list):
     empty_list.append(model) # fill empty_list to fill progress bar
     #classifier
     clf = models(model)
@@ -65,5 +67,6 @@ for model in tqdm(model_list, desc = 'Models are training and predicting ... '):
     
 # knn-0.6937192268681903
 # svr-0.7525300692785053
-# tree-0.6370119952499201
-# forest-0.8210802690708264
+# tree-0.6352273392080676
+# forest-0.8198227982646882
+# linear-0.6223138107295286

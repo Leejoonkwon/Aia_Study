@@ -52,11 +52,13 @@ def models(model):
         mod =  RandomForestClassifier()
     elif model == 'linear':
         mod =  LinearRegression ()    
+    elif model == 'linearSVC':
+        mod =  LinearSVC ()       
     return mod
-model_list = ['knn', 'svc',  'tree', 'forest','linear']
+model_list = ['knn', 'svc',  'tree', 'forest','linear','linearSVC']
 cnt = 0
 empty_list = [] #empty list for progress bar in tqdm library
-for model in tqdm(model_list, desc = 'Models are training and predicting ... '):
+for model in (model_list):
     empty_list.append(model) # fill empty_list to fill progress bar
     #classifier
     clf = models(model)
@@ -67,7 +69,9 @@ for model in tqdm(model_list, desc = 'Models are training and predicting ... '):
     pred = clf.predict(x_test) 
     print('{}-{}'.format(model,result))
 
-# knn-0.9473684210526315      
+# knn-0.9473684210526315
 # svc-0.9649122807017544
-# tree-0.9298245614035088
+# tree-0.9473684210526315
 # forest-0.9649122807017544
+# linear-0.761379619947087
+# linearSVC-0.9649122807017544

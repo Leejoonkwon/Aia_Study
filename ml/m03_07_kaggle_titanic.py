@@ -24,7 +24,7 @@ matplotlib.rcParams['axes.unicode_minus']=False
 
 #1.데이터
 
-path = 'D:\study_data\_data\_csv\\titanic/' # ".은 현재 폴더"
+path = 'D:\study_data\_data\_csv\kaggle_titanic/' # ".은 현재 폴더"
 train_set = pd.read_csv(path + 'train.csv',
                         )
 test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
@@ -40,58 +40,14 @@ train_set[["Sex", "Survived"]].groupby(['Sex'], as_index=False).mean().sort_valu
 train_set[["SibSp", "Survived"]].groupby(['SibSp'], as_index=False).mean().sort_values(by='Survived', ascending=False)
 train_set[["Parch", "Survived"]].groupby(['Parch'], as_index=False).mean().sort_values(by='Survived', ascending=False)
 
-# # 열(col)을 생존 여부로 나눔
-# g = sns.FacetGrid(train_set, col='Survived')
-# # 히스토그램으로 시각화, 연령의 분포를 확인, 히스토그램 bin을 20개로 설정
-# g.map(plt.hist, 'Age', bins=20)
-
-# grid = sns.FacetGrid(train_set, col='Survived', row='Pclass', hue="Pclass", height=2.2, aspect=1.6)
-
-# grid.map(plt.hist, 'Age', alpha=.5, bins=20) # 투명도(alpha): 0.5
-
-# # 범례 추가
-# grid.add_legend();
-# grid = sns.FacetGrid(train_set, row='Embarked', height=2.2, aspect=1.6)
-
-# # Pointplot으로 시각화, x: 객실 등급, y: 생존 여부, 색깔: 성별, x축 순서: [1, 2, 3], 색깔 순서: [남성, 여성]
-# grid.map(sns.pointplot, 'Pclass', 'Survived', 'Sex', palette='deep', order = [1, 2, 3], hue_order = ["male", "female"])
-
-# grid.add_legend()
-# grid = sns.FacetGrid(train_set, row='Embarked', col='Survived', height=2.2, aspect=1.6)
-
-# # 바그래프로 시각화, x: 성별, y: 요금, Error bar: 표시 안 함
-# grid.map(sns.barplot, 'Sex', 'Fare', alpha=.5, ci=None,order=["male","female"])
-
-# grid.add_legend()
-# plt.show()
-
 
 print(test_set) # [418 rows x 10 columns]
 print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
-# Survived      0
-# Pclass        0
-# Name          0
-# Sex           0
-# Age         177
-# SibSp         0
-# Parch         0
-# Ticket        0
-# Fare          0
-# Cabin       687
-# Embarked      2
+
 
 # train_set = train_set.fillna(train_set.median())
 print(test_set.isnull().sum())
-# Pclass        0
-# Name          0
-# Sex           0
-# Age          86
-# SibSp         0
-# Parch         0
-# Ticket        0
-# Fare          1
-# Cabin       327
-# Embarked      0
+
 print(train_set.head())
 
 drop_cols = ['Cabin','Ticket']
@@ -229,13 +185,15 @@ scaler = MinMaxScaler()
 # scaler = StandardScaler()
 # scaler = MaxAbsScaler()
 # scaler = RobustScaler()
-from tqdm import tqdm
+#2. 모델구성
 from sklearn.svm import LinearSVC,SVC
 from sklearn.linear_model import Perceptron ,LogisticRegression 
 #LogisticRegression은 유일하게 Regression이름이지만 분류 모델이다.
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier #공부하자 
 from sklearn.ensemble import RandomForestClassifier #공부하자 
+from sklearn.linear_model import LinearRegression 
+
 def models(model):
     if model == 'knn':
         mod = KNeighborsClassifier()
@@ -245,10 +203,15 @@ def models(model):
         mod =  DecisionTreeClassifier()
     elif model == 'forest':
         mod =  RandomForestClassifier()
+    elif model == 'linear':
+        mod =  LinearRegression ()    
+    elif model == 'linearSVC':
+        mod =  LinearSVC ()       
     return mod
-model_list = ['knn', 'svc',  'tree', 'forest']
+model_list = ['knn', 'svc',  'tree', 'forest','linear','linearSVC']
+cnt = 0
 empty_list = [] #empty list for progress bar in tqdm library
-for model in tqdm(model_list, desc = 'Models are training and predicting ... '):
+for model in (model_list):
     empty_list.append(model) # fill empty_list to fill progress bar
     #classifier
     clf = models(model)
@@ -258,3 +221,10 @@ for model in tqdm(model_list, desc = 'Models are training and predicting ... '):
     result = clf.score(x_test,y_test)
     pred = clf.predict(x_test) 
     print('{}-{}'.format(model,result))
+
+# knn-0.7901234567901234
+# svc-0.7654320987654321
+# tree-0.7654320987654321
+# forest-0.7777777777777778
+# linear-0.35489314914063963
+# linearSVC-0.7283950617283951    
