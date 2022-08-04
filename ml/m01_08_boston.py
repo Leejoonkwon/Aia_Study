@@ -12,7 +12,10 @@ import matplotlib
 import time
 from sklearn.svm import LinearSVC 
 from sklearn.svm import LinearSVR 
-
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import DecisionTreeRegressor #공부하자 
+from sklearn.ensemble import RandomForestRegressor #공부하자 
+from sklearn.linear_model import LogisticRegression 
 
 #1. 데이터
 datasets = load_boston()
@@ -24,7 +27,7 @@ x_train, x_test ,y_train, y_test = train_test_split(
 
 #2. 모델구성
 
-model = LinearSVR()
+model = KNeighborsRegressor()
 # #3. 컴파일,훈련
 
 model.fit(x_train,y_train)
