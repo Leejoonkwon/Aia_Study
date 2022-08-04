@@ -24,10 +24,10 @@ from tensorflow.python.keras.layers import LSTM,Dense,Embedding
 # print(x_train[0].shape) #AttributeError: 'list' object has no attribute 'shape'
 # print(len(x_train[0])) #87
 # print(len(x_train[1])) #56
-# print(len(x_train[2])) #139
-print("뉴스기사의 최대길이 :",max(len(i) for i in x_train))         #뉴스기사의 최대길이 : 2376
-print("뉴스기사의 평균길이 :",sum(map(len,x_train)) / len(x_train)) #뉴스기사의 평균길이 : 145.5398574927633
-#전처리
+# # print(len(x_train[2])) #139
+# print("뉴스기사의 최대길이 :",max(len(i) for i in x_train))         #뉴스기사의 최대길이 : 2376
+# print("뉴스기사의 평균길이 :",sum(map(len,x_train)) / len(x_train)) #뉴스기사의 평균길이 : 145.5398574927633
+# #전처리
 from keras.preprocessing.sequence import pad_sequences
 from keras.utils.np_utils import to_categorical
 
@@ -58,9 +58,18 @@ model.fit(x_train,y_train,epochs=10,batch_size=5000)
 loss = model.evaluate(x_test,y_test)
 print('loss :',loss)
 y_predict = model.predict(x_test)
+<<<<<<< HEAD
+y_predict = np.argmax(y_predict,axis=1)
+y_test = np.argmax(y_test,axis=1)
+print('y_predict :',y_predict)
+from sklearn.metrics import accuracy_score
+acc = accuracy_score(y_test, y_predict)
+print('acc 스코어 :', acc)
+=======
 
 print('predict :',y_predict[-1])
 
 print('predict :',np.round(y_predict[-1],0))
 #loss : [3.710134506225586, 0.21104185283184052]
+>>>>>>> ad868492ef77bb5853433422f731463c9cd8d8f8
 

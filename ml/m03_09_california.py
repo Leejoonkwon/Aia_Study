@@ -43,7 +43,7 @@ from sklearn.linear_model import LogisticRegression
 def models(model):
     if model == 'knn':
         mod = KNeighborsRegressor()
-    elif model == 'svc':
+    elif model == 'svr':
         mod = SVR()
     elif model == 'tree':
         mod =  DecisionTreeRegressor()
@@ -62,3 +62,8 @@ for model in tqdm(model_list, desc = 'Models are training and predicting ... '):
     result = clf.score(x_test,y_test)
     pred = clf.predict(x_test) 
     print('{}-{}'.format(model,result))
+    
+# knn-0.6937192268681903
+# svr-0.7525300692785053
+# tree-0.6370119952499201
+# forest-0.8210802690708264

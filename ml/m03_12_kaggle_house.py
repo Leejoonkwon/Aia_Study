@@ -80,7 +80,6 @@ print(y)
 print(y.shape) # (1460,)
 print(x_train.shape) #(1299, 75)
 print(x_test.shape) #(161, 75)
-
 from tqdm import tqdm
 from sklearn.svm import LinearSVC,SVC,SVR
 from sklearn.linear_model import Perceptron ,LogisticRegression 
@@ -94,7 +93,7 @@ from sklearn.linear_model import LogisticRegression
 def models(model):
     if model == 'knn':
         mod = KNeighborsRegressor()
-    elif model == 'svc':
+    elif model == 'svr':
         mod = SVR()
     elif model == 'tree':
         mod =  DecisionTreeRegressor()
@@ -113,3 +112,8 @@ for model in tqdm(model_list, desc = 'Models are training and predicting ... '):
     result = clf.score(x_test,y_test)
     pred = clf.predict(x_test) 
     print('{}-{}'.format(model,result))
+    
+# knn-0.6934792699382527
+# svr--0.031732730483525096
+# tree-0.7408501703890162
+# forest-0.8878999514086905
