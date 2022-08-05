@@ -16,7 +16,7 @@ x_train, x_test ,y_train, y_test = train_test_split(
           x, y, train_size=0.8,shuffle=True,random_state=100)
 #2. 모델 구성
 from sklearn.utils import all_estimators
-n_split = 5
+n_split = 10
 kfold = KFold(n_splits=n_split, shuffle=True, random_state=66)
 allAlgorithms = all_estimators(type_filter='classifier')
 # allAlgorithms = all_estimators(type_filter='Regressor')
@@ -38,3 +38,37 @@ for (name,algorithms) in allAlgorithms:
     except:
         continue
         # print(name,'은 안나온 놈!!!')
+# AdaBoostClassifier의 정확도 :0.967 검증 평균: 0.8867 
+# BaggingClassifier의 정확도 :0.967 검증 평균: 0.9533 
+# BernoulliNB의 정확도 :0.2 검증 평균: 0.2933
+# CalibratedClassifierCV의 정확도 :1.0 검증 평균: 0.9133 
+# CategoricalNB의 정확도 :0.933 검증 평균: 0.9333
+# ComplementNB의 정확도 :0.8 검증 평균: 0.6667
+# DecisionTreeClassifier의 정확도 :0.967 검증 평균: 0.9467
+# DummyClassifier의 정확도 :0.2 검증 평균: 0.2933 
+# ExtraTreeClassifier의 정확도 :0.9 검증 평균: 0.9267
+# ExtraTreesClassifier의 정확도 :0.967 검증 평균: 0.9533 
+# GaussianNB의 정확도 :0.967 검증 평균: 0.9467
+# GaussianProcessClassifier의 정확도 :0.967 검증 평균: 0.96 
+# GradientBoostingClassifier의 정확도 :0.967 검증 평균: 0.96 
+# HistGradientBoostingClassifier의 정확도 :0.967 검증 평균: 0.94 
+# KNeighborsClassifier의 정확도 :1.0 검증 평균: 0.96
+# LabelPropagation의 정확도 :1.0 검증 평균: 0.96 
+# LabelSpreading의 정확도 :1.0 검증 평균: 0.96
+# LinearDiscriminantAnalysis의 정확도 :1.0 검증 평균: 0.98 
+# LinearSVC의 정확도 :1.0 검증 평균: 0.9667 
+# LogisticRegression의 정확도 :0.967 검증 평균: 0.9667 
+# LogisticRegressionCV의 정확도 :1.0 검증 평균: 0.9733 
+# MLPClassifier의 정확도 :1.0 검증 평균: 0.9733 
+# MultinomialNB의 정확도 :0.6 검증 평균: 0.9667
+# NearestCentroid의 정확도 :0.967 검증 평균: 0.9333
+# NuSVC의 정확도 :1.0 검증 평균: 0.9733 
+# PassiveAggressiveClassifier의 정확도 :0.567 검증 평균: 0.7733 
+# Perceptron의 정확도 :1.0 검증 평균: 0.78 
+# QuadraticDiscriminantAnalysis의 정확도 :1.0 검증 평균: 0.98
+# RadiusNeighborsClassifier의 정확도 :0.933 검증 평균: 0.9533 
+# RandomForestClassifier의 정확도 :0.967 검증 평균: 0.96 
+# RidgeClassifier의 정확도 :0.867 검증 평균: 0.84
+# RidgeClassifierCV의 정확도 :0.867 검증 평균: 0.84
+# SGDClassifier의 정확도 :0.567 검증 평균: 0.7867 
+# SVC의 정확도 :1.0 검증 평균: 0.9667 
