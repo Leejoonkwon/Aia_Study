@@ -5,7 +5,8 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 from sklearn.metrics import r2_score
 from sklearn.model_selection import RandomizedSearchCV
-
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import HalvingGridSearchCV
 #1. 데이터
 datasets = load_diabetes()
 x = datasets.data
@@ -44,7 +45,7 @@ parameters = [
      'min_samples_split':[4, 7],'n_jobs':[-1, 4]}
     ]     
 #2. 모델 구성
-model = RandomizedSearchCV(RandomForestRegressor(),parameters,cv=kfold,verbose=1,
+model = HalvingGridSearchCV(RandomForestRegressor(),parameters,cv=kfold,verbose=1,
                      refit=True,n_jobs=-1) 
 
 #3. 컴파일,훈련
@@ -81,3 +82,12 @@ print("걸린 시간 :",round(end,2),"초")
 # accuracy_score : 0.4466455334658932
 # 최적 튠  ACC : 0.4466455334658932
 # 걸린 시간 : 4.76 초
+#============== halvinggridsearch
+# 최적의 매개변수 : RandomForestRegressor(max_depth=8, min_samples_leaf=5, n_jobs=-1)
+# 최적의 파라미터 : {'max_depth': 8, 'min_samples_leaf': 5, 'min_samples_split': 2, 'n_estimators': 100, 'n_jobs': -1}  
+# best_score : 0.4344427044860302
+# model_score : 0.4480013380734821
+# accuracy_score : 0.4480013380734822
+# 최적 튠  ACC : 0.4480013380734822
+# 걸린 시간 : 21.04 초
+

@@ -1,16 +1,18 @@
 import numpy as np
-from sklearn.datasets import load_wine
+from sklearn.datasets import fetch_covtype
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import RandomizedSearchCV
-
+import pandas as pd 
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import HalvingRandomSearchCV
 #1.데이터
-datasets = load_wine()
+datasets = fetch_covtype()
 x = datasets.data
 y = datasets['target']
+print(x.shape, y.shape) #(581012, 54) (581012,)
 
 from sklearn.model_selection import KFold,cross_val_score,cross_val_predict
 
@@ -53,7 +55,6 @@ model = GridSearchCV(RandomForestClassifier(),parameters,cv=kfold,verbose=1,
                      refit=True,n_jobs=-1) 
 # Fitting 5 folds(kfold의 인수) for each of 42 candidates, totalling 210 fits(42*5)
 # n_jobs=-1 사용할 CPU 갯수를 지정하는 옵션 '-1'은 최대 갯수를 쓰겠다는 뜻
-
 #3. 컴파일,훈련
 import time
 start = time.time()
@@ -62,7 +63,9 @@ end = time.time()- start
 
 
 # #4.  평가,예측
-
+# results = model.score(x_test,y_test) #분류 모델과 회귀 모델에서 score를 쓰면 알아서 값이 나온다 
+# print("results :",results)
+# # results : 0.9736842105263158
 
 print("최적의 매개변수 :",model.best_estimator_)
 print("최적의 파라미터 :",model.best_params_)
@@ -73,23 +76,3 @@ print('accuracy_score :',accuracy_score(y_test,y_predict))
 y_pred_best = model.best_estimator_.predict(x_test)
 print('최적 튠  ACC :',accuracy_score(y_test,y_predict))
 print("걸린 시간 :",round(end,2),"초")
-#============== randomsearch
-# 최적의 매개변수 : RandomForestClassifier(max_depth=6, min_samples_leaf=3, n_estimators=200,
-#                        n_jobs=2)
-# 최적의 파라미터 : {'max_depth': 6, 'min_samples_leaf': 3, 'min_samples_split': 2, 'n_estimators': 200, 'n_jobs': 2}   
-# best_score : 0.9862068965517242
-# model_score : 1.0
-# accuracy_score : 1.0
-# 최적 튠  ACC : 1.0
-# 걸린 시간 : 15.78 초
-#============== randomsearch
-# 최적의 매개변수 : RandomForestClassifier(max_depth=8, min_samples_leaf=5, min_samples_split=3,
-#                        n_estimators=200, n_jobs=2)
-# 최적의 파라미터 : {'n_jobs': 2, 'n_estimators': 200, 'min_samples_split': 3, 'min_samples_leaf': 5, 'max_depth': 8}   
-# best_score : 0.9790640394088671
-# model_score : 0.9722222222222222
-# accuracy_score : 0.9722222222222222
-# 최적 튠  ACC : 0.9722222222222222
-# 걸린 시간 : 4.81 초
-
-

@@ -6,7 +6,8 @@ from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import RandomizedSearchCV
-
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import HalvingGridSearchCV
 #1.데이터
 datasets = load_wine()
 x = datasets.data
@@ -49,7 +50,7 @@ parameters = [
 
 
 
-model = GridSearchCV(RandomForestClassifier(),parameters,cv=kfold,verbose=1,
+model = HalvingGridSearchCV(RandomForestClassifier(),parameters,cv=kfold,verbose=1,
                      refit=True,n_jobs=-1) 
 # Fitting 5 folds(kfold의 인수) for each of 42 candidates, totalling 210 fits(42*5)
 # n_jobs=-1 사용할 CPU 갯수를 지정하는 옵션 '-1'은 최대 갯수를 쓰겠다는 뜻
@@ -91,5 +92,14 @@ print("걸린 시간 :",round(end,2),"초")
 # accuracy_score : 0.9722222222222222
 # 최적 튠  ACC : 0.9722222222222222
 # 걸린 시간 : 4.81 초
+#============== halvinggridsearch
+# 최적의 매개변수 : RandomForestClassifier(max_depth=6, min_samples_leaf=3, n_estimators=200,
+#                        n_jobs=-1)
+# 최적의 파라미터 : {'max_depth': 6, 'min_samples_leaf': 3, 'min_samples_split': 2, 'n_estimators': 200, 'n_jobs': -1}  
+# best_score : 0.9660130718954247
+# model_score : 1.0
+# accuracy_score : 1.0
+# 최적 튠  ACC : 1.0
+# 걸린 시간 : 22.04 초
 
 

@@ -9,7 +9,8 @@ from sklearn.svm import LinearSVC
 from sklearn.svm import LinearSVR 
 from sklearn.metrics import r2_score
 from sklearn.model_selection import RandomizedSearchCV
-
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import HalvingGridSearchCV
 
 #1. 데이터
 datasets = fetch_california_housing()
@@ -34,7 +35,7 @@ parameters = [
      'min_samples_split':[4, 7],'n_jobs':[-1, 4]}
     ]     
 #2. 모델 구성
-model = GridSearchCV(RandomForestRegressor(),parameters,cv=kfold,verbose=1,
+model = HalvingGridSearchCV(RandomForestRegressor(),parameters,cv=kfold,verbose=1,
                      refit=True,n_jobs=-1) 
 
 #3. 컴파일,훈련
@@ -63,3 +64,12 @@ print("걸린 시간 :",round(end,2),"초")
 # accuracy_score : 0.7637812379177897
 # 최적 튠  ACC : 0.7637812379177897
 # 걸린 시간 : 57.18 초
+#==================halvinggridsearch
+# 최적의 매개변수 : RandomForestRegressor(max_depth=8, min_samples_leaf=5, n_estimators=200,
+#                       n_jobs=-1)
+# 최적의 파라미터 : {'max_depth': 8, 'min_samples_leaf': 5, 'min_samples_split': 2, 'n_estimators': 200, 'n_jobs': -1}  
+# best_score : 0.7492827319522345
+# model_score : 0.7624201313325216
+# accuracy_score : 0.7624201313325216
+# 최적 튠  ACC : 0.7624201313325216
+# 걸린 시간 : 63.88 초
