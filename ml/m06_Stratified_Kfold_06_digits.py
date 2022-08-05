@@ -8,8 +8,7 @@ import numpy as np
 datasets = load_digits()
 x = datasets.data
 y = datasets.target
-x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size=0.95,shuffle=True, random_state=12 ) 
+
 from sklearn.model_selection import KFold,cross_val_score,cross_val_predict
 import warnings 
 warnings.filterwarnings('ignore')
