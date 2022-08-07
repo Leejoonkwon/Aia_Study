@@ -14,7 +14,7 @@ path = 'D:\study_data/' # ".은 현재 폴더"
 df = pd.read_csv(path + 'music2.csv'
                        )
 from random import *
-# prin
+# pri
 # print(df.describe) #[400 rows x 4 columns]
 # token1 = sent_tokenize()
 # is_bal = df['Genre'] == '발라드'
