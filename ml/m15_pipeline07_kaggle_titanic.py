@@ -244,5 +244,11 @@ result = model.score(x_test,y_test)
 # 모델 정의와 상관없이 model로 정의된 기능에 x_test에 transform이 적용된다
 
 print('model.score :',result)
+
 ############# ML시
 # results : 0.7283950617283951
+
+############# ML시
+
+
+

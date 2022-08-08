@@ -45,4 +45,6 @@ print('model.score :',result)
 # acc 스코어 : 0.8221842298512942
 ########### ML 적용 후
 # results : 0.505496144666789
-
+ 
+########### ML 적용 후StandardScaler
+# model.score : 0.956765315869642
