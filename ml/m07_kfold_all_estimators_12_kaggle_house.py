@@ -109,3 +109,51 @@ for (name,algorithms) in allAlgorithms:
        
     except:
         continue 
+    
+# ARDRegression의 r2_score :0.862 검증 평균: 0.7811 
+# AdaBoostRegressor의 r2_score :0.817 검증 평균: 0.7969 
+# BaggingRegressor의 r2_score :0.851 검증 평균: 0.8462 
+# BayesianRidge의 r2_score :0.865 검증 평균: 0.7863 
+# CCA의 r2_score :-0.395 검증 평균: -0.6554 
+# DecisionTreeRegressor의 r2_score :0.76 검증 평균: 0.7169 
+# DummyRegressor의 r2_score :-0.0 검증 평균: -0.0026
+# ElasticNet의 r2_score :0.855 검증 평균: 0.7844 
+# ElasticNetCV의 r2_score :0.202 검증 평균: 0.5837 
+# ExtraTreeRegressor의 r2_score :0.708 검증 평균: 0.6639 
+# ExtraTreesRegressor의 r2_score :0.887 검증 평균: 0.8645 
+# GammaRegressor의 r2_score :0.868 검증 평균: -0.0029 
+# GaussianProcessRegressor의 r2_score :-5.068 검증 평균: -5.2023 
+# GradientBoostingRegressor의 r2_score :0.902 검증 평균: 0.8543 
+# HistGradientBoostingRegressor의 r2_score :0.888 검증 평균: 0.864 
+# HuberRegressor의 r2_score :0.875 검증 평균: 0.6797 
+# KNeighborsRegressor의 r2_score :0.764 검증 평균: 0.6481 
+# KernelRidge의 r2_score :-4.433 검증 평균: 0.7777 
+# Lars의 r2_score :0.57 검증 평균: 0.3621 
+# LarsCV의 r2_score :0.835 검증 평균: 0.7056 
+# Lasso의 r2_score :0.863 검증 평균: 0.7778 
+# LassoCV의 r2_score :0.865 검증 평균: 0.6824 
+# LassoLars의 r2_score :0.864 검증 평균: 0.7788 
+# LassoLarsCV의 r2_score :0.864 검증 평균: 0.7861 
+# LassoLarsIC의 r2_score :0.861 검증 평균: 0.7873 
+# LinearRegression의 r2_score :0.863 검증 평균: 0.7778 
+# LinearSVR의 r2_score :-5.093 검증 평균: 0.0985 
+# MLPRegressor의 r2_score :-4.97 검증 평균: 0.6264 
+# NuSVR의 r2_score :-0.015 검증 평균: -0.0146 
+# OrthogonalMatchingPursuit의 r2_score :0.858 검증 평균: 0.7697 
+# OrthogonalMatchingPursuitCV의 r2_score :0.858 검증 평균: 0.7697 
+# PLSCanonical의 r2_score :-4.071 검증 평균: -4.761 
+# PLSRegression의 r2_score :0.862 검증 평균: 0.7967 
+# PassiveAggressiveRegressor의 r2_score :0.874 검증 평균: 0.3959 
+# PoissonRegressor의 r2_score :0.892 검증 평균: -0.0029 
+# RANSACRegressor의 r2_score :0.812 검증 평균: 0.7411 
+# RadiusNeighborsRegressor의 r2_score :-1.3186819879354341e+28 검증 평균: -5.489054505378216e+27
+# RandomForestRegressor의 r2_score :0.875 검증 평균: 0.8504 
+# Ridge의 r2_score :0.863 검증 평균: 0.7782 
+# RidgeCV의 r2_score :0.864 검증 평균: 0.7789 
+# SGDRegressor의 r2_score :0.855 검증 평균: -4.6999246451209596e+23 
+# SVR의 r2_score :-0.067 검증 평균: -0.0526 
+# TheilSenRegressor의 r2_score :0.753 검증 평균: 0.7188 
+# TransformedTargetRegressor의 r2_score :0.863 검증 평균: 0.7778 
+# TweedieRegressor의 r2_score :0.838 검증 평균: 0.6598     
+    
+    
