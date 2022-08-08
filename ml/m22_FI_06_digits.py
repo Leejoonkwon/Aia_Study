@@ -8,65 +8,43 @@ import numpy as np
 datasets = load_digits()
 x = datasets.data
 y = datasets.target
-from sklearn.preprocessing import MinMaxScaler,StandardScaler
-from sklearn.experimental import enable_halving_search_cv
-from sklearn.model_selection import GridSearchCV,RandomizedSearchCV,HalvingGridSearchCV,KFold,StratifiedKFold
-
-from sklearn.model_selection import train_test_split
-x_train,x_test,y_train,y_test = train_test_split(x, y, train_size=0.8
-       ,random_state=1234,shuffle=True)
-
-# scaler = MinMaxScaler()
-# x_train = scaler.fit_transform(x_train) 
-# x_test = scaler.transform(x_test)
-
-#2. 모델 
-from sklearn.svm import LinearSVC, SVC 
-from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
-
-from sklearn.pipeline import make_pipeline,Pipeline 
-
-# model = SVC()
-# model = make_pipeline(MinMaxScaler(),SVC())
-# model = make_pipeline(StandardScaler(),RandomForestClassifier())
-pipe = Pipeline([('minmax',MinMaxScaler()),
-                  ('RF',RandomForestClassifier())
-                  ])
-#
-# 모델 정의와 스케일링을 정의해주지 않아도  fit에서 fit_transform이 적용된다.
-kfold = StratifiedKFold(n_splits=5,shuffle=True,random_state=100)
-
-parameters = [
-    {'RF__n_estimators':[100, 200],'RF__max_depth':[6, 8],'RF__min_samples_leaf':[3,5],
-     'RF__min_samples_split':[2, 3],'RF__n_jobs':[-1, 2]},
-    {'RF__n_estimators':[300, 400],'RF__max_depth':[6, 8],'RF__min_samples_leaf':[7, 10],
-     'RF__min_samples_split':[4, 7],'RF__n_jobs':[-1, 4]}
-   
-    ]     
-model = RandomizedSearchCV(pipe,parameters,cv = kfold,refit=True,n_jobs=-1,verbose=1)
-# Fitting 5 folds(kfold의 인수) for each of 42 candidates, totalling 210 fits(42*5)
-# n_jobs=-1 사용할 CPU 갯수를 지정하는 옵션 '-1'은 최대 갯수를 쓰겠다는 뜻
-#3. 컴파일,훈련
-import time
-start = time.time()
-model.fit(x_train,y_train) 
-end = time.time()- start
+allfeature = round(x.shape[1]*0.2, 0)
+print('자를 갯수: ', int(allfeature))
 
 
-# #4.  평가,예측
-# results = model.score(x_test,y_test) #분류 모델과 회귀 모델에서 score를 쓰면 알아서 값이 나온다 
-# print("results :",results)
-# # results : 0.9736842105263158
+x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, train_size=0.8, random_state=1234)
 
-print("최적의 매개변수 :",model.best_estimator_)
-print("최적의 파라미터 :",model.best_params_)
-print("best_score :",model.best_score_)
-print("model_score :",model.score(x_test,y_test))
-y_predict = model.predict(x_test)
-print('accuracy_score :',accuracy_score(y_test,y_predict))
-y_pred_best = model.best_estimator_.predict(x_test)
-print('최적 튠  ACC :',accuracy_score(y_test,y_predict))
-print("걸린 시간 :",round(end,2),"초")
+# 2. 모델구성
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from xgboost import XGBClassifier
+
+models = [DecisionTreeClassifier(), RandomForestClassifier(),
+          GradientBoostingClassifier(), XGBClassifier()]
+
+
+# 3. 컴파일, 훈련, 평가, 예측
+for model in models:
+    model.fit(x_train, y_train)
+    score = model.score(x_test, y_test)
+    if str(model).startswith('XGB'):
+        print('XGB 의 스코어:        ', score)
+    else:
+        print(str(model).strip('()'), '의 스코어:        ', score)
+        
+    featurelist = []
+    for a in range(int(allfeature)):
+        featurelist.append(np.argsort(model.feature_importances_)[a])
+        
+    x_bf = np.delete(x, featurelist, axis=1)
+    
+    x_train2, x_test2, y_train2, y_test2 = train_test_split(x_bf, y, shuffle=True, train_size=0.8, random_state=1234)
+    model.fit(x_train2, y_train2)
+    score = model.score(x_test2, y_test2)
+    if str(model).startswith('XGB'):
+        print('XGB 의 드랍후 스코어: ', score)
+    else:
+        print(str(model).strip('()'), '의 드랍후 스코어: ', score)
 
 # 최적의 매개변수 : RandomForestClassifier(max_depth=6, min_samples_leaf=3, n_jobs=-1)
 # 최적의 파라미터 : {'max_depth': 6, 'min_samples_leaf': 3, 'min_samples_split': 2, 'n_estimators': 100, 'n_jobs': -1}  

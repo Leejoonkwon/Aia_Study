@@ -16,6 +16,7 @@ matplotlib.rcParams['axes.unicode_minus']=False
 import pandas as pd
 from sklearn.svm import LinearSVC 
 from sklearn.svm import LinearSVR 
+import numpy as np 
 #1. 데이터
 path = 'D:\study_data\_data\_csv\_ddarung/' # ".은 현재 폴더"
 train_set = pd.read_csv(path + 'train.csv',
@@ -48,60 +49,61 @@ print(x.columns)
 print(x.shape) #(1459, 9)
 
 y = train_set['count']
-from sklearn.model_selection import KFold,cross_val_score,cross_val_predict
-
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
 from sklearn.experimental import enable_halving_search_cv
 from sklearn.model_selection import GridSearchCV,RandomizedSearchCV,HalvingGridSearchCV,KFold,StratifiedKFold
+x = np.array(x)
+y = np.array(y)
+allfeature = round(x.shape[1]*0.2, 0)
+print('자를 갯수: ', int(allfeature))
 
-from sklearn.model_selection import train_test_split
-x_train,x_test,y_train,y_test = train_test_split(x, y, train_size=0.8
-       ,random_state=1234,shuffle=True)
 
-# scaler = MinMaxScaler()
-# x_train = scaler.fit_transform(x_train) 
-# x_test = scaler.transform(x_test)
+x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, train_size=0.7, random_state=1234)
 
-#2. 모델 
-from sklearn.svm import LinearSVC, SVC 
-from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
+# 2. 모델구성
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from xgboost import XGBClassifier
 
-from sklearn.pipeline import make_pipeline,Pipeline 
+# models = [DecisionTreeClassifier(), RandomForestClassifier(), GradientBoostingClassifier(), XGBClassifier()]
+def models(model):
+    if model == 'RF':
+        mod = RandomForestClassifier()
+    elif model == 'GB':
+        mod = GradientBoostingClassifier()
+    elif model == 'XGB':
+        mod =  XGBClassifier()
+    elif model == 'DT':
+        mod =  DecisionTreeClassifier()
+  
+    return mod
+model_list = ['RF', 'GB',  'XGB', 'DT']
+empty_list = []
 
-# model = SVC()
-# model = make_pipeline(MinMaxScaler(),SVC())
-# model = make_pipeline(StandardScaler(),RandomForestClassifier())
-pipe = Pipeline([('minmax',MinMaxScaler()),
-                  ('RF',RandomForestRegressor())
-                  ])
-#
-# 모델 정의와 스케일링을 정의해주지 않아도  fit에서 fit_transform이 적용된다.
-kfold = StratifiedKFold(n_splits=5,shuffle=True,random_state=100)
-
-parameters = [
-    {'RF__n_estimators':[100, 200],'RF__max_depth':[6, 8],'RF__min_samples_leaf':[3,5],
-     'RF__min_samples_split':[2, 3],'RF__n_jobs':[-1, 2]},
-    {'RF__n_estimators':[300, 400],'RF__max_depth':[6, 8],'RF__min_samples_leaf':[7, 10],
-     'RF__min_samples_split':[4, 7],'RF__n_jobs':[-1, 4]}
-   
-    ]     
-model = RandomizedSearchCV(pipe,parameters,cv = kfold,refit=True,n_jobs=-1,verbose=1,
-                          )
-#3. 컴파일,훈련
-import time
-start = time.time()
-model.fit(x_train,y_train) 
-end = time.time()- start
-
-print("최적의 매개변수 :",model.best_estimator_)
-print("최적의 파라미터 :",model.best_params_)
-print("best_score :",model.best_score_)
-print("model_score :",model.score(x_test,y_test))
-y_predict = model.predict(x_test)
-print('accuracy_score :',r2_score(y_test,y_predict))
-y_pred_best = model.best_estimator_.predict(x_test)
-print('최적 튠  ACC :',r2_score(y_test,y_predict))
-print("걸린 시간 :",round(end,2),"초")
+for model in models:
+    empty_list.append(model)
+    clf = models(model)    
+    clf.fit(x_train, y_train) 
+    result = clf.score(x_test,y_test) 
+    if str(model).startswith('XGB'):
+        print('XGB 의 스코어:        ', score)
+    else:
+        print(str(model).strip('()'), '의 스코어:        ', score)
+        
+    featurelist = []
+    for a in range(int(allfeature)):
+        featurelist.append(np.argsort(model.feature_importances_)[a])
+        
+    x_bf = np.delete(x, featurelist, axis=1)
+    
+    x_train2, x_test2, y_train2, y_test2 = train_test_split(x_bf, y, shuffle=True, train_size=0.7, random_state=1234)
+    model.fit(x_train2, y_train2)
+    score = model.score(x_test2, y_test2)
+    if str(model).startswith('XGB'):
+        print('XGB 의 드랍후 스코어: ', score)
+    else:
+        print(str(model).strip('()'), '의 드랍후 스코어: ', score)
+        
 #============= pipe HalvingGridSearchCV
 # 최적의 매개변수 : Pipeline(steps=[('minmax', MinMaxScaler()),
 #                 ('RF',

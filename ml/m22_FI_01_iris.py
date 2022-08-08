@@ -11,12 +11,14 @@ datasets = load_iris()
 
 x =  datasets.data 
 y =  datasets.target   
+# print(datasets['feature_names'])
+aaa = np.round(len(datasets['feature_names'])*0.25,0)
+print(aaa)
 
 from sklearn.model_selection import train_test_split 
 
 x_train,x_test,y_train,y_test = train_test_split(x,y,
                                                  train_size=0.8,shuffle=True,random_state=123)
-
 
 #2. 모델 구성
 from sklearn.tree import DecisionTreeClassifier 
@@ -24,70 +26,44 @@ from sklearn.ensemble import RandomForestClassifier,GradientBoostingClassifier
 from xgboost import XGBClassifier
 
 def models(model):
-    if model == 'rf':
+    if model == 'RF':
         mod = RandomForestClassifier()
-    elif model == 'gb':
+    elif model == 'GB':
         mod = GradientBoostingClassifier()
-    elif model == 'xgb':
+    elif model == 'XGB':
         mod =  XGBClassifier()
-    elif model == 'dt':
+    elif model == 'DT':
         mod =  DecisionTreeClassifier()
   
     return mod
-model_list = ['rf', 'gb',  'xgb', 'dt']
-empty_list = [] #empty list for progress bar in tqdm library
+model_list = ['RF', 'GB',  'XGB', 'DT']
+empty_list = []
+
+
+#empty list for progress bar in tqdm library
 for model in (model_list):
-    empty_list.append(model) # fill empty_list to fill progress bar
+    empty_list.append(model)
+    print(empty_list)
+
+    clf = models(model)    
     #classifier
-    clf = models(model)
-    #Training
     clf.fit(x_train, y_train) 
-    #Predict
     result = clf.score(x_test,y_test)
-    pred = clf.predict(x_test) 
+    abc = np.argsort(clf.feature_importances_,axis=0)[aaa] # [0,7,2,3,5]
     print('{}-{}'.format(model,result))
-    print(model,':',np.argsort(clf.feature_importances_,axis=0),len(clf.feature_importances_)*0.25)
-    
-#4. 평가,예측
+    for i in aaa:
+        x = np.delete(x,i,axis=1)
+        x1_train,x1_test,y1_train,y1_test = train_test_split(x,y,train_size=0.75,shuffle=True,random_state=100)
+        model_list3 = ['RF', 'GB',  'XGB', 'DT']
+        empty_list2 = []
+        for model2 in (model_list3):
+            empty_list2.append(model2)
+            clf2 = models(model2)    
+            #classifier
+            clf2.fit(x1_train, y1_train) 
+            #Predict
+            result2 = clf2.score(x1_test,y1_test)
+            pred = clf2.predict(x1_test) 
+            print('{}-{}'.format(model2,result2))
 
-'''
-# DecisionTreeClassifier() : [0.01088866 0.01253395 0.55770372 0.41887367]
-# RandomForestClassifier() : [0.09711772 0.02531929 0.44701223 0.43055075]
-# GradientBoostingClassifier() : [0.00085471 0.02276816 0.56079501 0.41558212]
-# XGBClassifier() : [0.0089478  0.01652037 0.75273126 0.22180054]
 
-import matplotlib.pyplot as plt
-def plot_feature_importances(model):
-    n_features = datasets.data.shape[1]
-    plt.barh(np.arange(n_features),model.feature_importances_,align='center')
-    plt.yticks(np.arange(n_features),datasets.feature_names)
-    plt.xlabel('Feature_importances')
-    plt.ylabel('Features')
-    plt.ylim(-1,n_features)
-   
-
-    
-plt.subplot(2,2,1)
-plt.title('DecisionTreeClassifier')
-plot_feature_importances(model1)
-
-plt.subplot(2,2,2)
-plt.title('RandomForestClassifier')
-plot_feature_importances(model2)
-
-plt.subplot(2,2,3)
-plt.title('GradientBoostingClassifier')
-plot_feature_importances(model3)
-
-plt.subplot(2,2,4)
-plt.title('XGBClassifier')
-plot_feature_importances(model4)
-
-plt.show()
-
-#4. 평가,예측
-abc = [model1,model2,model3,model4]
-for i in abc:
-    result = abc[i].score(x_test,y_test)
-    print("model.score :",result)
-'''
