@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from sklearn.svm import LinearSVC 
 from sklearn.svm import LinearSVR 
 from sklearn.metrics import r2_score
-
+import numpy as np
 
 #1. 데이터
 datasets = fetch_california_housing()

@@ -53,6 +53,8 @@ for (name,algorithms) in allAlgorithms:
        
     except:
         continue
-    
-    
-    
+
+# 모델의 갯수 : 41
+# AdaBoostClassifier의 정확도 :0.493 검증 평균: 0.5156 
+# BaggingClassifier의 정확도 :0.961 검증 평균: 0.9621 
+# BernoulliNB의 정확도 :0.641 검증 평균: 0.6311    

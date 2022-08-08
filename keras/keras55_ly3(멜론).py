@@ -7,11 +7,7 @@ import re
 import pandas as pd
 
 # title=driver.find_elements_by_class_name
-<<<<<<< HEAD
-driver.get("https://www.melon.com/chart/day/index.htm?classCd=GN0500")
-=======
-driver.get("https://www.melon.com/chart/week/index.htm?classCd=GN0800")
->>>>>>> 5442dc49979c491b265b97ea00646ff04ee03a12
+driver.get("https://movie.naver.com/movie/bi/mi/point.naver?code=194196&onlyActualPointYn=Y#pointAfterTab")
 title=driver.find_elements(By.CLASS_NAME,'ellipsis.rank01')
 				
 title2=[]
@@ -29,10 +25,6 @@ for i in singer:
 del singer2[50:]
 
 songTagList = driver.find_elements(By.ID,'lst50')
-<<<<<<< HEAD
-=======
-
->>>>>>> 5442dc49979c491b265b97ea00646ff04ee03a12
 number=[]
 for i in songTagList:
     number.append(i.get_attribute('data-song-no'))
@@ -45,11 +37,7 @@ for i in number:
     lyric=driver.find_element(By.CLASS_NAME,"lyric")
     LYRIC.append(lyric.text)
 df=pd.DataFrame({"제목":title2,"가수":singer2,"가사":LYRIC})
-<<<<<<< HEAD
 df.to_excel("멜론TOP50_가사5.xlsx",  encoding='utf-8')    
-=======
-df.to_excel("멜론TOP50_가사8.xlsx",  encoding='utf-8')    
 
 # //*[@id="lst50"]/td[4]/div/a/span
 # //*[@id="lst50"]/td[4]/div/a/span
->>>>>>> 5442dc49979c491b265b97ea00646ff04ee03a12
