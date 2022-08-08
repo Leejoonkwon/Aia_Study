@@ -33,7 +33,7 @@ from sklearn.pipeline import make_pipeline
 
 # model = SVC()
 # model = make_pipeline(MinMaxScaler(),SVC())
-model = make_pipeline(MinMaxScaler(),RandomForestClassifier())
+model = make_pipeline(StandardScaler(),RandomForestClassifier())
 # 모델 정의와 스케일링을 정의해주지 않아도  fit에서 fit_transform이 적용된다.
 
 #3. 훈련 
@@ -46,6 +46,8 @@ result = model.score(x_test,y_test)
 print('model.score :',result)
 #######ML 사용시
 # results : 0.9649122807017544
-#######ML scaler
 
+#######ML MinMaxScaler
 # model.score : 0.9473684210526315
+#######ML StandardScaler
+# model.score : 0.9122807017543859

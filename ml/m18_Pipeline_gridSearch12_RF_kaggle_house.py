@@ -63,9 +63,11 @@ print(x.columns)
 print(x.shape) #(1460, 75)
 
 y = train_set['SalePrice']
-from sklearn.svm import LinearSVC 
-from sklearn.svm import LinearSVR 
+from sklearn.model_selection import KFold,cross_val_score,cross_val_predict
+
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import GridSearchCV,RandomizedSearchCV,HalvingGridSearchCV,KFold,StratifiedKFold
 
 from sklearn.model_selection import train_test_split
 x_train,x_test,y_train,y_test = train_test_split(x, y, train_size=0.8
@@ -76,34 +78,74 @@ x_train,x_test,y_train,y_test = train_test_split(x, y, train_size=0.8
 # x_test = scaler.transform(x_test)
 
 #2. 모델 
-from sklearn.svm import LinearSVC, SVC , SVR
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.svm import LinearSVC, SVC 
+from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
 
-from sklearn.pipeline import make_pipeline 
+from sklearn.pipeline import make_pipeline,Pipeline 
 
 # model = SVC()
 # model = make_pipeline(MinMaxScaler(),SVC())
-model = make_pipeline(StandardScaler(),SVR())
+# model = make_pipeline(StandardScaler(),RandomForestClassifier())
+pipe = Pipeline([('minmax',MinMaxScaler()),
+                  ('RF',RandomForestRegressor())
+                  ])
+#
 # 모델 정의와 스케일링을 정의해주지 않아도  fit에서 fit_transform이 적용된다.
+kfold = StratifiedKFold(n_splits=5,shuffle=True,random_state=100)
 
-#3. 훈련 
-model.fit(x_train,y_train)
+parameters = [
+    {'RF__n_estimators':[100, 200],'RF__max_depth':[6, 8],'RF__min_samples_leaf':[3,5],
+     'RF__min_samples_split':[2, 3],'RF__n_jobs':[-1, 2]},
+    {'RF__n_estimators':[300, 400],'RF__max_depth':[6, 8],'RF__min_samples_leaf':[7, 10],
+     'RF__min_samples_split':[4, 7],'RF__n_jobs':[-1, 4]}
+   
+    ]     
+model = RandomizedSearchCV(pipe,parameters,cv = kfold,refit=True,n_jobs=-1,verbose=1,
+                         )
+#3. 컴파일,훈련
+import time
+start = time.time()
+model.fit(x_train,y_train) 
+end = time.time()- start
 
-#4. 평가,예측
-result = model.score(x_test,y_test)
-# 모델 정의와 상관없이 model로 정의된 기능에 x_test에 transform이 적용된다
-
-print('model.score :',result)
-
-########### ML 시
-# results : -3.640761034476303
-
-########### ML 시 StandardScaler RandomForestRegressor
-# model.score : 0.8699854369554119
-
-########### ML 시 MinMaxScaler RandomForestRegressor
-# model.score : 0.8690639005791617
-
-
-
+print("최적의 매개변수 :",model.best_estimator_)
+print("최적의 파라미터 :",model.best_params_)
+print("best_score :",model.best_score_)
+print("model_score :",model.score(x_test,y_test))
+y_predict = model.predict(x_test)
+print('accuracy_score :',r2_score(y_test,y_predict))
+y_pred_best = model.best_estimator_.predict(x_test)
+print('최적 튠  ACC :',r2_score(y_test,y_predict))
+print("걸린 시간 :",round(end,2),"초")
+# 최적의 매개변수 : RandomForestRegressor(max_depth=8, min_samples_leaf=3, n_jobs=2)
+# 최적의 파라미터 : {'max_depth': 8, 'min_samples_leaf': 3, 'min_samples_split': 2, 'n_estimators': 100, 'n_jobs': 2}   
+# best_score : 0.8279813665272245
+# model_score : 0.8791392215145897
+# accuracy_score : 0.8791392215145897
+# 최적 튠  ACC : 0.8791392215145897
+# 걸린 시간 : 61.35 초    
+#============= pipe HalvingGridSearchCV
+# 최적의 매개변수 : Pipeline(steps=[('minmax', MinMaxScaler()),
+#                 ('RF',
+#                  RandomForestRegressor(max_depth=8, min_samples_leaf=3,
+#                                        n_estimators=200, n_jobs=2))])
+# 최적의 파라미터 : {'RF__max_depth': 8, 'RF__min_samples_leaf': 3, 'RF__min_samples_split': 2, 
+# 'RF__n_estimators': 200, 'RF__n_jobs': 2}      
+# best_score : 0.8581178318511601
+# model_score : 0.863593220963692
+# accuracy_score : 0.863593220963692
+# 최적 튠  ACC : 0.863593220963692
+# 걸린 시간 : 64.59 초
+#============= pipe GridSearchCV
+# 최적의 매개변수 : Pipeline(steps=[('minmax', MinMaxScaler()),
+#                 ('RF',
+#                  RandomForestRegressor(max_depth=8, min_samples_leaf=3,
+#                                        min_samples_split=3, n_jobs=2))])
+# 최적의 파라미터 : {'RF__max_depth': 8, 'RF__min_samples_leaf': 3, 'RF__min_samples_split': 3, 
+# 'RF__n_estimators': 100, 'RF__n_jobs': 2}      
+# best_score : 0.8604112043120843
+# model_score : 0.8664759216302295
+# accuracy_score : 0.8664759216302295
+# 최적 튠  ACC : 0.8664759216302295
+# 걸린 시간 : 65.7 초
+#============= pipe RandomizedSearchCV

@@ -31,67 +31,21 @@ test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
                        )
 combine = [train_set,test_set]
 print(train_set) # [891 rows x 11 columns]
-# print(train_set.describe())
-# print(train_set.info())
-# train_set.describe()
-# print(train_set.describe(include=['O']))
+
 train_set[['Pclass', 'Survived']].groupby(['Pclass'], as_index=False).mean().sort_values(by='Survived', ascending=False)
 train_set[["Sex", "Survived"]].groupby(['Sex'], as_index=False).mean().sort_values(by='Survived', ascending=False)
 train_set[["SibSp", "Survived"]].groupby(['SibSp'], as_index=False).mean().sort_values(by='Survived', ascending=False)
 train_set[["Parch", "Survived"]].groupby(['Parch'], as_index=False).mean().sort_values(by='Survived', ascending=False)
 
-# # 열(col)을 생존 여부로 나눔
-# g = sns.FacetGrid(train_set, col='Survived')
-# # 히스토그램으로 시각화, 연령의 분포를 확인, 히스토그램 bin을 20개로 설정
-# g.map(plt.hist, 'Age', bins=20)
-
-# grid = sns.FacetGrid(train_set, col='Survived', row='Pclass', hue="Pclass", height=2.2, aspect=1.6)
-
-# grid.map(plt.hist, 'Age', alpha=.5, bins=20) # 투명도(alpha): 0.5
-
-# # 범례 추가
-# grid.add_legend();
-# grid = sns.FacetGrid(train_set, row='Embarked', height=2.2, aspect=1.6)
-
-# # Pointplot으로 시각화, x: 객실 등급, y: 생존 여부, 색깔: 성별, x축 순서: [1, 2, 3], 색깔 순서: [남성, 여성]
-# grid.map(sns.pointplot, 'Pclass', 'Survived', 'Sex', palette='deep', order = [1, 2, 3], hue_order = ["male", "female"])
-
-# grid.add_legend()
-# grid = sns.FacetGrid(train_set, row='Embarked', col='Survived', height=2.2, aspect=1.6)
-
-# # 바그래프로 시각화, x: 성별, y: 요금, Error bar: 표시 안 함
-# grid.map(sns.barplot, 'Sex', 'Fare', alpha=.5, ci=None,order=["male","female"])
-
-# grid.add_legend()
-# plt.show()
 
 
 print(test_set) # [418 rows x 10 columns]
 print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
-# Survived      0
-# Pclass        0
-# Name          0
-# Sex           0
-# Age         177
-# SibSp         0
-# Parch         0
-# Ticket        0
-# Fare          0
-# Cabin       687
-# Embarked      2
+
 
 # train_set = train_set.fillna(train_set.median())
 print(test_set.isnull().sum())
-# Pclass        0
-# Name          0
-# Sex           0
-# Age          86
-# SibSp         0
-# Parch         0
-# Ticket        0
-# Fare          1
-# Cabin       327
-# Embarked      0
+
 print(train_set.head())
 
 drop_cols = ['Cabin','Ticket']
@@ -213,9 +167,12 @@ x = train_set.drop(['Survived'],axis=1) #axis는 컬럼
 
 print(x) #(891, 7)
 y = train_set['Survived']
-from sklearn.svm import LinearSVC 
-from sklearn.svm import LinearSVR 
+
+from sklearn.model_selection import KFold,cross_val_score,cross_val_predict
+
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import GridSearchCV,RandomizedSearchCV,HalvingGridSearchCV,KFold,StratifiedKFold
 
 from sklearn.model_selection import train_test_split
 x_train,x_test,y_train,y_test = train_test_split(x, y, train_size=0.8
@@ -227,29 +184,95 @@ x_train,x_test,y_train,y_test = train_test_split(x, y, train_size=0.8
 
 #2. 모델 
 from sklearn.svm import LinearSVC, SVC 
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
 
-from sklearn.pipeline import make_pipeline 
+from sklearn.pipeline import make_pipeline,Pipeline 
 
 # model = SVC()
 # model = make_pipeline(MinMaxScaler(),SVC())
-model = make_pipeline(MinMaxScaler(),RandomForestClassifier())
+# model = make_pipeline(StandardScaler(),RandomForestClassifier())
+pipe = Pipeline([('minmax',MinMaxScaler()),
+                  ('RF',RandomForestClassifier())
+                  ])
+#
 # 모델 정의와 스케일링을 정의해주지 않아도  fit에서 fit_transform이 적용된다.
+kfold = StratifiedKFold(n_splits=5,shuffle=True,random_state=100)
 
-#3. 훈련 
-model.fit(x_train,y_train)
+parameters = [
+    {'RF__n_estimators':[100, 200],'RF__max_depth':[6, 8],'RF__min_samples_leaf':[3,5],
+     'RF__min_samples_split':[2, 3],'RF__n_jobs':[-1, 2]},
+    {'RF__n_estimators':[300, 400],'RF__max_depth':[6, 8],'RF__min_samples_leaf':[7, 10],
+     'RF__min_samples_split':[4, 7],'RF__n_jobs':[-1, 4]}
+   
+    ]     
+model = RandomizedSearchCV(pipe,parameters,cv = kfold,refit=True,n_jobs=-1,verbose=1)
+# Fitting 5 folds(kfold의 인수) for each of 42 candidates, totalling 210 fits(42*5)
+# n_jobs=-1 사용할 CPU 갯수를 지정하는 옵션 '-1'은 최대 갯수를 쓰겠다는 뜻
+#3. 컴파일,훈련
+import time
+start = time.time()
+model.fit(x_train,y_train) 
+end = time.time()- start
 
-#4. 평가,예측
-result = model.score(x_test,y_test)
-# 모델 정의와 상관없이 model로 정의된 기능에 x_test에 transform이 적용된다
 
-print('model.score :',result)
+# #4.  평가,예측
+# results = model.score(x_test,y_test) #분류 모델과 회귀 모델에서 score를 쓰면 알아서 값이 나온다 
+# print("results :",results)
+# # results : 0.9736842105263158
 
-############# ML시
-# results : 0.7283950617283951
+print("최적의 매개변수 :",model.best_estimator_)
+print("최적의 파라미터 :",model.best_params_)
+print("best_score :",model.best_score_)
+print("model_score :",model.score(x_test,y_test))
+y_predict = model.predict(x_test)
+print('accuracy_score :',accuracy_score(y_test,y_predict))
+y_pred_best = model.best_estimator_.predict(x_test)
+print('최적 튠  ACC :',accuracy_score(y_test,y_predict))
+print("걸린 시간 :",round(end,2),"초")
+#==================gridsearch
+# 최적의 매개변수 : RandomForestClassifier(max_depth=6, min_samples_leaf=3, n_jobs=-1)
+# 최적의 파라미터 : {'max_depth': 6, 'min_samples_leaf': 3, 'min_samples_split': 2, 'n_estimators': 100, 'n_jobs': -1}  
+# best_score : 0.813158672313602
+# model_score : 0.8268156424581006
+# accuracy_score : 0.8268156424581006
+# 최적 튠  ACC : 0.8268156424581006
+# 걸린 시간 : 18.97 초
+#============= pipe HalvingGridSearchCV
+# 최적의 매개변수 : Pipeline(steps=[('minmax', MinMaxScaler()),
+#                 ('RF',
+#                  RandomForestClassifier(max_depth=8, min_samples_leaf=3,
+#                                         n_jobs=-1))])
+# 최적의 파라미터 : {'RF__max_depth': 8, 'RF__min_samples_leaf': 3, 'RF__min_samples_split': 2, 
+# 'RF__n_estimators': 100, 'RF__n_jobs': -1}     
+# best_score : 0.8057142857142857
+# model_score : 0.8156424581005587
+# accuracy_score : 0.8156424581005587
+# 최적 튠  ACC : 0.8156424581005587
+# 걸린 시간 : 28.06 초
+#============= pipe GridSearchCV
+# 최적의 매개변수 : Pipeline(steps=[('minmax', MinMaxScaler()),
+#                 ('RF',
+#                  RandomForestClassifier(max_depth=6, min_samples_leaf=5,
+#                                         min_samples_split=3, n_jobs=-1))])
+# 최적의 파라미터 : {'RF__max_depth': 6, 'RF__min_samples_leaf': 5, 'RF__min_samples_split': 3, 
+# 'RF__n_estimators': 100, 'RF__n_jobs': -1}     
+# best_score : 0.804875406283857
+# model_score : 0.8100558659217877
+# accuracy_score : 0.8100558659217877
+# 최적 튠  ACC : 0.8100558659217877
+# 걸린 시간 : 24.3 초
+#============= pipe RandomizedSearchCV
+# 최적의 매개변수 : Pipeline(steps=[('minmax', MinMaxScaler()),
+#                 ('RF',
+#                  RandomForestClassifier(max_depth=8, min_samples_leaf=10,
+#                                         min_samples_split=7, n_estimators=400,
+#                                         n_jobs=-1))])
+# 최적의 파라미터 : {'RF__n_jobs': -1, 'RF__n_estimators': 400, 'RF__min_samples_split': 7, 'RF__min_samples_leaf': 10, 'RF__max_depth': 8}    
+# best_score : 0.8020979020979022
+# model_score : 0.8212290502793296
+# accuracy_score : 0.8212290502793296
+# 최적 튠  ACC : 0.8212290502793296
+# 걸린 시간 : 6.83 초
 
-############# ML시 StandardScaler
-# model.score : 0.8156424581005587
-############# ML시 MinMaxScaler
-# model.score : 0.8212290502793296
+
 

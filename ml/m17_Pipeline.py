@@ -1,16 +1,13 @@
-from sklearn.datasets import load_diabetes
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from sklearn.model_selection import train_test_split
-from sklearn.svm import LinearSVC 
-from sklearn.svm import LinearSVR 
-#1. 데이터
-datasets = load_diabetes()
-x = datasets.data
-y = datasets.target
+import numpy as np 
+from sklearn.datasets import load_iris 
+from sklearn.preprocessing import MinMaxScaler,StandardScaler 
 
-
+#1. 데이터 
+datasets = load_iris() 
+x = datasets.data 
+y = datasets.target   
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
+
 from sklearn.model_selection import train_test_split
 x_train,x_test,y_train,y_test = train_test_split(x, y, train_size=0.8
        ,random_state=1234,shuffle=True)
@@ -22,14 +19,14 @@ x_train,x_test,y_train,y_test = train_test_split(x, y, train_size=0.8
 #2. 모델 
 from sklearn.svm import LinearSVC, SVC 
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import RandomForestRegressor
 
-
-from sklearn.pipeline import make_pipeline 
+from sklearn.pipeline import make_pipeline,Pipeline 
 
 # model = SVC()
 # model = make_pipeline(MinMaxScaler(),SVC())
-model = make_pipeline(MinMaxScaler(),RandomForestRegressor())
+# model = make_pipeline(StandardScaler(),RandomForestClassifier())
+model = Pipeline([('minmax',MinMaxScaler()),
+                  ('RF',RandomForestClassifier())])
 # 모델 정의와 스케일링을 정의해주지 않아도  fit에서 fit_transform이 적용된다.
 
 #3. 훈련 
@@ -40,11 +37,11 @@ result = model.score(x_test,y_test)
 # 모델 정의와 상관없이 model로 정의된 기능에 x_test에 transform이 적용된다
 
 print('model.score :',result)
+#3. 훈련 
+# model.fit(x_train,y_train)
 
-#######ML 사용시
-# results : 0.022222222222222223
+# #4. 평가,예측
+# result = model.score(x_test,y_test)
+# 모델 정의와 상관없이 model로 정의된 기능에 x_test에 transform이 적용된다
 
-#######ML StandardScaler
-# model.score : 0.4046784582787267
-#######ML MinMaxScaler
-# model.score : 0.4114871032869758
+# print('model.score :',result)
