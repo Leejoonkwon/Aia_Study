@@ -92,6 +92,8 @@ for (name,algorithms) in allAlgorithms:
        
     except:
         continue    
+<<<<<<< HEAD
+=======
     
     
     
@@ -140,4 +142,5 @@ for (name,algorithms) in allAlgorithms:
 # TransformedTargetRegressor의 r2_score :0.601 검증 평균: 0.5919    
 TweedieRegressor의 r2_score :0.511 검증 평균: 0.5599     
     
+>>>>>>> 2c957d9ba7d95ae2a556526cd2109205d9849f68
     
