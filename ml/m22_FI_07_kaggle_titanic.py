@@ -184,7 +184,7 @@ models = [DecisionTreeClassifier(), RandomForestClassifier(),
           GradientBoostingClassifier(), XGBClassifier()]
 
 
-# 3. 컴파일, 훈
+# 3. 컴파일, 
 for model in models:
     model.fit(x_train, y_train)
     score = model.score(x_test, y_test)
