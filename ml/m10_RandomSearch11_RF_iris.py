@@ -39,7 +39,8 @@ from sklearn.svm import LinearSVC,SVC
 
 model = RandomizedSearchCV(SVC(),parameters,cv=kfold,verbose=1,
                      refit=True,n_jobs=-1,) 
-# Fitting 5 folds(kfold의 인수) for each of 42 candidates, totalling 210 fits(42*5)
+# Fitting 5 folds for each of 10 candidates, totalling 50 fits 분할된 횟수마다 X 10회  총 50
+
 # n_jobs=-1 사용할 CPU 갯수를 지정하는 옵션 '-1'은 최대 갯수를 쓰겠다는 뜻
 #3. 컴파일,훈련
 import time

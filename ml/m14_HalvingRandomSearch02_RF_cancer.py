@@ -57,7 +57,7 @@ parameters = [
 
 
 
-model = RandomizedSearchCV(RandomForestClassifier(),parameters,cv=kfold,verbose=1,
+model = HalvingRandomSearchCV(RandomForestClassifier(),parameters,cv=kfold,verbose=1,
                      refit=True,n_jobs=-1) 
 # Fitting 5 folds(kfold의 인수) for each of 42 candidates, totalling 210 fits(42*5)
 # n_jobs=-1 사용할 CPU 갯수를 지정하는 옵션 '-1'은 최대 갯수를 쓰겠다는 뜻
