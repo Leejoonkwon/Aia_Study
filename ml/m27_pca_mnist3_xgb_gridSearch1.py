@@ -56,7 +56,7 @@ print('결과 :',results)
 print("걸린 시간 :",end_time)
     
 
-
+#  GridSearchCV 154
 
 
 

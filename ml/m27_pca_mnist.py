@@ -22,13 +22,15 @@ pca = PCA(n_components=784) # 차원 축소 (차원=컬럼,열,피처)
 x = pca.fit_transform(x) 
 print(x.shape) # (506, 2)
 pca_EVR = pca.explained_variance_ratio_ # PCA로 압축 후에 새로 생성된 피쳐 임포턴스를 보여준다.
-print(sum(pca_EVR)) #0.999998352533973
-print(pca_EVR)
+# print(sum(pca_EVR)) #0.999998352533973
+# print(pca_EVR)
 
 cumsum = np.cumsum(pca_EVR)
+# print(cumsum)
 # cumsum = np.argmax(cumsum,axis=1)
-print(np.argmax(cumsum >=0.95)+1)   # 154
-# print(np.argmax(cumsum >=0.99)+1)   # 331
+a = (cumsum >=0.95)
+print(a)  
+print(np.argmin(cumsum >=0.99)+1)   # 331
 # print(np.argmax(cumsum >=0.999)+1)  # 486
 # print(np.argmax(cumsum >=1.0)+1)    # 713
 # import matplotlib.pyplot as plt   
