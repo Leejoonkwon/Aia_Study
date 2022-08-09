@@ -26,8 +26,8 @@ scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 scaler.transform(x_train)
 x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
-x_train = x_train.reshape(60000, 28,28,1)
-x_test = x_test.reshape(10000, 28,28,1)
+x_train = x_train.reshape(60000, 784)
+x_test = x_test.reshape(10000, 784)
 print(np.unique(y_train,return_counts=True))
 # (array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], dtype=uint8), 
 #  array([5923, 6742, 5958, 6131, 5842, 5421, 5918, 6265, 5851, 5949],
@@ -40,22 +40,23 @@ y_test = pd.get_dummies((y_test))
 
 #2. 모델 구성
 model = Sequential()
-model.add(Conv2D(filters=64, kernel_size=(3, 3),   # 출력(4,4,10)                                    
-                 padding='same',
-                 input_shape=(28, 28, 1)))    #(batch_size, row, column, channels)     
+# model.add(Conv2D(filters=64, kernel_size=(3, 3),   # 출력(4,4,10)                                    
+#                  padding='same',
+#                  input_shape=(28, 28, 1)))    #(batch_size, row, column, channels)     
                                                                                            
-model.add(MaxPooling2D())
+# model.add(MaxPooling2D())
 
- #    (kernel_size * channls) * filters = summary Param 개수(CNN모델)  
-model.add(Conv2D(32, (2,2),  #인풋쉐이프에 행값은 디폴트는 32
-                 padding = 'same',         # 디폴트값(안준것과 같다.) 
-                 activation= 'swish'))    # 출력(3,3,7)       
-model.add(MaxPooling2D())
-model.add(Conv2D(100, (2,2), 
-                 padding = 'same',         # 디폴트값(안준것과 같다.) 
-                 activation= 'swish'))    # 출력(3,3,7)      
+#  #    (kernel_size * channls) * filters = summary Param 개수(CNN모델)  
+# model.add(Conv2D(32, (2,2),  #인풋쉐이프에 행값은 디폴트는 32
+#                  padding = 'same',         # 디폴트값(안준것과 같다.) 
+#                  activation= 'swish'))    # 출력(3,3,7)       
+# model.add(MaxPooling2D())
+# model.add(Conv2D(100, (2,2), 
+#                  padding = 'same',         # 디폴트값(안준것과 같다.) 
+#                  activation= 'swish'))    # 출력(3,3,7)      
                                               
-model.add(Flatten()) # (N, 63) 위치와 순서는 바뀌지 않아야한다.transpose와 전혀 다르다.
+# model.add(Flatten()) # (N, 63) 위치와 순서는 바뀌지 않아야한다.transpose와 전혀 다르다.
+model.add(Dense(100,input_shape=(784,)))
 model.add(Dense(100,activation='swish'))
 model.add(Dropout(0.3))
 model.add(Dense(100, activation='swish'))
@@ -73,20 +74,21 @@ print(date)
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 filepath = './_ModelCheckPoint/K24/'
 filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
-earlyStopping = EarlyStopping(monitor='loss', patience=5, mode='min', 
+earlyStopping = EarlyStopping(monitor='val_loss', patience=20, mode='min', 
                               verbose=1,restore_best_weights=True)
-mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
-                      save_best_only=True, 
-                      filepath="".join([filepath,'k25_', date, '_mnist2_', filename])
-                    )
+# mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
+#                       save_best_only=True, 
+#                       filepath="".join([filepath,'k25_', date, '_mnist2_', filename])
+#                     )
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-
-model.fit(x_train, y_train, epochs=100000, batch_size=3500, 
+import time
+start_time = time.time()
+model.fit(x_train, y_train, epochs=200, batch_size=7000, 
                 validation_split=0.33,
-                callbacks = [earlyStopping,mcp],
+                callbacks = [earlyStopping],
                 verbose=2
                 )
-
+end_time = time.time()-start_time
 #4. 평가 예측
 loss = model.evaluate(x_test, y_test)
 print('loss :', loss)
@@ -102,9 +104,8 @@ y_predict = np.argmax(y_predict,axis=1)
 print(y_test) #[10000 rows x 10 columns]
 y_predict = pd.get_dummies((y_predict))
 
-
 acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
-
+print("걸린 시간 :",end_time)
 # loss : [0.03594522178173065, 0.9915000200271606]
 # acc 스코어 : 0.9915

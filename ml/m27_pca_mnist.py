@@ -11,10 +11,10 @@ x = np.append(x_train,x_test,axis = 0)
 #####################################
 # [실습]
 # pca를 통해 0.95 이상인 n_component는 몇개?
-# 0.95 # 153
-# 0.99 # 330
-# 0.999 # 485
-# 1.0 # 712
+# 0.95 # 154
+# 0.99 # 331
+# 0.999 # 486
+# 1.0 # 713
 # 힌트  np.armax
 
 x = x.reshape(70000,784)
@@ -27,9 +27,12 @@ print(pca_EVR)
 
 cumsum = np.cumsum(pca_EVR)
 # cumsum = np.argmax(cumsum,axis=1)
-print(cumsum)
+print(np.argmax(cumsum >=0.95)+1)   # 154
+# print(np.argmax(cumsum >=0.99)+1)   # 331
+# print(np.argmax(cumsum >=0.999)+1)  # 486
+# print(np.argmax(cumsum >=1.0)+1)    # 713
 # import matplotlib.pyplot as plt   
 # plt.plot(cumsum)
 # plt.grid()
 # plt.show() # 그림을 그려서 컬럼이 손실되면 안되는 범위를 예상할 수 있다.
-print(np.argwhere(cumsum >= 0.95)[0])
+# # print(np.argwhere(cumsum >= 0.95)[0])
