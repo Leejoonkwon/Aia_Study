@@ -15,7 +15,7 @@ x = np.append(x_train,x_test,axis = 0)
 # 0.99 # 331
 # 0.999 486
 # 1.0  # 713
-# 힌트  np.armax
+# 힌트 np.armax
 
 x = x.reshape(70000,784)
 pca = PCA(n_components=784) # 차원 축소 (차원=컬럼,열,피처)
