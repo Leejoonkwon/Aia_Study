@@ -14,7 +14,7 @@ x = np.append(x_train,x_test,axis = 0)
 # 0.95 #   154
 # 0.99 # 331
 # 0.999 486
-# 1.0   # 713
+# 1.0     # 713
 # 힌트  np.armax
 
 x = x.reshape(70000,784)
