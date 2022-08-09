@@ -13,7 +13,7 @@ x = np.append(x_train,x_test,axis = 0)
 # pca를 통해 0.95 이상인 n_component  몇개?
 # 0.95 #   154
 # 0.99 # 331
-# 0.999 # 486
+# 0.999 486
 # 1.0   # 713
 # 힌트  np.armax
 
