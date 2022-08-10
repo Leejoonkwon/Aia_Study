@@ -22,36 +22,42 @@ scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
 scaler.transform(x_train)
 x_train_scale = scaler.transform(x_train)
 x_test_scale = scaler.transform(x_test)
-from sklearn.model_selection import KFold,cross_val_score,GridSearchCV,StratifiedKFold
+from sklearn.model_selection import KFold,cross_val_score,GridSearchCV,StratifiedKFold,RandomizedSearchCV
 # a = [154,331,486,713]
 
-pca = PCA(n_components=154)
-# tree_method='gpu_hist' gpu를 사용하겠다는 뜻 데이터가 작을 경우 
-# CPU 만으로 하는 것이 빠름 
-# predictor = 'gpu_predictor
-x_train_pca = pca.fit_transform(x_train_scale) 
-x_test_pca = pca.transform(x_test_scale) 
+# pca = PCA(n_components=154)
+# # tree_method='gpu_hist' gpu를 사용하겠다는 뜻 데이터가 작을 경우 
+# # CPU 만으로 하는 것이 빠름 
+# # predictor = 'gpu_predictor
+# x_train_pca = pca.fit_transform(x_train_scale) 
+# x_test_pca = pca.transform(x_test_scale) 
 
 kfold = StratifiedKFold(n_splits=5,shuffle=True,random_state=100)
 
 parameters = [
-    {"n_estimators":[100,200,300],"learning_rate":[0.1, 0.3, 0.001,0.01],
+    {"n_estimators":[100,200,300],"learning_rate":[0.3, 0.001,0.01],
      "max_depth": [4,5,6]},
-    {"n_estimators":[90,100,110],"learning_rate":[0.1, 0.001, 0.01],
+    {"n_estimators":[90,100,110],"learning_rate":[0.1, 0.01],
      "max_depth": [4,5,6]},
     {"n_estimators":[90,110],"learning_rate":[0.1, 0.001, 0.5],
-     "max_depth": [4,5,6],"colsample_bytree":[0.6,0.9,1],
-     "colsample_bylevel":[0.6,0.7,0.9]}
+     "max_depth": [4,5,6],"colsample_bytree":[0.9,1],
+     "colsample_bylevel":[0.6,0.9]}
 ]
 
-model = GridSearchCV(XGBClassifier(tree_method='gpu_hist'),parameters,cv=kfold,verbose=1,
+model = RandomizedSearchCV(XGBClassifier(tree_method='gpu_hist'),parameters,cv=kfold,verbose=1,
                      refit=True,n_jobs=-1) 
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+
+lda = LinearDiscriminantAnalysis() 
+lda.fit(x_train,y_train)
+x_train = lda.transform(x_train)
+x_test = lda.transform(x_test)
 
 
 start_time = time.time()
-model.fit(x_train_pca,y_train,verbose=1) # eval_metric='error'
+model.fit(x_train,y_train,verbose=1) # eval_metric='error'
 end_time = time.time()-start_time
-results = model.score(x_test_pca,y_test) 
+results = model.score(x_test,y_test) 
 print('결과 :',results)
 print("걸린 시간 :",end_time)
     
