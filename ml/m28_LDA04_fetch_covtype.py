@@ -1,3 +1,4 @@
+from tabnanny import verbose
 import numpy as np    
 from sklearn.datasets import load_breast_cancer,load_wine,fetch_covtype
 from sklearn.model_selection import train_test_split
@@ -5,6 +6,7 @@ from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 import sklearn as sk 
 import warnings 
+from sklearn.preprocessing import LabelEncoder
 warnings.filterwarnings(action='ignore')
 # print(sk.__version__) #0.24
 
@@ -13,8 +15,10 @@ datasets =  fetch_covtype()
 x = datasets.data
 y = datasets.target      
 # print(x.shape,y.shape) # (506, 13) (506,)
+le = LabelEncoder()
+y = le.fit_transform(y)
 
-x_train,x_test,y_train,y_test = train_test_split(x,y,
+x_train,x_test,y_train,y_test = train_test_split(x,y,stratify = y,
                                                  train_size=0.8,shuffle=True,random_state=123)
 lda = LinearDiscriminantAnalysis() 
 lda.fit(x_train,y_train)
@@ -26,10 +30,10 @@ x_test = lda.transform(x_test)
 from xgboost import XGBClassifier,XGBRegressor
 from sklearn.ensemble import RandomForestRegressor,RandomForestClassifier
 
-model = RandomForestRegressor()
+model = XGBClassifier(tree_method='gpu_hist')
 
 #3. 훈련
-model.fit(x_train,y_train,) # eval_metric='error'
+model.fit(x_train,y_train) # eval_metric='error'
 
 #4. 평가,예측 
 results = model.score(x_test,y_test) 
