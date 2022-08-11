@@ -2,7 +2,6 @@ import numpy as np
 from sklearn.datasets import load_breast_cancer,load_wine,load_digits
 from sklearn.model_selection import train_test_split 
 from sklearn.decomposition import PCA
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 import sklearn as sk 
 import warnings 
 warnings.filterwarnings(action='ignore')
@@ -19,6 +18,7 @@ print(x.shape,y.shape) # (1797, 64) (1797,)
 
 x_train,x_test,y_train,y_test = train_test_split(x,y,
                                                  train_size=0.8,shuffle=True,random_state=123)
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 lda = LinearDiscriminantAnalysis() 
 lda.fit(x_train,y_train)
 x_train = lda.transform(x_train)
