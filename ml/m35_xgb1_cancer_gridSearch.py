@@ -36,18 +36,21 @@ kfold = KFold(n_splits=n_splits,shuffle=True,random_state=123)
 # 'reg_lambda' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=1] 0~inf /L2 절댓값 가중치 규제 
 # max_delta_step[기본값=0]
 
-parameters = {'n_estimators':[100,200], # 2
-              'learning_rate':[0.1,0.3,0.7], # 3
-              'max_depth': [2,3,4], # 3
-              'gamma' : [0.1,0.9,1], # 4 
-              'min_child_weight' : [5], # 1
-              'subsample' : [0.1,0.5,0.7,1], # 4
-              'colsample_bytree' : [0.3,0.5,0.7,1], # 4
-              'colsample_bylevel': [0.3,0.5,0.7,1],# 4
-              'colsample_bynode': [0.3,0.5,0.7,1],# 4
-              'alpha' : [ 0.001, 1 ,2 ,10], # 3
-              'lambda' : [0.001, 1 ,2 ,10] # 3
-              } # 디폴트 6 
+# parameters = {'n_estimators':[100,200], # 2
+#               'learning_rate':[0.1,0.3], # 3
+#               'max_depth': [2,3,4], # 3
+#               'gamma' : [0.1,1], # 4 
+#               'min_child_weight' : [5], # 1
+#               'subsample' : [0.5,0.7,1], # 4
+#               'colsample_bytree' : [0.3,0.5,1], # 4
+#               'colsample_bylevel': [0.3,0.5,1],# 4
+#               'colsample_bynode': [0.3,0.5,1],# 4
+#               'alpha' : [ 1 ,2 ,10], # 3
+#               'lambda' : [1 ,2 ,10] # 3
+#               } # 디폴트 6 
+parameters ={'alpha': [1], 'colsample_bylevel': [0.3], 'colsample_bynode': [1], 
+ 'colsample_bytree': [0.5], 'gamma': [1], 'lambda': [2], 'learning_rate': [0.3], 
+ 'max_depth': [2], 'min_child_weight': [5], 'n_estimators': [100], 'subsample': [0.7]}
 # 통상 max_depth의 디폴트인 6보다 작을 파라미터를 줄 때 성능이 좋다 -> 너무 깊어지면 훈련 데이터에 특화되어 과적합이 될 수 있다.
 # 통상 min_depth의 디폴트인 6보다 큰 파라미터를 줄 때 성능이 좋다
 
@@ -59,14 +62,17 @@ xgb = XGBClassifier(random_state=123,
                 )
 
 model = GridSearchCV(xgb,parameters,cv=kfold,n_jobs=-1)
-
+import time
+start_time = time.time()
 model.fit(x_train,y_train)
-
+end_time =time.time()-start_time
 # model.score(x_test,y_test)
 results = model.score(x_test,y_test)
 print('최적의 매개변수 : ',model.best_params_)
 print('최상의 점수 : ',model.best_score_)
 print('model.socre : ',results)
+print('걸린 시간 : ',end_time)
+
 ####################################################
 # 최적의 매개변수 :  {'learning_rate': 0.2, 'n_estimators': 100}
 # 최상의 점수 :  0.25834227216709194
@@ -92,3 +98,9 @@ print('model.socre : ',results)
 # 'max_depth': 1, 'min_child_weight': 5, 'n_estimators': 100, 'subsample': 1}
 # 최상의 점수 :  0.41199505440070894
 # model.socre :  0.597604046868436
+# 최적의 매개변수 :  {'alpha': 1, 'colsample_bylevel': 0.3, 
+# 'colsample_bynode': 1, 'colsample_bytree': 0.5, 'gamma': 1, 'lambda': 2, 
+# 'learning_rate': 0.3, 'max_depth': 2, 'min_child_weight': 5, 'n_estimators': 100, 'subsample': 0.7}
+# 최상의 점수 :  0.9670329670329672
+# model.socre :  0.9736842105263158
+# 걸린 시간 :  1.7486727237701416
