@@ -1,78 +1,67 @@
-# n_component > 0.95 이상 
-# xgboost,gridSearch 또는 RandomSearch를 쓸것
 
-# m27_2 결과를 뛰어넘어랏
-import numpy as np    
-from sklearn.model_selection import train_test_split 
-from sklearn.decomposition import PCA
-from keras.datasets import mnist 
-from sklearn.ensemble import RandomForestRegressor,RandomForestClassifier
-from xgboost import XGBClassifier
-import time
-
-(x_train, y_train), (x_test, y_test)=mnist.load_data()  
-# print(y_train.shape)
-x_train = x_train.reshape(60000,784)
-x_test = x_test.reshape(10000,784)
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer
-# scaler = StandardScaler() 
-scaler = MinMaxScaler()
-scaler.fit(x_train) #여기까지는 스케일링 작업을 했다.
-scaler.transform(x_train)
-x_train_scale = scaler.transform(x_train)
-x_test_scale = scaler.transform(x_test)
-from sklearn.model_selection import KFold,cross_val_score,GridSearchCV,StratifiedKFold
+import matplotlib
+import pandas as pd
+import matplotlib.pyplot as plt
+from tensorflow.python.keras.models import Sequential,load_model
+from tensorflow.python.keras.layers import Dense,Dropout,Conv2D,Flatten,LSTM,Conv1D
+from sklearn.model_selection import train_test_split
+from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 from sklearn.model_selection import RandomizedSearchCV
 
-# a = [154,331,486,713]
+matplotlib.rcParams['font.family']='Malgun Gothic'
+matplotlib.rcParams['axes.unicode_minus']=False
+from sklearn.svm import LinearSVC 
+from sklearn.svm import LinearSVR 
+from sklearn.metrics import r2_score
+#1. 데이터
+path = 'D:\study_data\_data\_csv\kaggle_bike/' # ".은 현재 폴더"
+train_set = pd.read_csv(path + 'train.csv',
+                        index_col=0)
+# print(train_set)
 
-pca = PCA(n_components=486)
-# tree_method='gpu_hist' gpu를 사용하겠다는 뜻 데이터가 작을 경우 
-# CPU 만으로 하는 것이 빠름 
-# predictor = 'gpu_predictor
-x_train_pca = pca.fit_transform(x_train_scale) 
-x_test_pca = pca.transform(x_test_scale) 
+# print(train_set.shape) #(10886, 11)
 
-kfold = StratifiedKFold(n_splits=5,shuffle=True,random_state=100)
+test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
+                       index_col=0)
 
-parameters = [
-    {"n_estimators":[100,200,300],"learning_rate":[0.1, 0.3, 0.001,0.01],
-     "max_depth": [4,5,6]},
-    {"n_estimators":[90,100,110],"learning_rate":[0.1, 0.001, 0.01],
-     "max_depth": [4,5,6]},
-    {"n_estimators":[90,110],"learning_rate":[0.1, 0.001, 0.5],
-     "max_depth": [4,5,6],"colsample_bytree":[0.6,0.9,1],
-     "colsample_bylevel":[0.6,0.7,0.9]}
-]
+sampleSubmission = pd.read_csv(path + 'sampleSubmission.csv',#예측에서 쓸거야!!
+                       index_col=0)
 
-model = RandomizedSearchCV(XGBClassifier(tree_method='gpu_hist'),parameters,cv=kfold,verbose=1,
-                     refit=True,n_jobs=-1) 
+from sklearn.covariance import EllipticEnvelope
 
+outliers = EllipticEnvelope(contamination=.3)
+            
+# print(test_set)
+# print(test_set.shape) #(6493, 8) #train_set과 열 값이 '1'차이 나는 건 count를 제외했기 때문이다.예측 단계에서 값을 대입
 
-start_time = time.time()
-model.fit(x_train_pca,y_train,verbose=1) # eval_metric='error'
-end_time = time.time()-start_time
-results = model.score(x_test_pca,y_test) 
-print('결과 :',results)
-print("걸린 시간 :",end_time)
-    
-# RandomizedSearchCV 154
-# 결과 : 0.9648
-# 걸린 시간 : 302.0717215538025
-# RandomizedSearchCV 331
-# 결과 : 0.9608
-# 걸린 시간 : 538.3998608589172
-# RandomizedSearchCV 486
+# print(train_set.columns)
+# Index(['season', 'holiday', 'workingday', 'weather', 'temp', 'atemp',
+#        'humidity', 'windspeed', 'casual', 'registered', 'count'
+import numpy as np
+abc = np.array(train_set['season'])
+# abc2 = aaa[:,1]
+abc = abc.reshape(-1,1)
+# abc2 = abc2.reshape(-1,1)
 
+outliers.fit(abc)
+results1 = outliers.predict(abc)
+print(np.argwhere(results1 == -1))
 
-
-
-
+'''
+print(train_set.info()) #null은 누락된 값이라고 하고 "결측치"라고도 한다.
+print(train_set.describe()) 
 
 
+###### 결측치 처리 1.제거##### dropna 사용
+print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
+print(train_set.shape) #(10886,11)
 
 
+x = train_set.drop([ 'casual', 'registered','count'],axis=1) #axis는 컬럼 
 
 
+print(x.columns)
+print(x.shape) #(10886, 8)
 
-
+y = train_set['count']
+'''

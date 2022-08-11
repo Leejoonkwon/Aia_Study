@@ -1,5 +1,5 @@
 import numpy as np
-aaa = np.array([2,3,-16,4,5,6,7,8,50,10])
+aaa = np.array([2.000005,3,-16,4,5,6,7,8,50,10])
 
 def outliers(data_out):
     quartile_1, q2 , quartile_3 = np.percentile(data_out,
@@ -15,13 +15,19 @@ def outliers(data_out):
                     (data_out<lower_bound))
 outliers_loc = outliers(aaa)
 print("이상치의 위치 :",outliers_loc)
+aaa = outliers_loc[0]
+# print(aaa)
+
+empty = []
+empty.extend(aaa)
+print(empty)
 # 1사분위 :  2.5
 # q2 :  5.5
 # quartile_3 :  7.75
 # iqr : 5.25
 # 이상치의 위치 : (array([2, 8, 9], dtype=int64),)
-import matplotlib.pyplot as  plt
-plt.boxplot(aaa)
-plt.show()
+# import matplotlib.pyplot as  plt
+# plt.boxplot(aaa)
+# plt.show()
 
 

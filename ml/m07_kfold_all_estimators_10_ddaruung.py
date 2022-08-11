@@ -92,10 +92,7 @@ for (name,algorithms) in allAlgorithms:
        
     except:
         continue    
-<<<<<<< HEAD
-=======
-    
-    
+
     
 # ARDRegression의 r2_score :0.6 검증 평균: 0.5921 
 # AdaBoostRegressor의 r2_score :0.577 검증 평균: 0.5798 
