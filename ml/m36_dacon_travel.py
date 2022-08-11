@@ -180,7 +180,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 # x_test = lda.transform(x_test)
 # test_set = lda.transform(test_set)
 n_splits = 5 
-    ##3$$####
+    ##3$$#######
 kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
 
 parameters = {'gamma': [0.1], 'learning_rate': [0.1,0.3,0.5], 
