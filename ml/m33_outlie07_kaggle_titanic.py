@@ -1,12 +1,3 @@
-# [실습]
-# 시작!!!
-# datasets.descibe()
-# datasets.info()
-# datasets.isnull().sum()
-
-# pandas의  y 라벨의 종류가 무엇인지 확인하는 함수 쓸것
-# numpy 에서는 np.unique(y,return_counts=True)
-
 import numpy as np
 import pandas as pd 
 from tensorflow.python.keras.models import Sequential
@@ -19,6 +10,8 @@ from sklearn.metrics import r2_score, mean_squared_error
 import seaborn as sns
 import matplotlib
 import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 matplotlib.rcParams['font.family']='Malgun Gothic'
 matplotlib.rcParams['axes.unicode_minus']=False
 
@@ -31,67 +24,34 @@ test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
                        )
 combine = [train_set,test_set]
 print(train_set) # [891 rows x 11 columns]
-# print(train_set.describe())
-# print(train_set.info())
-# train_set.describe()
-# print(train_set.describe(include=['O']))
+print(train_set.isnull().sum())
+# PassengerId      0
+# Survived         0
+# Pclass           0
+# Name             0
+# Sex              0
+# Age            177
+# SibSp            0
+# Parch            0
+# Ticket           0
+# Fare             0
+# Cabin          687
+# Embarked         2
+
 train_set[['Pclass', 'Survived']].groupby(['Pclass'], as_index=False).mean().sort_values(by='Survived', ascending=False)
 train_set[["Sex", "Survived"]].groupby(['Sex'], as_index=False).mean().sort_values(by='Survived', ascending=False)
 train_set[["SibSp", "Survived"]].groupby(['SibSp'], as_index=False).mean().sort_values(by='Survived', ascending=False)
 train_set[["Parch", "Survived"]].groupby(['Parch'], as_index=False).mean().sort_values(by='Survived', ascending=False)
 
-# # 열(col)을 생존 여부로 나눔
-# g = sns.FacetGrid(train_set, col='Survived')
-# # 히스토그램으로 시각화, 연령의 분포를 확인, 히스토그램 bin을 20개로 설정
-# g.map(plt.hist, 'Age', bins=20)
-
-# grid = sns.FacetGrid(train_set, col='Survived', row='Pclass', hue="Pclass", height=2.2, aspect=1.6)
-
-# grid.map(plt.hist, 'Age', alpha=.5, bins=20) # 투명도(alpha): 0.5
-
-# # 범례 추가
-# grid.add_legend();
-# grid = sns.FacetGrid(train_set, row='Embarked', height=2.2, aspect=1.6)
-
-# # Pointplot으로 시각화, x: 객실 등급, y: 생존 여부, 색깔: 성별, x축 순서: [1, 2, 3], 색깔 순서: [남성, 여성]
-# grid.map(sns.pointplot, 'Pclass', 'Survived', 'Sex', palette='deep', order = [1, 2, 3], hue_order = ["male", "female"])
-
-# grid.add_legend()
-# grid = sns.FacetGrid(train_set, row='Embarked', col='Survived', height=2.2, aspect=1.6)
-
-# # 바그래프로 시각화, x: 성별, y: 요금, Error bar: 표시 안 함
-# grid.map(sns.barplot, 'Sex', 'Fare', alpha=.5, ci=None,order=["male","female"])
-
-# grid.add_legend()
-# plt.show()
 
 
-print(test_set) # [418 rows x 10 columns]
-print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
-# Survived      0
-# Pclass        0
-# Name          0
-# Sex           0
-# Age         177
-# SibSp         0
-# Parch         0
-# Ticket        0
-# Fare          0
-# Cabin       687
-# Embarked      2
+print(train_set) # [418 rows x 10 columns]
+# print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
+
 
 # train_set = train_set.fillna(train_set.median())
 print(test_set.isnull().sum())
-# Pclass        0
-# Name          0
-# Sex           0
-# Age          86
-# SibSp         0
-# Parch         0
-# Ticket        0
-# Fare          1
-# Cabin       327
-# Embarked      0
+
 print(train_set.head())
 
 drop_cols = ['Cabin','Ticket']
@@ -213,44 +173,49 @@ x = train_set.drop(['Survived'],axis=1) #axis는 컬럼
 
 print(x) #(891, 7)
 y = train_set['Survived']
-from sklearn.svm import LinearSVC 
-from sklearn.svm import LinearSVR 
-from sklearn.preprocessing import MinMaxScaler,StandardScaler
+x = np.array(x)
+y = np.array(y)
+print(x.shape,y.shape) # (891, 7) (891,)
+# pca = PCA(n_components=6) # 차원 축소 (차원=컬럼,열,피처)
+# x = pca.fit_transform(x) 
+# print(x.shape) # (506, 2)
 
-from sklearn.model_selection import train_test_split
-x_train,x_test,y_train,y_test = train_test_split(x, y, train_size=0.8
-       ,random_state=1234,shuffle=True)
+x_train,x_test,y_train,y_test = train_test_split(x,y,
+                                                 train_size=0.8,shuffle=True,random_state=123)
+# lda = LinearDiscriminantAnalysis() 
+# lda.fit(x_train,y_train)
+# x_train = lda.transform(x_train)
+# x_test = lda.transform(x_test)
 
-# scaler = MinMaxScaler()
-# x_train = scaler.fit_transform(x_train) 
-# x_test = scaler.transform(x_test)
+#2. 모델
 
-#2. 모델 
-from sklearn.svm import LinearSVC, SVC 
-from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier,XGBRegressor
+from sklearn.ensemble import RandomForestRegressor,RandomForestClassifier
 
-from sklearn.pipeline import make_pipeline 
+model = XGBClassifier(tree_method='gpu_hist')
 
-# model = SVC()
-# model = make_pipeline(MinMaxScaler(),SVC())
-model = make_pipeline(MinMaxScaler(),RandomForestClassifier())
-# 모델 정의와 스케일링을 정의해주지 않아도  fit에서 fit_transform이 적용된다.
-
-#3. 훈련 
+#3. 훈련
+import time
+start_time = time.time()
 model.fit(x_train,y_train)
+end_time = time.time()
 
-#4. 평가,예측
-result = model.score(x_test,y_test)
-# 모델 정의와 상관없이 model로 정의된 기능에 x_test에 transform이 적용된다
+#4. 평가,예측 
+results = model.score(x_test,y_test) 
+print('model.score :',results)
+print("걸린 시간 :",end_time-start_time)
+#==========PCA 사용 전
+# model_score : 0.8212290502793296
 
-print('model.score :',result)
 
-############# ML시
-# results : 0.7283950617283951
+#==========PCA 사용 후
+# model.score : 0.471226153067437
+# 걸린 시간 : 0.12484860420227051
 
-############# ML시 StandardScaler
-# model.score : 0.8156424581005587
+#==========LDA 사용 후
+# model.score : 0.4196927414077545
+# 걸린 시간 : 0.08544659614562988
 
-############# ML시 MinMaxScaler
-# model.score : 0.8212290502793296
+
+
 

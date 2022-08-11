@@ -82,12 +82,12 @@ from sklearn.svm import LinearSVC, SVC
 from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
 
 from sklearn.pipeline import make_pipeline,Pipeline 
-
+from xgboost import XGBRegressor
 # model = SVC()
 # model = make_pipeline(MinMaxScaler(),SVC())
 # model = make_pipeline(StandardScaler(),RandomForestClassifier())
 pipe = Pipeline([('minmax',MinMaxScaler()),
-                  ('RF',RandomForestRegressor())
+                  ('RF',XGBRegressor(tree_method = 'gpu_hist'))
                   ])
 #
 # 모델 정의와 스케일링을 정의해주지 않아도  fit에서 fit_transform이 적용된다.

@@ -2,6 +2,7 @@
 # xgboost,gridSearch 또는 RandomSearch를 쓸것
 
 # m27_2 결과를 뛰어넘어랏
+from tabnanny import verbose
 import numpy as np    
 from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import train_test_split 
@@ -44,7 +45,8 @@ parameters = [
      "colsample_bylevel":[0.6,0.9]}
 ]
 
-model = RandomizedSearchCV(XGBClassifier(tree_method='gpu_hist'),parameters,cv=kfold,verbose=1,
+model = RandomizedSearchCV(XGBClassifier(tree_method='gpu_hist',verbose=2),parameters,
+                           cv=kfold,
                      refit=True,n_jobs=-1) 
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
@@ -61,9 +63,25 @@ results = model.score(x_test,y_test)
 print('결과 :',results)
 print("걸린 시간 :",end_time)
     
+#3. PCA 0.95
+# 결과 : 0.9501
+# 걸린 시간 : 70.41563248634338
 
-#  GridSearchCV 154
+#4. PCA 0.99
+# 결과 : 0.9417
+# 걸린 시간 : 108.65130114555359
 
+#5. PCA 0.999
+# 결과 : 0.9700714285714286
+# 걸린 시간 : 29.213647842407227
+
+#6. PCA 1.0
+# 결과 : 0.9255
+# 걸린 시간 : 157.61064887046814
+
+#  RandomizedSearchCV LDA
+# 결과 : 0.9167
+# 걸린 시간 : 267.7866253852844
 
 
 
