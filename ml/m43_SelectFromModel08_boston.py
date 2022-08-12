@@ -10,7 +10,7 @@ from sklearn.metrics import accuracy_score, r2_score
 from sklearn.feature_selection import SelectFromModel
 
 # 1. 데이터
-datasets = load_iris()
+datasets = load_boston()
 x = datasets.data
 y = datasets.target
 print(x.shape, y.shape) #(150, 4) (150,)
@@ -22,7 +22,7 @@ x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
 # 2. 모델
-model = XGBClassifier(n_estimators=100,
+model = XGBRegressor(n_estimators=100,
               learning_rate=1,
               max_depth=2,
               gamma=0,
@@ -75,21 +75,52 @@ for thresh in thresholds:
     y_predict = selection_model.predict(select_x_test)
     score = r2_score(y_test, y_predict)
     print('Thresh=%.3f, n=%d, R2: %.2f%%'%(thresh, select_x_train.shape[1], score*100), '\n')
-# 테스트 스코어:  1.0
-# acc_score 결과:  1.0
-# [0.20807147 0.0203274  0.2616216  0.5099795 ]
+
+# 테스트 스코어:  0.8208776710793739
+# acc_score 결과:  0.8208776710793739
+# [0.05517107 0.00852136 0.03864899 0.02511239 0.0194922  0.0895038
+#  0.03961516 0.0156719  0.01996997 0.07966852 0.06927608 0.04030788
+#  0.49904066]
 # -----------------------------------------------
-# (120, 3) (120, 3)
-# Thresh=0.208, n=3, R2: 91.26% 
+# (404, 5) (404, 5)
+# Thresh=0.055, n=5, R2: 78.22% 
 
-# (120, 4) (120, 4)
-# Thresh=0.020, n=4, R2: 95.38% 
+# (404, 13) (404, 13)
+# Thresh=0.009, n=13, R2: 85.11% 
 
-# (120, 2) (120, 2)
-# Thresh=0.262, n=2, R2: 95.31% 
+# (404, 8) (404, 8)
+# Thresh=0.039, n=8, R2: 87.92% 
 
-# (120, 1) (120, 1)
-# Thresh=0.510, n=1, R2: 98.20% 
+# (404, 9) (404, 9)
+# Thresh=0.025, n=9, R2: 87.92% 
+
+# (404, 11) (404, 11)
+# Thresh=0.019, n=11, R2: 87.75% 
+
+# (404, 2) (404, 2)
+# Thresh=0.090, n=2, R2: 69.28% 
+
+# (404, 7) (404, 7)
+# Thresh=0.040, n=7, R2: 81.71% 
+
+# (404, 12) (404, 12)
+# Thresh=0.016, n=12, R2: 82.85% 
+
+# (404, 10) (404, 10)
+# Thresh=0.020, n=10, R2: 81.60% 
+
+# (404, 3) (404, 3)
+# Thresh=0.080, n=3, R2: 72.70% 
+
+# (404, 4) (404, 4)
+# Thresh=0.069, n=4, R2: 84.08% 
+
+# (404, 6) (404, 6)
+# Thresh=0.040, n=6, R2: 79.13% 
+
+# (404, 1) (404, 1)
+# Thresh=0.499, n=1, R2: 39.41% 
+
 
 
 

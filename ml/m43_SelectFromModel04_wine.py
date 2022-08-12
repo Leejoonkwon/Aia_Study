@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.datasets import load_iris,load_boston,load_digits,load_breast_cancer
+from sklearn.datasets import load_iris,load_boston,load_digits,load_breast_cancer,load_wine
 from sklearn.datasets import load_boston,fetch_covtype,fetch_california_housing
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import KFold, StratifiedKFold, train_test_split
@@ -10,7 +10,7 @@ from sklearn.metrics import accuracy_score, r2_score
 from sklearn.feature_selection import SelectFromModel
 
 # 1. 데이터
-datasets = load_iris()
+datasets = load_wine()
 x = datasets.data
 y = datasets.target
 print(x.shape, y.shape) #(150, 4) (150,)
@@ -75,21 +75,49 @@ for thresh in thresholds:
     y_predict = selection_model.predict(select_x_test)
     score = r2_score(y_test, y_predict)
     print('Thresh=%.3f, n=%d, R2: %.2f%%'%(thresh, select_x_train.shape[1], score*100), '\n')
-# 테스트 스코어:  1.0
-# acc_score 결과:  1.0
-# [0.20807147 0.0203274  0.2616216  0.5099795 ]
-# -----------------------------------------------
-# (120, 3) (120, 3)
-# Thresh=0.208, n=3, R2: 91.26% 
+# 테스트 스코어:  0.9722222222222222
+# acc_score 결과:  0.9472913616398243
+# [0.01169864 0.05024325 0.00171308 0.00264352 0.         0.03281694
+#  0.05708249 0.00214115 0.00233366 0.30660474 0.24723305 0.04431141
+#  0.24117804]
+# (142, 8) (142, 8)
+# Thresh=0.012, n=8, R2: 75.82% 
 
-# (120, 4) (120, 4)
-# Thresh=0.020, n=4, R2: 95.38% 
+# (142, 5) (142, 5)
+# Thresh=0.050, n=5, R2: 81.58% 
 
-# (120, 2) (120, 2)
-# Thresh=0.262, n=2, R2: 95.31% 
+# (142, 12) (142, 12)
+# Thresh=0.002, n=12, R2: 68.30% 
 
-# (120, 1) (120, 1)
-# Thresh=0.510, n=1, R2: 98.20% 
+# (142, 9) (142, 9)
+# Thresh=0.003, n=9, R2: 82.83% 
+
+# (142, 13) (142, 13)
+# Thresh=0.000, n=13, R2: 86.15% 
+
+# (142, 7) (142, 7)
+# Thresh=0.033, n=7, R2: 79.49% 
+
+# (142, 4) (142, 4)
+# Thresh=0.057, n=4, R2: 89.34% 
+
+# (142, 11) (142, 11)
+# Thresh=0.002, n=11, R2: 85.55% 
+
+# (142, 10) (142, 10)
+# Thresh=0.002, n=10, R2: 82.20% 
+
+# (142, 1) (142, 1)
+# Thresh=0.307, n=1, R2: -9.30% 
+
+# (142, 2) (142, 2)
+# Thresh=0.247, n=2, R2: 10.08% 
+
+# (142, 6) (142, 6)
+# Thresh=0.044, n=6, R2: 89.35% 
+
+# (142, 3) (142, 3)
+# Thresh=0.241, n=3, R2: 48.51% 
 
 
 

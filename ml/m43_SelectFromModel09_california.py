@@ -10,7 +10,7 @@ from sklearn.metrics import accuracy_score, r2_score
 from sklearn.feature_selection import SelectFromModel
 
 # 1. 데이터
-datasets = load_iris()
+datasets = fetch_california_housing()
 x = datasets.data
 y = datasets.target
 print(x.shape, y.shape) #(150, 4) (150,)
@@ -22,7 +22,7 @@ x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
 # 2. 모델
-model = XGBClassifier(n_estimators=100,
+model = XGBRegressor(n_estimators=100,
               learning_rate=1,
               max_depth=2,
               gamma=0,
@@ -75,21 +75,34 @@ for thresh in thresholds:
     y_predict = selection_model.predict(select_x_test)
     score = r2_score(y_test, y_predict)
     print('Thresh=%.3f, n=%d, R2: %.2f%%'%(thresh, select_x_train.shape[1], score*100), '\n')
-# 테스트 스코어:  1.0
-# acc_score 결과:  1.0
-# [0.20807147 0.0203274  0.2616216  0.5099795 ]
+
+# 테스트 스코어:  0.7829929935589588
+# acc_score 결과:  0.7829929935589588
+# [0.24213526 0.04204758 0.25923392 0.03098403 0.01171169 0.16838305
+#  0.14919013 0.09631437]
 # -----------------------------------------------
-# (120, 3) (120, 3)
-# Thresh=0.208, n=3, R2: 91.26% 
+# (16512, 2) (16512, 2)
+# Thresh=0.242, n=2, R2: 52.37% 
 
-# (120, 4) (120, 4)
-# Thresh=0.020, n=4, R2: 95.38% 
+# (16512, 6) (16512, 6)
+# Thresh=0.042, n=6, R2: 78.97% 
 
-# (120, 2) (120, 2)
-# Thresh=0.262, n=2, R2: 95.31% 
+# (16512, 1) (16512, 1)
+# Thresh=0.259, n=1, R2: 14.08% 
 
-# (120, 1) (120, 1)
-# Thresh=0.510, n=1, R2: 98.20% 
+# (16512, 7) (16512, 7)
+# Thresh=0.031, n=7, R2: 76.82% 
 
+# (16512, 8) (16512, 8)
+# Thresh=0.012, n=8, R2: 78.30% 
+
+# (16512, 3) (16512, 3)
+# Thresh=0.168, n=3, R2: 59.54% 
+
+# (16512, 4) (16512, 4)
+# Thresh=0.149, n=4, R2: 68.61% 
+
+# (16512, 5) (16512, 5)
+# Thresh=0.096, n=5, R2: 77.42% 
 
 

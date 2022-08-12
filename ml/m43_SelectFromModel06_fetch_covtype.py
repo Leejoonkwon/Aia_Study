@@ -22,7 +22,7 @@ x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
 # 2. 모델
-model = XGBClassifier(n_estimators=100,
+model = XGBRegressor(n_estimators=100,
               learning_rate=1,
               max_depth=2,
               gamma=0,
@@ -75,21 +75,23 @@ for thresh in thresholds:
     y_predict = selection_model.predict(select_x_test)
     score = r2_score(y_test, y_predict)
     print('Thresh=%.3f, n=%d, R2: %.2f%%'%(thresh, select_x_train.shape[1], score*100), '\n')
-# 테스트 스코어:  1.0
-# acc_score 결과:  1.0
-# [0.20807147 0.0203274  0.2616216  0.5099795 ]
-# -----------------------------------------------
-# (120, 3) (120, 3)
-# Thresh=0.208, n=3, R2: 91.26% 
 
 # (120, 4) (120, 4)
-# Thresh=0.020, n=4, R2: 95.38% 
+# Thresh=0.006, n=4, R2: 95.38% 
+
+# (120, 3) (120, 3)
+# Thresh=0.007, n=3, R2: 90.27% 
 
 # (120, 2) (120, 2)
-# Thresh=0.262, n=2, R2: 95.31% 
+# Thresh=0.012, n=2, R2: 95.31% 
 
 # (120, 1) (120, 1)
-# Thresh=0.510, n=1, R2: 98.20% 
+# Thresh=0.975, n=1, R2: 98.20% 
+
+# 칼럼 갯수 중복 없음
+# 해당 피처임포턴스보다 작은 놈을 빼버린다 / 자기와 자기보다 큰 임포턴스의 피처만 남겨놓는다
+
+
 
 
 

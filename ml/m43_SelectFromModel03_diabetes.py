@@ -1,6 +1,5 @@
 import numpy as np
-from sklearn.datasets import load_iris,load_boston,load_digits,load_breast_cancer
-from sklearn.datasets import load_boston,fetch_covtype,fetch_california_housing
+from sklearn.datasets import load_diabetes
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import KFold, StratifiedKFold, train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
@@ -10,10 +9,10 @@ from sklearn.metrics import accuracy_score, r2_score
 from sklearn.feature_selection import SelectFromModel
 
 # 1. 데이터
-datasets = load_iris()
+datasets = load_diabetes()
 x = datasets.data
 y = datasets.target
-print(x.shape, y.shape) #(150, 4) (150,)
+print(x.shape, y.shape) #(442, 10) (442,)
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, random_state=1234, train_size=0.8)
 
@@ -22,7 +21,7 @@ x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
 # 2. 모델
-model = XGBClassifier(n_estimators=100,
+model = XGBRegressor(n_estimators=100,
               learning_rate=1,
               max_depth=2,
               gamma=0,
@@ -37,7 +36,8 @@ model = XGBClassifier(n_estimators=100,
               )
 
 model.fit(x_train, y_train, early_stopping_rounds=10, 
-          eval_set=[(x_train, y_train), (x_test, y_test)]
+          eval_set=[(x_train, y_train), (x_test, y_test)],
+          eval_metric=['logloss'],
           )
 
 print('테스트 스코어: ', model.score(x_test, y_test))
@@ -46,8 +46,6 @@ r2 = r2_score(y_test, model.predict(x_test))
 print('acc_score 결과: ', r2)
 
 print(model.feature_importances_)
-# [0.02737029 0.06044502 0.2727516  0.07338018 0.02401855 0.06909694
-#  0.03971948 0.24999845 0.07974161 0.10347791]
 
 thresholds = model.feature_importances_
 print('-----------------------------------------------')
@@ -75,21 +73,39 @@ for thresh in thresholds:
     y_predict = selection_model.predict(select_x_test)
     score = r2_score(y_test, y_predict)
     print('Thresh=%.3f, n=%d, R2: %.2f%%'%(thresh, select_x_train.shape[1], score*100), '\n')
-# 테스트 스코어:  1.0
-# acc_score 결과:  1.0
-# [0.20807147 0.0203274  0.2616216  0.5099795 ]
+
+
+# 테스트 스코어:  0.34273103377168257
+# acc_score 결과:  0.34273103377168257
+# [0.02737029 0.06044502 0.2727516  0.07338018 0.02401855 0.06909694
+#  0.03971948 0.24999845 0.07974161 0.10347791]
 # -----------------------------------------------
-# (120, 3) (120, 3)
-# Thresh=0.208, n=3, R2: 91.26% 
+# (353, 9) (353, 9)
+# Thresh=0.027, n=9, R2: 9.99% 
 
-# (120, 4) (120, 4)
-# Thresh=0.020, n=4, R2: 95.38% 
+# (353, 7) (353, 7)
+# Thresh=0.060, n=7, R2: -1.07% 
 
-# (120, 2) (120, 2)
-# Thresh=0.262, n=2, R2: 95.31% 
+# (353, 1) (353, 1)
+# Thresh=0.273, n=1, R2: 11.46% 
 
-# (120, 1) (120, 1)
-# Thresh=0.510, n=1, R2: 98.20% 
+# (353, 5) (353, 5)
+# Thresh=0.073, n=5, R2: 10.56% 
 
+# (353, 10) (353, 10)
+# Thresh=0.024, n=10, R2: -2.27% 
 
+# (353, 6) (353, 6)
+# Thresh=0.069, n=6, R2: 14.63% 
 
+# (353, 8) (353, 8)
+# Thresh=0.040, n=8, R2: 19.73% 
+
+# (353, 2) (353, 2)
+# Thresh=0.250, n=2, R2: 12.47% 
+
+# (353, 4) (353, 4)
+# Thresh=0.080, n=4, R2: 7.29% 
+
+# (353, 3) (353, 3)
+# Thresh=0.103, n=3, R2: 13.72% 
