@@ -1,15 +1,8 @@
-from tensorflow.python.keras.models import Sequential,load_model
-from tensorflow.python.keras.layers import Dense,Dropout,Conv2D,Flatten,LSTM,Conv1D
 from sklearn.model_selection import train_test_split
-from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
-import matplotlib.pyplot as plt
-from sklearn.metrics import r2_score
 import matplotlib
 matplotlib.rcParams['font.family']='Malgun Gothic'
 matplotlib.rcParams['axes.unicode_minus']=False
 import pandas as pd
-from sklearn.svm import LinearSVC 
-from sklearn.svm import LinearSVR 
 import numpy as np 
 #1. 데이터
 path = 'D:\study_data\_data\_csv\dacon_travel/' # ".은 현재 폴더"
@@ -42,18 +35,6 @@ test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
 #  17  MonthlyIncome             1855 non-null   float64 직급?나이?
 #  18  ProdTaken                 1955 non-null   int64
 ######### 결측치 채우기 (클래스별 괴리가 큰 컬럼으로 평균 채우기)
-print(train_set.shape)
-index1 = train_set[train_set['MonthlyIncome'] >= 90000].index
-index2 = train_set[train_set['MonthlyIncome'] <= 2000].index
-index3 = test_set[test_set['MonthlyIncome'] <= 5000].index
-print(index1,index2,index3)
-
-
-
-
-# train_set = train_set.drop([190,605,1339],inplace=True)
-# test_set = test_set.drop(index3,index=True)
-
 
 train_set['TypeofContact'].fillna('Self Enquiry', inplace=True)
 test_set['TypeofContact'].fillna('Self Enquiry', inplace=True)
@@ -73,7 +54,6 @@ test_set['NumberOfFollowups'].fillna(test_set.groupby('NumberOfChildrenVisiting'
 # print(train_set[train_set['PreferredPropertyStar'].notnull()].groupby(['Occupation'])['PreferredPropertyStar'].mean())
 train_set['PreferredPropertyStar'].fillna(train_set.groupby('Occupation')['PreferredPropertyStar'].transform('mean'), inplace=True)
 test_set['PreferredPropertyStar'].fillna(test_set.groupby('Occupation')['PreferredPropertyStar'].transform('mean'), inplace=True)
-# train_set['AgeBand'] = pd.cut(train_set['Age'], 5)
 # 임의로 5개 그룹을 지정
 # print(train_set['AgeBand'])
 # [(17.957, 26.6] < (26.6, 35.2] < (35.2, 43.8] <
@@ -86,6 +66,9 @@ for dataset in combine:
     dataset.loc[(dataset['Age'] > 43.8) & (dataset['Age'] <= 52.4), 'Age'] = 3
     dataset.loc[ dataset['Age'] > 52.4, 'Age'] = 4
 # train_set = train_set.drop(['AgeBand'], axis=1)
+
+
+
 # print(train_set[train_set['NumberOfTrips'].notnull()].groupby(['DurationOfPitch'])['PreferredPropertyStar'].mean())
 train_set['NumberOfTrips'].fillna(train_set.groupby('DurationOfPitch')['NumberOfTrips'].transform('mean'), inplace=True)
 test_set['NumberOfTrips'].fillna(test_set.groupby('DurationOfPitch')['NumberOfTrips'].transform('mean'), inplace=True)
@@ -120,8 +103,6 @@ def outliers(data_out):
 
 
 Age_out_index= outliers(train_set['Age'])[0]
-print("이상치의 위치 :",Age_out_index)
-
 TypeofContact_out_index= outliers(train_set['TypeofContact'])[0]
 CityTier_out_index= outliers(train_set['CityTier'])[0]
 DurationOfPitch_out_index= outliers(train_set['DurationOfPitch'])[0]
@@ -169,6 +150,33 @@ for i in train_set.index:
 train_set_clean = train_set.loc[lead_not_outlier_index]      
 train_set_clean = train_set_clean.reset_index(drop=True)
 # print(train_set_clean)
+#  [(902.322, 13209.75] < (13209.75, 25419.5] <
+# (25419.5, 37629.25] < (37629.25, 49839.0] <
+# (49839.0, 62048.75] < (62048.75, 74258.5] <
+# (74258.5, 86468.25] < (86468.25, 98678.0]]
+# train_set_clean['MonthlyIncomeBand'] = pd.cut(train_set_clean['MonthlyIncome'], 8)
+# print(train_set_clean['MonthlyIncomeBand'])
+combine = [train_set,test_set]
+for dataset in combine:    
+    dataset.loc[ dataset['MonthlyIncome'] <= 13209.75, 'MonthlyIncome'] = 0
+    dataset.loc[(dataset['MonthlyIncome'] > 13209.75) & (dataset['MonthlyIncome'] <= 25419.5), 'MonthlyIncome'] = 1
+    dataset.loc[(dataset['MonthlyIncome'] > 25419.5) & (dataset['MonthlyIncome'] <= 37629.25), 'MonthlyIncome'] = 2
+    dataset.loc[(dataset['MonthlyIncome'] > 37629.25) & (dataset['MonthlyIncome'] <= 49839.0), 'MonthlyIncome'] = 3
+    dataset.loc[(dataset['MonthlyIncome'] > 49839.0) & (dataset['MonthlyIncome'] <= 62048.75), 'MonthlyIncome'] = 4
+    dataset.loc[(dataset['MonthlyIncome'] > 62048.75) & (dataset['MonthlyIncome'] <= 74258.5), 'MonthlyIncome'] = 5
+    dataset.loc[(dataset['MonthlyIncome'] > 74258.5) & (dataset['MonthlyIncome'] <= 86468.25), 'MonthlyIncome'] = 6
+    dataset.loc[(dataset['MonthlyIncome'] > 86468.25) & (dataset['MonthlyIncome'] <= 98678.0), 'MonthlyIncome'] = 7
+    dataset.loc[ dataset['MonthlyIncome'] > 98678.0, 'MonthlyIncome'] = 8
+# train_set_clean['DurationOfPitchBand'] = pd.cut(train_set_clean['DurationOfPitch'], 5)
+# print(train_set_clean['DurationOfPitchBand'])
+combine = [train_set,test_set]
+for dataset in combine:    
+    dataset.loc[ dataset['DurationOfPitch'] <= 11.2, 'DurationOfPitch'] = 0
+    dataset.loc[(dataset['DurationOfPitch'] > 11.2) & (dataset['DurationOfPitch'] <= 17.4), 'DurationOfPitch'] = 1
+    dataset.loc[(dataset['DurationOfPitch'] > 17.4) & (dataset['DurationOfPitch'] <= 23.6), 'DurationOfPitch'] = 2
+    dataset.loc[(dataset['DurationOfPitch'] > 23.6) & (dataset['DurationOfPitch'] <= 29.8), 'DurationOfPitch'] = 3
+    dataset.loc[ dataset['DurationOfPitch'] > 29.8, 'DurationOfPitch'] = 4
+    
 
 x = train_set_clean.drop(['ProdTaken'], axis=1)
 
@@ -179,6 +187,8 @@ from sklearn.model_selection import KFold,StratifiedKFold
 from sklearn.preprocessing import StandardScaler,MinMaxScaler 
 from xgboost import XGBClassifier,XGBRegressor
 from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
+from sklearn.linear_model import Perceptron ,LogisticRegression 
+
 x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.8,shuffle=True,random_state=1234)
 
 # scaler = StandardScaler()
@@ -195,8 +205,7 @@ n_splits = 5
     ##3$$###########
 kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
 
-parameters = {'gamma': [0.1], 'learning_rate': [0.1,0.3,0.5], 
-             'max_depth': [6,7,8], 'min_child_weight': [1], 'n_estimators': [100], 'subsample': [1]}
+parameters = { 'n_estimators': [100,200,300],'criterion' : ['entropy','gini'],'min_samples_leaf': [0.1,0.3,0.5,0.7,1]}
 
 # parameters = [
 #     {'n_estimators':[100, 200],'max_depth':[6, 8],'min_samples_leaf':[3,5],
@@ -206,7 +215,8 @@ parameters = {'gamma': [0.1], 'learning_rate': [0.1,0.3,0.5],
    
 #     ]    
 
-xgb = XGBClassifier()
+
+xgb = RandomForestClassifier(random_state=100)
 
 model = GridSearchCV(xgb,parameters,cv=kfold,n_jobs=-1)
 import time
@@ -227,7 +237,7 @@ submission = pd.read_csv(path + 'sample_submission.csv',#예측에서 쓸거야!
 submission['ProdTaken'] = y_summit
 # submission = submission.fillna(submission.mean())
 # submission = submission.astype(int)
-submission.to_csv('test22.csv',index=False)
+submission.to_csv('test23.csv',index=False)
 
 
 
@@ -249,10 +259,8 @@ submission.to_csv('test22.csv',index=False)
 # model.socre :  0.826797385620915        
 # 걸린 시간 :  4.118602991104126
 
-# 최적의 매개변수 :  {'gamma': 0.1, 'learning_rate': 0.1, 
-#              'max_depth': 6, 'min_child_weight': 1, 'n_estimators': 100, 'subsample': 1}
-# 최상의 점수 :  0.8747975911676147       
-# model.socre :  0.826797385620915        
-# 걸린 시간 :  3.917900800704956
-
+# 최적의 매개변수 :  {'criterion': 'entropy', 'min_samples_leaf': 1, 'n_estimators': 300}
+# 최상의 점수 :  0.8748109735697558
+# model.socre :  0.8496732026143791
+# 걸린 시간 :  7.541437387466431
 
