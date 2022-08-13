@@ -179,7 +179,7 @@ from sklearn.model_selection import KFold,StratifiedKFold
 from sklearn.preprocessing import StandardScaler,MinMaxScaler 
 from xgboost import XGBClassifier,XGBRegressor
 from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
-x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.8,shuffle=True,random_state=1234)
+x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.9,shuffle=True,random_state=1234)
 
 # scaler = StandardScaler()
 # x_train = scaler.fit_transform(x_train)
@@ -193,20 +193,19 @@ x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.8,shuffle=True
 # test_set = lda.transform(test_set)
 n_splits = 5 
 
-kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=124)
+kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
 
-parameters = {'gamma': [0.1], 'learning_rate': [0.1], 
-             'max_depth': [6,7,8], 'min_child_weight': [1], 'n_estimators': [100], 'subsample': [1]}
+parameters = {'gamma': [0.1], 'learning_rate': [0.1,0.2,0.3,0.4], 
+             'max_depth': [6,7,8], 'min_child_weight': [1], 'n_estimators': [100,200], 'subsample': [1]}
 
 # parameters = [
 #     {'n_estimators':[100, 200],'max_depth':[6, 8],'min_samples_leaf':[3,5],
 #      'min_samples_split':[2, 3],'n_jobs':[-1, 2]},
 #     {'n_estimators':[300, 400],'max_depth':[6, 8],'min_samples_leaf':[7, 10],
 #      'min_samples_split':[4, 7],'n_jobs':[-1, 4]}
-   
 #     ]    
 
-xgb = XGBClassifier()
+xgb = XGBClassifier(random_state=103)
 
 model = GridSearchCV(xgb,parameters,cv=kfold,n_jobs=-1)
 import time
@@ -236,3 +235,14 @@ submission.to_csv('test22.csv',index=False)
 # 걸린 시간 :  3.917900800704956
 
 
+# 최적의 매개변수 :  {'gamma': 0.1, 'learning_rate': 0.1, 
+# 'max_depth': 8, 'min_child_weight': 1, 'n_estimators': 100, 'subsample': 1}
+# 최상의 점수 :  0.8574873774873775
+# model.socre :  0.8478260869565217
+# 걸린 시간 :  3.8145270347595215
+
+# 최적의 매개변수 :  {'gamma': 0.1, 'learning_rate': 0.3, 
+# 'max_depth': 8, 'min_child_weight': 1, 'n_estimators': 100, 'subsample': 1}
+# 최상의 점수 :  0.8676363636363635
+# model.socre :  0.869281045751634
+# 걸린 시간 :  6.3972249031066895
