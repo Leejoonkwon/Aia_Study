@@ -82,11 +82,12 @@ print('걸린 시간 : ',end_time)
 print('model.socre : ',results)
 y_summit = model.predict(test_set)
 submission = pd.read_csv(path + 'sample_submission.csv',#예측에서 쓸거야!!
-                      )
-print(y_summit)
-'''
-submission = y_summit
+                      index_col=0)
+print(submission)
+
+submission['Y_01','Y_02','Y_03','Y_04','Y_05','Y_06','Y_07' ,'Y_08','Y_09','Y_10','Y_11','Y_12','Y_13','Y_14'] = \
+y_summit[1,2,3,4,5,6,7,8,9,10,11,12,13,14]
 # submission = submission.fillna(submission.mean())
 # submission = submission.astype(int)
 submission.to_csv('test23.csv',index=False)
-'''                 
+ 
