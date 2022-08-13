@@ -232,7 +232,7 @@ submission.to_csv('test22.csv',index=False)
 #              'max_depth': 6, 'min_child_weight': 1, 'n_estimators': 100, 'subsample': 1}
 # 최상의 점수 :  0.8747975911676147       
 # model.socre :  0.826797385620915        
-# 걸린 시간 :  3.91790080070495
+# 걸린 시간 :  3.9179008007049
 
 
 # 최적의 매개변수 :  {'gamma': 0.1, 'learning_rate': 0.1, 
