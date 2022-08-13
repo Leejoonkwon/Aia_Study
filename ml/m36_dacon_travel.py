@@ -185,17 +185,17 @@ x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.8,shuffle=True
 # x_train = scaler.fit_transform(x_train)
 # x_test = scaler.transform(x_test)
 
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-lda = LinearDiscriminantAnalysis() 
-lda.fit(x_train,y_train)
-x_train = lda.transform(x_train)
-x_test = lda.transform(x_test)
-test_set = lda.transform(test_set)
+# from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+# lda = LinearDiscriminantAnalysis() 
+# lda.fit(x_train,y_train)
+# x_train = lda.transform(x_train)
+# x_test = lda.transform(x_test)
+# test_set = lda.transform(test_set)
 n_splits = 5 
-    ##3$$###########
-kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
 
-parameters = {'gamma': [0.1], 'learning_rate': [0.1,0.3,0.5], 
+kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=124)
+
+parameters = {'gamma': [0.1], 'learning_rate': [0.1], 
              'max_depth': [6,7,8], 'min_child_weight': [1], 'n_estimators': [100], 'subsample': [1]}
 
 # parameters = [
@@ -228,26 +228,6 @@ submission['ProdTaken'] = y_summit
 # submission = submission.fillna(submission.mean())
 # submission = submission.astype(int)
 submission.to_csv('test22.csv',index=False)
-
-
-
-# 최적의 매개변수 :  {'n_estimators': 100}
-# 최상의 점수 :  0.8698661759785882       
-# model.socre :  0.8464052287581699       
-# 걸린 시간 :  5.060976505279541
-
-# 최적의 매개변수 :  {'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 100}  
-# 최상의 점수 :  0.8608899297423888       
-# model.socre :  0.8366013071895425       
-# 걸린 시간 :  3.698702096939087
-# 최적의 매개변수 :  {'learning_rate': 0.1, 'max_depth': 6, 'n_estimators': 100}  
-# 최상의 점수 :  0.8731549013047843       
-# model.socre :  0.826797385620915        
-# 걸린 시간 :  3.997284173965454
-
-# 최상의 점수 :  0.8747975911676147       
-# model.socre :  0.826797385620915        
-# 걸린 시간 :  4.118602991104126
 
 # 최적의 매개변수 :  {'gamma': 0.1, 'learning_rate': 0.1, 
 #              'max_depth': 6, 'min_child_weight': 1, 'n_estimators': 100, 'subsample': 1}
