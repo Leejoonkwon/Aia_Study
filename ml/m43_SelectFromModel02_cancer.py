@@ -1,12 +1,13 @@
 import numpy as np
 from sklearn.datasets import load_iris,load_boston,load_digits,load_breast_cancer
 from sklearn.datasets import load_boston,fetch_covtype,fetch_california_housing
-from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import KFold, StratifiedKFold, train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from xgboost import XGBClassifier, XGBRegressor
 import time
 from sklearn.metrics import accuracy_score, r2_score
+from sklearn.model_selection import KFold, StratifiedKFold, train_test_split
+
+from sklearn.model_selection import GridSearchCV
 from sklearn.feature_selection import SelectFromModel
 
 # 1. 데이터

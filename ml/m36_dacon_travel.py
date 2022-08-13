@@ -186,11 +186,11 @@ x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.8,shuffle=True
 # x_test = scaler.transform(x_test)
 
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-# lda = LinearDiscriminantAnalysis() 
-# lda.fit(x_train,y_train)
-# x_train = lda.transform(x_train)
-# x_test = lda.transform(x_test)
-# test_set = lda.transform(test_set)
+lda = LinearDiscriminantAnalysis() 
+lda.fit(x_train,y_train)
+x_train = lda.transform(x_train)
+x_test = lda.transform(x_test)
+test_set = lda.transform(test_set)
 n_splits = 5 
     ##3$$###########
 kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)

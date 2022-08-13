@@ -1,9 +1,4 @@
-#  과제
-# activation : sigmoid,relu,linear
-# metrics 추가
-# EarlyStopping  넣고
-# 성능비교
-# 감상문 2줄이상!
+
 from tensorflow.python.keras.models import Sequential,load_model
 from tensorflow.python.keras.layers import Dense,Dropout,Conv2D,Flatten,LSTM,Conv1D
 from sklearn.model_selection import train_test_split
