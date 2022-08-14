@@ -209,7 +209,6 @@ parameters = {'gamma': [0,0.1,0.3],
 #     {'n_estimators':[300, 400],'max_depth':[6, 8],'min_samples_leaf':[7, 10],
 #      'min_samples_split':[4, 7],'n_jobs':[-1, 4]}
 #     ]    
-
 xgb = XGBClassifier(random_state=123,tree_method='gpu_hist')
 
 model = GridSearchCV(xgb,parameters,cv=kfold,n_jobs=-1)
