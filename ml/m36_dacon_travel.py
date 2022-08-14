@@ -183,7 +183,7 @@ x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.9,shuffle=True
 
 n_splits = 5 
 kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
-# kfold = KFold(n_splits=n_splits,shuffle=True,random_state
+# kfold = KFold(n_splits=n_splits,shuffle=True,random_stat=
 # parameters = {'n_estimators':[100,200,300,400,500,1000], # 디폴트 100/ 1~inf 무한대 
 # eta[기본값=0.3, 별칭: learning_rate] learning_rate':[0.1,0.2,0.3,0.4,0.5,0.7,1]
 # max_depth': [1,2,3,4,5,6,7][기본값=6]
