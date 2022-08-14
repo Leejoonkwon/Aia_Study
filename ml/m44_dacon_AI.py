@@ -20,7 +20,7 @@ test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
 train_x = train_set.filter(regex='X') # Input : X Featrue : 56
 train_y = train_set.filter(regex='Y') # Output : Y Feature : 14
 
-x_train,x_test,y_train,y_test=train_test_split(train_x,train_y,shuffle=True,random_state=1234,train_size=0.8)
+x_train,x_test,y_train,y_test=train_test_split(train_x,train_y,shuffle=True,random_state=1234,train_size=0.85)
 # print(train_x.shape,train_y.shape)  #(39607, 56) (39607, 14)     
 # print(test_set.shape) # (39608, 56)
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer

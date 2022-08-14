@@ -181,22 +181,27 @@ from xgboost import XGBClassifier,XGBRegressor
 from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
 x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.9,shuffle=True,random_state=1234)
 
-# scaler = StandardScaler()
-# x_train = scaler.fit_transform(x_train)
-# x_test = scaler.transform(x_test)
-
-# from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-# lda = LinearDiscriminantAnalysis() 
-# lda.fit(x_train,y_train)
-# x_train = lda.transform(x_train)
-# x_test = lda.transform(x_test)
-# test_set = lda.transform(test_set)
 n_splits = 5 
-
 kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
-
-parameters = {'gamma': [0.1], 'learning_rate': [0.1,0.2,0.3,0.4], 
-             'max_depth': [6,7,8], 'min_child_weight': [1], 'n_estimators': [100,200], 'subsample': [1]}
+# kfold = KFold(n_splits=n_splits,shuffle=True,random_state=123)
+# parameters = {'n_estimators':[100,200,300,400,500,1000], # 디폴트 100/ 1~inf 무한대 
+# eta[기본값=0.3, 별칭: learning_rate] learning_rate':[0.1,0.2,0.3,0.4,0.5,0.7,1]
+# max_depth': [1,2,3,4,5,6,7][기본값=6]
+# gamma[기본값=0, 별칭: min_split_loss] [0,0.1,0.3,0.5,0.7,0.8,0.9,1]
+# min_child_weight[기본값=1] 0~inf
+# subsample[기본값=1][0,0.1,0.3,0.5,0.7,1] 0~1
+# colsample_bytree [0,0.1,0.2,0.3,0.5,0.7,1]    [기본값=1] 0~1
+# colsample_bylevel': [0,0.1,0.2,0.3,0.5,0.7,1] [기본값=1] 0~1
+# 'colsample_bynode': [0,0.1,0.2,0.3,0.5,0.7,1] [기본값=1] 0~1
+# 'reg_alpha' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=0] 0~inf /L1 절댓값 가중치 규제 
+# 'reg_lambda' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=1] 0~inf /L2 절댓값 가중치 규제 
+# max_delta_step[기본값=0]
+parameters = {'gamma': [0,0.1,0.3], 
+              'learning_rate': [0.1,0.2,0.3,0.4], 
+             'max_depth': [None,6,7,8],
+             'min_child_weight': [1,2,3], 
+             'n_estimators': [100,200,300], 
+             'subsample': [1]}
 
 # parameters = [
 #     {'n_estimators':[100, 200],'max_depth':[6, 8],'min_samples_leaf':[3,5],
@@ -205,7 +210,7 @@ parameters = {'gamma': [0.1], 'learning_rate': [0.1,0.2,0.3,0.4],
 #      'min_samples_split':[4, 7],'n_jobs':[-1, 4]}
 #     ]    
 
-xgb = XGBClassifier(random_state=103)
+xgb = XGBClassifier(random_state=123,tree_method='gpu_hist')
 
 model = GridSearchCV(xgb,parameters,cv=kfold,n_jobs=-1)
 import time
@@ -226,7 +231,7 @@ submission = pd.read_csv(path + 'sample_submission.csv',#예측에서 쓸거야!
 submission['ProdTaken'] = y_summit
 # submission = submission.fillna(submission.mean())
 # submission = submission.astype(int)
-submission.to_csv('test22.csv',index=False)
+submission.to_csv('test32.csv',index=False)
 
 # 최적의 매개변수 :  {'gamma': 0.1, 'learning_rate': 0.1, 
 #              'max_depth': 6, 'min_child_weight': 1, 'n_estimators': 100, 'subsample': 1}
