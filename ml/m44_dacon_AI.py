@@ -20,7 +20,9 @@ test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
 train_x = train_set.filter(regex='X') # Input : X Featrue : 56
 train_y = train_set.filter(regex='Y') # Output : Y Feature : 14
 
-x_train,x_test,y_train,y_test=train_test_split(train_x,train_y,shuffle=True,random_state=1234,train_size=0.85)
+print(train_x.info())
+
+x_train,x_test,y_train,y_test=train_test_split(train_x,train_y,shuffle=True,random_state=1234,train_size=0.9)
 # print(train_x.shape,train_y.shape)  #(39607, 56) (39607, 14)     
 # print(test_set.shape) # (39608, 56)
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, QuantileTransformer, PowerTransformer
@@ -49,7 +51,7 @@ kfold = KFold(n_splits=n_splits,shuffle=True,random_state=123)
 # max_delta_step[기본값=0]
 
 parameters = {'n_estimators':[100],
-              'learning_rate':[0.1],
+              'learning_rate':[0.1,0.2,0.3],
             #   'max_depth': [3],
             #   'gamma' : [1],
             #   'min_child_weight' : [1],
@@ -64,7 +66,7 @@ parameters = {'n_estimators':[100],
 #2. 모델 
 xgb = XGBRegressor(random_state=123,
                     n_estimators=100,
-                    tree_method='gpu_hist'
+                    # tree_method='gpu_hist'
                 )
 
 model = GridSearchCV(xgb,parameters,cv=kfold,n_jobs=-1)
@@ -89,4 +91,18 @@ for idx, col in enumerate(submission.columns):
     submission[col] = y_summit[:,idx-1]
 print('Done.')
 submission.to_csv('test23.csv',index=False)
- 
+
+# 최적의 매개변수 :  {'learning_rate': 0.1, 'n_estimators': 100}
+# 최상의 점수 :  0.06523837244168644
+# 걸린 시간 :  60.23209834098816
+# model.socre :  0.06985114732540963 
+
+# 최적의 매개변수 :  {'learning_rate': 0.1, 'n_estimators': 100}
+# 최상의 점수 :  0.06577843806588209
+# 걸린 시간 :  309.3102035522461
+# model.socre :  0.06780211853254144
+
+# 최적의 매개변수 :  {'learning_rate': 0.1, 'n_estimators': 100}
+# 최상의 점수 :  0.06970460808498297
+# 걸린 시간 :  329.5538504123688
+# model.socre :  0.07454421428426697
