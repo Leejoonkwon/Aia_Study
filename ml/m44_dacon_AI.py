@@ -64,7 +64,7 @@ kfold = KFold(n_splits=n_splits,shuffle=True,random_state=123)
 # 'colsample_bynode': [0,0.1,0.2,0.3,0.5,0.7,1] [기본값=1] 0~1
 # 'reg_alpha' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=0] 0~inf /L1 절댓값 가중치 규제 
 # 'reg_lambda' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=1] 0~inf /L2 절댓값 가중치 규제 
-##
+####
 parameters = {'n_estimators':[100,200],
               'learning_rate':[0.1,0.2,0.3],
               'max_depth': [5,6,7],
