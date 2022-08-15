@@ -4,6 +4,8 @@ from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
+from sklearn.decomposition import PCA
+
 import matplotlib
 matplotlib.rcParams['font.family']='Malgun Gothic'
 matplotlib.rcParams['axes.unicode_minus']=False
@@ -42,18 +44,9 @@ test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
 #  17  MonthlyIncome             1855 non-null   float64 직급?나이?
 #  18  ProdTaken                 1955 non-null   int64
 ######### 결측치 채우기 (클래스별 괴리가 큰 컬럼으로 평균 채우기)
-print(train_set.shape)
-index1 = train_set[train_set['MonthlyIncome'] >= 90000].index
-index2 = train_set[train_set['MonthlyIncome'] <= 2000].index
-index3 = test_set[test_set['MonthlyIncome'] <= 5000].index
-print(index1,index2,index3)
-
-
-
 
 # train_set = train_set.drop([190,605,1339],inplace=True)
 # test_set = test_set.drop(index3,index=True)
-
 
 train_set['TypeofContact'].fillna('Self Enquiry', inplace=True)
 test_set['TypeofContact'].fillna('Self Enquiry', inplace=True)
@@ -118,10 +111,8 @@ def outliers(data_out):
                     (data_out<lower_bound))
 
 
-
+'''
 Age_out_index= outliers(train_set['Age'])[0]
-print("이상치의 위치 :",Age_out_index)
-
 TypeofContact_out_index= outliers(train_set['TypeofContact'])[0]
 CityTier_out_index= outliers(train_set['CityTier'])[0]
 DurationOfPitch_out_index= outliers(train_set['DurationOfPitch'])[0]
@@ -138,8 +129,6 @@ OwnCar_out_index= outliers(train_set['OwnCar'])[0]
 NumberOfChildrenVisiting_out_index= outliers(train_set['NumberOfChildrenVisiting'])[0]
 Designation_out_index= outliers(train_set['Designation'])[0]
 MonthlyIncome_out_index= outliers(train_set['MonthlyIncome'])[0]
-
-
 
 lead_outlier_index = np.concatenate((Age_out_index,
                                      TypeofContact_out_index,
@@ -169,10 +158,24 @@ for i in train_set.index:
 train_set_clean = train_set.loc[lead_not_outlier_index]      
 train_set_clean = train_set_clean.reset_index(drop=True)
 # print(train_set_clean)
+'''
+x = train_set.drop(['ProdTaken'], axis=1)
 
-x = train_set_clean.drop(['ProdTaken'], axis=1)
+y = train_set['ProdTaken']
+# pca = PCA(n_components=12) # 차원 축소 (차원=컬럼,열,피처)
+# x = pca.fit_transform(x)
+# test_set = pca.transform(test_set) 
+# pca_EVR = pca.explained_variance_ratio_ # PCA로 압축 후에 새로 생성된 피쳐 임포턴스를 보여준다.
+# print(sum(pca_EVR)) #0.999998352533973
+# print(pca_EVR)
 
-y = train_set_clean['ProdTaken']
+# cumsum = np.cumsum(pca_EVR)
+# print(cumsum)
+# import matplotlib.pyplot as plt   
+# plt.plot(cumsum)
+# plt.grid()
+# plt.show()
+
 # print(x.shape,y.shape) #(1528, 18) (1528,)
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import KFold,StratifiedKFold
@@ -196,11 +199,11 @@ kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
 # 'reg_alpha' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=0] 0~inf /L1 절댓값 가중치 규제 
 # 'reg_lambda' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=1] 0~inf /L2 절댓값 가중치 규제 
 # max_delta_step[기본값=0]
-parameters = {'gamma': [0,0.1,0.3], 
-              'learning_rate': [0.1,0.2,0.3,0.4], 
-             'max_depth': [None,6,7,8],
-             'min_child_weight': [1,2,3], 
-             'n_estimators': [100,200,300], 
+parameters = {'gamma': [0.1], 
+              'learning_rate': [0.2,0.3], 
+             'max_depth': [8],
+             'min_child_weight': [1], 
+             'n_estimators': [100], 
              'subsample': [1]}
 
 # parameters = [
@@ -209,7 +212,9 @@ parameters = {'gamma': [0,0.1,0.3],
 #     {'n_estimators':[300, 400],'max_depth':[6, 8],'min_samples_leaf':[7, 10],
 #      'min_samples_split':[4, 7],'n_jobs':[-1, 4]}
 #     ]    
-xgb = XGBClassifier(random_state=123,tree_method='gpu_hist')
+xgb = XGBClassifier(random_state=123,
+                    # tree_method='gpu_hist'
+                    )
 
 model = GridSearchCV(xgb,parameters,cv=kfold,n_jobs=-1)
 import time
@@ -250,3 +255,9 @@ submission.to_csv('test32.csv',index=False)
 # 최상의 점수 :  0.8676363636363635
 # model.socre :  0.869281045751634
 # 걸린 시간 :  6.3972249031066895
+
+# 최적의 매개변수 :  {'gamma': 0.1, 'learning_rate': 0.3,
+# 'max_depth': 8, 'min_child_weight': 1, 'n_estimators': 100, 'subsample': 1}
+# 최상의 점수 :  0.8879985754985755
+# model.socre :  0.8622448979591837
+# 걸린 시간 :  3.593817949295044
