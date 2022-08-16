@@ -31,23 +31,6 @@ for i in y :
     else:
         newlist += [2]    
 # print(np.unique(newlist,return_counts=True))
-# (array([0, 1, 2]), array([1640, 2198, 1060], dtype=int64))       
-# y['band'] = pd.cut(y, 3)
-# # 임의로 5개 그룹을 지정
-# print(y['band'])
-# [(2.994, 4.2] < (4.2, 5.4] < (5.4, 6.6] <
-#  (6.6, 7.8] <   (7.8, 9.0]]
-# [(2.994, 5.0] < (5.0, 7.0] < (7.0, 9.0]]
-
-
-# print(np.unique(y,return_counts=True))
-# (array([3, 4, 5, 6, 7, 8, 9], dtype=int64), 
-#  array([  20,  163, 1457, 2198,  880,  175,    5], dtype=int64))
-# pandas 타입이라면 df['확인할 컬럼'].value_counts()로 확인 가능 
-# from tensorflow.keras.utils import to_categorical 
-# y = to_categorical(y)
-# print(x.shape)
-# print(y.shape)
 
 x_train, x_test, y_train, y_test = train_test_split(x, newlist, 
                                                     shuffle=True, random_state=123, 
@@ -89,5 +72,5 @@ print('f1_score(macro) :',f1_score(y_test,y_predict,average='macro'))
 # f1_score(macro) : 0.42765507578677014
 
 ######################## Label 축소 후 SMOTE까지
-# acc_score : 0.7309833024118738
-# f1_score(macro) : 0.7320752389358599
+# acc_score : 0.7402597402597403
+# f1_score(macro) : 0.7432630229600647
