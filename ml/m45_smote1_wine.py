@@ -69,7 +69,7 @@ x_train,y_train = smote.fit_resample(x_train,y_train)
 # test 데이터는 적용하지 않는다.평가 데이터는 변형하지 않는다!!!!!
 # print(pd.Series(y_train).value_counts())
 # 데이터 증폭 시 큰 숫자에 통일 숫자가 커질수록 제곱방식으로 진행하기 때문에
-# 오래걸린다.
+# 오래걸린다.좋은 방법이
 # 0    53
 # 1    53
 # 2    53
