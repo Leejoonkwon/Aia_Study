@@ -182,7 +182,7 @@ from sklearn.model_selection import KFold,StratifiedKFold
 from sklearn.preprocessing import StandardScaler,MinMaxScaler 
 from xgboost import XGBClassifier,XGBRegressor
 from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
-x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.9,shuffle=True,random_state=1234)
+x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.82,shuffle=True,random_state=72)
 
 n_splits = 5 
 kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
@@ -200,7 +200,7 @@ kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
 # 'reg_lambda' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=1] 0~inf /L2 절댓값 가중치 규제 
 # max_delta_step[기본값=0]
 parameters = {'gamma': [0.1], 
-              'learning_rate': [0.2,0.3], 
+              'learning_rate': [0.3], 
              'max_depth': [8],
              'min_child_weight': [1], 
              'n_estimators': [100], 
