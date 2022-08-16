@@ -23,14 +23,17 @@ print(pd.Series(y).value_counts())
 # 2    48
 # dtype: int64
 print(y)
-x_new = x[:-30]
-y_new = y[:-30]
-print(pd.Series(y_new).value_counts())
+x = x[:-40]
+y = y[:-40]
+# print(pd.Series(y).value_counts())
 
-x_train,x_test,y_train,y_test = train_test_split(x_new,y_new,train_size=0.8,shuffle=True,
-                                                 random_state=123,stratify=y_new)
+x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.75,shuffle=True,
+                                                 random_state=123,stratify=y)
 
-print(pd.Series(y_train).value_counts())
+print(pd.Series(y_train).value_counts()) # 데이터 증폭 
+# 1    53
+# 0    44
+# 2     6
 
 #2. 모델
 from sklearn.ensemble import RandomForestClassifier
@@ -45,11 +48,41 @@ y_predict = model.predict(x_test)
 
 score = model.score(x_test,y_test)
 from sklearn.metrics import accuracy_score,f1_score
-print('model.score :', score)
+# print('model.score :', score)
 print('acc_score :',accuracy_score(y_test,y_predict))
-# print('f1_score(macro) :',f1_score(y_test,y_predict,average='macro'))
-# f1_score(macro) : 0.4397558777039733 이진 분류일 때 사용
-print('f1_score(micro) :',f1_score(y_test,y_predict,average='micro'))
+print('f1_score(macro) :',f1_score(y_test,y_predict,average='macro'))
 # f1_score(micro) : 0.7163265306122448 다중 분류일 때 사용
+
+# 기본 결과 
+# model.score : 0.9777777777777777
+# acc_score : 0.9777777777777777
+# f1_score(micro) : 0.9777777777777777
+
+# 데이터 축소후 (2 라벨을 40개 줄인 후)
+# model.score : 0.9428571428571428
+# acc_score : 0.9428571428571428
+# f1_score(macro) : 0.8596176821983273
+
+print("=============== SMOTE 적용 후 =============")
+smote = SMOTE(random_state=123)
+x_train,y_train = smote.fit_resample(x_train,y_train)
+# test 데이터는 적용하지 않는다.평가 데이터는 변형하지 않는다!!!!!
+# print(pd.Series(y_train).value_counts())
+# 데이터 증폭 시 큰 숫자에 통일 숫자가 커질수록 제곱방식으로 진행하기 때문에
+# 오래걸린다.
+# 0    53
+# 1    53
+# 2    53
+
+#2. 모델 3. 훈련
+model = RandomForestClassifier()
+model.fit(x_train,y_train)
+#4. 평가, 예측
+score = model.score(x_test,y_test)
+# print('model.score :', score)
+print('acc_score :',accuracy_score(y_test,y_predict))
+print('f1_score(macro) :',f1_score(y_test,y_predict,average='macro'))
+
+
 
 
