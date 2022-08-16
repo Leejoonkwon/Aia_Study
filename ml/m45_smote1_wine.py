@@ -23,8 +23,8 @@ print(pd.Series(y).value_counts())
 # 2    48
 # dtype: int64
 print(y)
-x = x[:-40]
-y = y[:-40]
+x = x[:-25]
+y = y[:-25]
 # print(pd.Series(y).value_counts())
 
 x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.75,shuffle=True,
@@ -70,6 +70,7 @@ x_train,y_train = smote.fit_resample(x_train,y_train)
 # print(pd.Series(y_train).value_counts())
 # 데이터 증폭 시 큰 숫자에 통일 숫자가 커질수록 제곱방식으로 진행하기 때문에
 # 오래걸린다.좋은 방법이 있지만 돈 줘야 알려준다!
+
 # 0    53
 # 1    53
 # 2    53
