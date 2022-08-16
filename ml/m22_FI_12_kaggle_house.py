@@ -65,13 +65,13 @@ print(x.shape) #(1460, 75)
 y = train_set['SalePrice']
 from sklearn.model_selection import KFold,cross_val_score,cross_val_predict
 
-from sklearn.preprocessing import MinMaxScaler,StandardScaler
 from sklearn.experimental import enable_halving_search_cv
 from sklearn.model_selection import GridSearchCV,RandomizedSearchCV,HalvingGridSearchCV,KFold,StratifiedKFold
 
 from sklearn.model_selection import train_test_split
 x_train,x_test,y_train,y_test = train_test_split(x, y, train_size=0.8
        ,random_state=1234,shuffle=True)
+from sklearn.preprocessing import MinMaxScaler,StandardScaler
 
 # scaler = MinMaxScaler()
 # x_train = scaler.fit_transform(x_train) 
