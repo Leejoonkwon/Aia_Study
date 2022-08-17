@@ -107,7 +107,7 @@ print('loss :', loss)
 y_summit = model.predict(test_data)
 
 
-
+ 
 test_target = pd.DataFrame(test_target,columns=['rate'])
 test_target['rate'] = y_summit
 # submission = submission.fillna(submission.mean())
