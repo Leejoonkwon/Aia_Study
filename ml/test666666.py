@@ -1,67 +1,111 @@
-
-import matplotlib
 import pandas as pd
-import matplotlib.pyplot as plt
-from tensorflow.python.keras.models import Sequential,load_model
-from tensorflow.python.keras.layers import Dense,Dropout,Conv2D,Flatten,LSTM,Conv1D
-from sklearn.model_selection import train_test_split
-from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
-from sklearn.model_selection import RandomizedSearchCV
-
-matplotlib.rcParams['font.family']='Malgun Gothic'
-matplotlib.rcParams['axes.unicode_minus']=False
-from sklearn.svm import LinearSVC 
-from sklearn.svm import LinearSVR 
-from sklearn.metrics import r2_score
-#1. 데이터
-path = 'D:\study_data\_data\_csv\kaggle_bike/' # ".은 현재 폴더"
-train_set = pd.read_csv(path + 'train.csv',
-                        index_col=0)
-# print(train_set)
-
-# print(train_set.shape) #(10886, 11)
-
-test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
-                       index_col=0)
-
-sampleSubmission = pd.read_csv(path + 'sampleSubmission.csv',#예측에서 쓸거야!!
-                       index_col=0)
-
-from sklearn.covariance import EllipticEnvelope
-
-outliers = EllipticEnvelope(contamination=.3)
-            
-# print(test_set)
-# print(test_set.shape) #(6493, 8) #train_set과 열 값이 '1'차이 나는 건 count를 제외했기 때문이다.예측 단계에서 값을 대입
-
-# print(train_set.columns)
-# Index(['season', 'holiday', 'workingday', 'weather', 'temp', 'atemp',
-#        'humidity', 'windspeed', 'casual', 'registered', 'count'
 import numpy as np
-abc = np.array(train_set['season'])
-# abc2 = aaa[:,1]
-abc = abc.reshape(-1,1)
-# abc2 = abc2.reshape(-1,1)
+import glob
+from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.layers import LSTM,GRU,Dense,Dropout
+from sklearn.model_selection import train_test_split
 
-outliers.fit(abc)
-results1 = outliers.predict(abc)
-print(np.argwhere(results1 == -1))
+path = 'D:\study_data\_data\_csv\dacon_grow/'
+all_input_list = sorted(glob.glob(path + 'train_input/*.csv'))
+all_target_list = sorted(glob.glob(path + 'train_target/*.csv'))
 
-'''
-print(train_set.info()) #null은 누락된 값이라고 하고 "결측치"라고도 한다.
-print(train_set.describe()) 
+test_input_list2 = sorted(glob.glob(path + 'test_input/*.csv'))
+submission = sorted(glob.glob(path + 'submission/*.csv'))
+
+train_input_list = all_input_list[:50]
+train_target_list = all_target_list[:50]
+
+val_input_list = all_input_list[50:]
+val_target_list = all_target_list[50:]
+
+# print(all_input_list)
+print(val_input_list)
+print(len(val_input_list))  # 8
+
+def aaa(input_paths, target_paths): #, infer_mode):
+    input_paths = input_paths
+    target_paths = target_paths
+    # self.infer_mode = infer_mode
+   
+    data_list = []
+    label_list = []
+    print('시작...')
+    # for input_path, target_path in tqdm(zip(input_paths, target_paths)):
+    for input_path, target_path in zip(input_paths, target_paths):
+        input_df = pd.read_csv(input_path)
+        target_df = pd.read_csv(target_path)
+       
+        input_df = input_df.drop(columns=['시간'])
+        input_df = input_df.fillna(0)
+       
+        input_length = int(len(input_df)/1440)
+        target_length = int(len(target_df))
+        print(input_length, target_length)
+       
+        for idx in range(target_length):
+            time_series = input_df[1440*idx:1440*(idx+1)].values
+            # self.data_list.append(torch.Tensor(time_series))
+            data_list.append(time_series)
+        for label in target_df["rate"]:
+            label_list.append(label)
+    return np.array(data_list), np.array(label_list)
+    print('끗.')
+
+train_data, label_data = aaa(train_input_list, train_target_list) #, False)
+val_data, val_target = aaa(val_input_list, val_target_list) #, False)
+test_data,submission_target = aaa(test_input_list2, submission) #, False)
+# print(train_data[0])
+print(len(train_data), len(label_data)) # 1607 1607
+print(len(train_data[0]))   # 1440
+print(label_data)   # 1440
+print(train_data.shape, label_data.shape)   # (1607, 1440, 37) (1607,)
+print(val_data.shape, val_target.shape)   # (206, 1440, 37) (206,)
+print(test_data.shape, submission_target.shape)   # (195, 1440, 37) (195,)
 
 
-###### 결측치 처리 1.제거##### dropna 사용
-print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
-print(train_set.shape) #(10886,11)
+x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.75,shuffle=False)
+
+#2. 모델 구성
+model = Sequential()
+model.add(GRU(10,input_shape=(1440,37)))
+model.add(Dense(32, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(16, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(8, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(1))
+model.summary()
 
 
-x = train_set.drop([ 'casual', 'registered','count'],axis=1) #axis는 컬럼 
+#3. 컴파일, 훈련
+model.compile(loss='mae', optimizer='adam',metrics=['acc'])
+# "".join은 " "사이에 있는 문자열을 합치겠다는 기능
+hist = model.fit(x_train, y_train, epochs=5, batch_size=1000, 
+                validation_data=(val_data, val_target),
+                verbose=2,#callbacks = [earlyStopping]
+                )
+
+#4. 평가,예측
+loss = model.evaluate(x_test, y_test)
+print('loss :', loss)
 
 
-print(x.columns)
-print(x.shape) #(10886, 8)
+# y_predict = model.predict(x_test)
+# print(y_test.shape) #(152,)
+# print(y_predict.shape) #(152, 13, 1)
 
-y = train_set['count']
-'''
+# from sklearn.metrics import accuracy_score, r2_score,accuracy_score
+# r2 = r2_score(y_test, y_predict)
+# print('r2스코어 :', r2)
+
+
+y_summit = model.predict(test_data)
+
+
+
+submission_target = pd.DataFrame(submission_target,columns=['rate'])
+submission_target['rate'] = y_summit
+# submission = submission.fillna(submission.mean())
+# submission = submission.astype(int)
+submission_target.to_csv('test34.csv',index=False)
