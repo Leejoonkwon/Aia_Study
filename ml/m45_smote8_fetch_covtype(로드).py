@@ -3,7 +3,7 @@
 import numpy as np
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.ensemble import RandomForestClassifier
-
+from skl
 x_train = np.load('C:\study\Study\_save\_npy/keras49_9_train_x.npy')
 y_train = np.load('C:\study\Study\_save\_npy/keras49_9_train_y.npy')
 x_test = np.load('C:\study\Study\_save\_npy/keras49_9_test_x.npy')
