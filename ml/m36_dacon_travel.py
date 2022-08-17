@@ -184,7 +184,7 @@ from xgboost import XGBClassifier,XGBRegressor
 from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
 x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.82,shuffle=True,random_state=72)
 
-n_splits = 5 
+n_splits = 5 ##
 kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
 # kfold = KFold(n_splits=n_splits,shuffle=True,random_stat=12
 # parameters = {'n_estimators':[100,200,300,400,500,1000], # 디폴트 100/ 1~inf 무한대 
