@@ -10,7 +10,9 @@ all_input_list = sorted(glob.glob(path + 'train_input/*.csv'))
 all_target_list = sorted(glob.glob(path + 'train_target/*.csv'))
 
 test_input_list2 = sorted(glob.glob(path + 'test_input/*.csv'))
-submission = sorted(glob.glob(path + 'submission/*.csv'))
+test_target_list2 = sorted(glob.glob(path + 'test_target/*.csv'))
+
+
 
 train_input_list = all_input_list[:50]
 train_target_list = all_target_list[:50]
@@ -53,14 +55,16 @@ def aaa(input_paths, target_paths): #, infer_mode):
 
 train_data, label_data = aaa(train_input_list, train_target_list) #, False)
 val_data, val_target = aaa(val_input_list, val_target_list) #, False)
-test_data,submission_target = aaa(test_input_list2, submission) #, False)
+test_data,test_target = aaa(test_input_list2, test_target_list2) #, False)
+
+
 # print(train_data[0])
 print(len(train_data), len(label_data)) # 1607 1607
 print(len(train_data[0]))   # 1440
 print(label_data)   # 1440
 print(train_data.shape, label_data.shape)   # (1607, 1440, 37) (1607,)
 print(val_data.shape, val_target.shape)   # (206, 1440, 37) (206,)
-print(test_data.shape, submission_target.shape)   # (195, 1440, 37) (195,)
+# print(test_data.shape, submission_target.shape)   # (195, 1440, 37) (195,)
 
 
 x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.75,shuffle=False)
@@ -104,8 +108,16 @@ y_summit = model.predict(test_data)
 
 
 
-submission_target = pd.DataFrame(submission_target,columns=['rate'])
-submission_target['rate'] = y_summit
+test_target = pd.DataFrame(test_target,columns=['rate'])
+test_target['rate'] = y_summit
 # submission = submission.fillna(submission.mean())
 # submission = submission.astype(int)
-submission_target.to_csv('test34.csv',index=False)
+test_target.to_csv('D:\study_data\_data\_csv\dacon_grow\\test_target',index=False)
+import os
+import zipfile
+os.chdir("D:\study_data\_data\_csv\dacon_grow\\test_target/")
+submission = zipfile.ZipFile("D:\study_data\_data\_csv\dacon_grow\sample_submission.zip", 'w')
+for path in test_target_list2:
+    path = path.split('/')[-1]
+    submission.write(path)
+submission.close()
