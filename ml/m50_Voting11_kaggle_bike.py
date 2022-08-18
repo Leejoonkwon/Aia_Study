@@ -74,7 +74,7 @@ def outliers(data_out):
     upper_bound = quartile_3 + (iqr * 1.5)
     return np.where((data_out>upper_bound)|
                     (data_out<lower_bound))
-    
+
 # Index(['season', 'holiday', 'workingday', 'weather', 'temp', 'atemp',
 #        'humidity', 'windspeed', 'casual', 'registered', 'count'],
 season_out_index= outliers(train_set['season'])[0]
@@ -90,13 +90,14 @@ registered_out_index= outliers(train_set['registered'])[0]
 # print(train_set2.loc[season_out_index,'season'])
 lead_outlier_index = np.concatenate((season_out_index,
                                      holiday_out_index,
-                                     workingday_out_index,
+                                    #  workingday_out_index,
                                      weather_out_index,
                                      temp_out_index,
-                                     atemp_out_index,
-                                     humidity_out_index,
+                                    #  atemp_out_index,
+                                    #  humidity_out_index,
                                      windspeed_out_index,
-                                     casual_out_index,registered_out_index),axis=None)
+                                     casual_out_index,
+                                     registered_out_index),axis=None)
 print(len(lead_outlier_index)) #161개 
 print(lead_outlier_index)
 lead_not_outlier_index = []
@@ -178,8 +179,8 @@ for model2 in Regressor:
 ######Bagging 후 r2 model xgb
 # model.score : 0.37089630515782024
 
-# 보팅 결과 : 0.3415
+# 보팅 결과 : 0.3413
 # CatBoostRegressor score : 0.335828
 # XGBRegressor score : 0.309432
 # LGBMRegressor score : 0.327279
-# RandomForestRegressor score : 0.270874
+# RandomForestRegressor score : 0.273691
