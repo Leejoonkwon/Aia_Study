@@ -62,49 +62,59 @@ print(x.columns)
 print(x.shape) #(1460, 75)
 
 y = train_set['SalePrice']
-from sklearn.model_selection import KFold,cross_val_score,cross_val_predict
-import warnings 
+from xgboost import XGBClassifier,XGBRegressor
+from lightgbm import LGBMClassifier,LGBMRegressor
+from catboost import CatBoostClassifier,CatBoostRegressor
+from sklearn.ensemble import VotingClassifier,VotingRegressor
+from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import r2_score
+x_train,x_test,y_train,y_test = train_test_split(
+    x,y,train_size=0.8,shuffle=True,random_state=123,
+    )
 
-warnings.filterwarnings('ignore')
-x_train, x_test ,y_train, y_test = train_test_split(
-          x, y, train_size=0.8,shuffle=True,random_state=100)
-
-from sklearn.preprocessing import MaxAbsScaler,RobustScaler 
-from sklearn.preprocessing import MinMaxScaler,StandardScaler
-# scaler = MinMaxScaler()
 scaler = StandardScaler()
-# scaler = MaxAbsScaler()
-# scaler = RobustScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
 #2. 모델
-from sklearn.ensemble import BaggingClassifier,RandomForestClassifier
-from sklearn.ensemble import BaggingRegressor,RandomForestRegressor
-from sklearn.tree import DecisionTreeClassifier,DecisionTreeRegressor
-from xgboost import XGBClassifier, XGBRegressor
-from sklearn.linear_model import LogisticRegression
-model = BaggingRegressor(DecisionTreeRegressor(),
-                          n_estimators=100,#해당 모델을 100번 훈련한다.
-                          n_jobs=-1,
-                          random_state=123
-                          )
-# Bagging 할 때는 스케일링이 무조건 필요하다.
-# Bagging(Bootstrap Aggregating)
-# 한가지 모델을 여러번 훈련한다.대표적인 Ensemble 모데 랜덤포레스트
+
+xg = XGBRegressor(random_state=123)
+lg = LGBMRegressor(random_state=123,
+                    learning_rate=0.2)
+cat = CatBoostRegressor(verbose=False,random_state=123)
+rf =RandomForestRegressor()
+models = [('XG', xg), ('LG', lg),('CAT', cat),('RF', rf)]
+
+voting_regressor = VotingRegressor(models, n_jobs=-1)
+
+
+# hard 는 결과 A 0 B 0 C 1이라면 결과는 0으로 다수결에 따른다.
+# soft 는 클래스파이어간의 평균으로 결정
 
 #3. 훈련
-model.fit(x_train,y_train)
+voting_regressor.fit(x_train,y_train)
+
+#4. 평가,예측
+y_predict = voting_regressor.predict(x_test)
+
+score = r2_score(y_test,y_predict)
+print("보팅 결과 :",round(score,4))
 
 
-#4. 평가, 예측
-print('model.score :',model.score(x_test,y_test))
-######Bagging 후 acc Df
-# model.score : 0.8779065734197633
+Regressor = [cat,xg,lg,rf]
+for model2 in Regressor:
+    model2.fit(x_train,y_train)
+    y_predict = model2.predict(x_test)
+    score2 = r2_score(y_test,y_predict)
+    class_name = model2.__class__.__name__ # 해당 커맨드로 이름 반환
+    print('{0} score : {1:4f}'.format(class_name,score2))
 
 ######Bagging 후 acc model xgb
 # model.score : 0.9035555646696385
 
-######Bagging 후 acc model rf
-# model.score : 0.8803616918885842
+# 보팅 결과 : 0.8984
+# CatBoostRegressor score : 0.903083
+# XGBRegressor score : 0.885783
+# LGBMRegressor score : 0.867253
+# RandomForestRegressor score : 0.883745

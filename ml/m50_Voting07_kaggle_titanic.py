@@ -148,35 +148,54 @@ x = train_set.drop(['Survived'],axis=1) #axis는 컬럼
 
 print(x) #(891, 7)
 y = train_set['Survived']
+from sklearn.metrics import accuracy_score
+from xgboost import XGBClassifier
+from lightgbm import LGBMClassifier
+from catboost import CatBoostClassifier
+from sklearn.ensemble import VotingClassifier,RandomForestClassifier
 
 from sklearn.preprocessing import StandardScaler
-x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, train_size=0.8, random_state=1234)
+x_train,x_test,y_train,y_test = train_test_split(
+    x,y,train_size=0.8,shuffle=True,random_state=123,
+    stratify=y)
+
 scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
-
 #2. 모델
-from sklearn.ensemble import BaggingClassifier,RandomForestClassifier
-from sklearn.ensemble import BaggingRegressor,RandomForestRegressor
-from sklearn.tree import DecisionTreeClassifier,DecisionTreeRegressor
-from xgboost import XGBClassifier, XGBRegressor
-from sklearn.linear_model import LogisticRegression
-model = BaggingClassifier(DecisionTreeClassifier(),
-                          n_estimators=100,#해당 모델을 100번 훈련한다.
-                          n_jobs=-1,
-                          random_state=123
-                          )
-# Bagging 할 때는 스케일링이 무조건 필요하다.
-# Bagging(Bootstrap Aggregating)
-# 한가지 모델을 여러번 훈련한다.대표적인 Ensemble 모데 랜덤포레스트
+
+xg = XGBClassifier(random_state=123)
+lg = LGBMClassifier(random_state=123,
+                    learning_rate=0.2)
+cat = CatBoostClassifier(verbose=False,random_state=123)
+rf =RandomForestClassifier()
+model = VotingClassifier(
+    estimators=[('XG', xg), ('LG', lg),('CAT', cat),
+                ('RF',rf)],
+    voting='soft'    # hard 옵션도 있다.
+)
+
+# hard 는 결과 A 0 B 0 C 1이라면 결과는 0으로 다수결에 따른다.
+# soft 는 클래스파이어간의 평균으로 결정
 
 #3. 훈련
 model.fit(x_train,y_train)
 
+#4. 평가,예측
+y_predict = model.predict(x_test)
 
-#4. 평가, 예측
-print('model.score :',model.score(x_test,y_test))
+score = accuracy_score(y_test,y_predict)
+print("보팅 결과 :",round(score,4))
+
+
+classifiers = [cat,xg,lg,rf]
+for model2 in classifiers:
+    model2.fit(x_train,y_train)
+    y_predict = model2.predict(x_test)
+    score2 = accuracy_score(y_test,y_predict)
+    class_name = model2.__class__.__name__ # 해당 커맨드로 이름 반환
+    print('{0} 정확도 : {1:4f}'.format(class_name,score2))
 
 #==================gridsearch
 # 최적의 매개변수 : RandomForestClassifier(max_depth=6, min_samples_leaf=3, n_jobs=-1)
@@ -187,14 +206,14 @@ print('model.score :',model.score(x_test,y_test))
 # 최적 튠  ACC : 0.8268156424581006
 # 걸린 시간 : 18.97 초
 
-######Bagging 후 acc Df
-# model.score : 0.8212290502793296
-
 ######Bagging 후 acc model xgb
 # model.score : 0.8379888268156425
 
-######Bagging 후 acc model rf
-# model.score : 0.8212290502793296
+# 보팅 결과 : 0.838
+# CatBoostClassifier 정확도 : 0.843575
+# XGBClassifier 정확도 : 0.837989
+# LGBMClassifier 정확도 : 0.843575
+# RandomForestClassifier 정확도 : 0.837989
 
 
 
