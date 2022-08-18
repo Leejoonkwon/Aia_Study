@@ -1,18 +1,19 @@
 import numpy as np 
 import pandas as pd 
+from sklearn.datasets import load_breast_cancer,load_iris
 
-from sklearn.ensemble import VotingClassifier,RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from xgboost import XGBClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.datasets import load_breast_cancer
-from sklearn.metrics import accuracy_score 
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
-#1. 데이터 
-datasets = load_breast_cancer()
+#1. 데이터
+datasets = load_iris()
+x,y = datasets.data, datasets.target # 이렇게도 된다.초등생용 문법
+print(x.shape,y.shape) #(569, 30) (569,)
 
-# df = pd.DataFrame(datasets.data,columns=datasets.feature_names)
+from xgboost import XGBClassifier
+from lightgbm import LGBMClassifier
+from catboost import CatBoostClassifier
+from sklearn.ensemble import VotingClassifier
 from sklearn.preprocessing import StandardScaler
 x_train,x_test,y_train,y_test = train_test_split(
     datasets.data,datasets.target,train_size=0.8,shuffle=True,random_state=123,
@@ -21,14 +22,16 @@ x_train,x_test,y_train,y_test = train_test_split(
 scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
+
 #2. 모델
-lr = LogisticRegression()
-knn = KNeighborsClassifier(n_neighbors=8)
-rf = RandomForestClassifier()
-xgb = XGBClassifier()
+
+xg = XGBClassifier(random_state=123)
+lg = LGBMClassifier(random_state=123,
+                    learning_rate=0.3)
+cat = CatBoostClassifier(verbose=False,random_state=123)
 model = VotingClassifier(
-    estimators=[('LR', lr), ('KNN', knn)],
-    voting='hard'    # hard 옵션도 있다.
+    estimators=[('XG', xg), ('LG', lg),('CAT', cat)],
+    voting='soft'    # hard 옵션도 있다.
 )
 
 # hard 는 결과 A 0 B 0 C 1이라면 결과는 0으로 다수결에 따른다.
@@ -44,18 +47,20 @@ score = accuracy_score(y_test,y_predict)
 print("보팅 결과 :",round(score,4))
 
 
-# 보팅 결과 : 0.9912 soft
-
-# 보팅 결과 : 0.9825 hard
-classifiers = [lr,knn,rf,xgb]
+classifiers = [cat,xg,lg]
 for model2 in classifiers:
     model2.fit(x_train,y_train)
     y_predict = model2.predict(x_test)
     score2 = accuracy_score(y_test,y_predict)
     class_name = model2.__class__.__name__ # 해당 커맨드로 이름 반환
     print('{0} 정확도 : {1:4f}'.format(class_name,score2))
-    
-# LogisticRegression 정확도 : 0.973684
-# KNeighborsClassifier 정확도 : 0.991228
-# RandomForestClassifier 정확도 : 0.982456
-# XGBClassifier 정확도 : 0.991228    
+
+######Bagging 후 ACC
+# model.score : 0.9736842105263158
+
+# 보팅 결과 : 0.9333
+# CatBoostClassifier 정확도 : 0.933333
+# XGBClassifier 정확도 : 0.933333
+# LGBMClassifier 정확도 : 0.933333
+
+
