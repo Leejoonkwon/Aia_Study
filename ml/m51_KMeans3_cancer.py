@@ -5,7 +5,7 @@ import pandas as pd
 from sklearn.datasets import load_iris,load_wine,load_breast_cancer 
 from sklearn.cluster import KMeans # 대표적 비지도 학습 
 from sklearn.metrics import accuracy_score
-
+from sklearn.ensemble import RandomForestClassifier
 
 datasets = load_breast_cancer()
 
@@ -23,6 +23,14 @@ df['cluster'] = kmeans.labels_
 df['target'] = datasets.target
 # print('acc :',accuracy_score(datasets.target,kmeans.labels_))
 print('acc :',accuracy_score(df['cluster'],df['target']))
-
 # acc : 0.8541300527240774
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test = train_test_split(
+    df,kmeans.labels_,train_size=0.8,shuffle=True,
+    random_state=123
+)
 
+model = RandomForestClassifier()
+model.fit(x_train,y_train)
+y_predict = model.predict(x_test)
+print('model.score :',accuracy_score(y_test,y_predict))
