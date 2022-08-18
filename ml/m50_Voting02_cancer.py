@@ -1,8 +1,6 @@
 import numpy as np 
 import pandas as pd 
-from sklearn.datasets import load_breast_cancer,load_iris
-
-from sklearn.preprocessing import StandardScaler 
+from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
@@ -15,10 +13,11 @@ from xgboost import XGBClassifier
 from lightgbm import LGBMClassifier
 from catboost import CatBoostClassifier
 from sklearn.ensemble import VotingClassifier
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.preprocessing import StandardScaler
 x_train,x_test,y_train,y_test = train_test_split(
-    datasets.data,datasets.target,train_size=0.8,shuffle=True,random_state=123,
-    stratify=datasets.target)
+    x,y,train_size=0.8,shuffle=True,random_state=123,
+    stratify=y)
 
 scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
@@ -30,8 +29,10 @@ xg = XGBClassifier(random_state=123)
 lg = LGBMClassifier(random_state=123,
                     learning_rate=0.2)
 cat = CatBoostClassifier(verbose=False,random_state=123)
+df = DecisionTreeClassifier(random_state=123)
 model = VotingClassifier(
-    estimators=[('XG', xg), ('LG', lg),('CAT', cat)],
+    estimators=[('XG', xg), ('LG', lg),('CAT', cat),
+                ('DF', df)],
     voting='soft'    # hard 옵션도 있다.
 )
 
@@ -48,7 +49,7 @@ score = accuracy_score(y_test,y_predict)
 print("보팅 결과 :",round(score,4))
 
 
-classifiers = [cat,xg,lg]
+classifiers = [cat,xg,lg,df]
 for model2 in classifiers:
     model2.fit(x_train,y_train)
     y_predict = model2.predict(x_test)
@@ -59,10 +60,11 @@ for model2 in classifiers:
 ######Bagging 후 ACC model xgb
 # model.score : 0.9824561403508771
 
-# 보팅 결과 : 0.9825
+# 보팅 결과 : 0.9912
 # CatBoostClassifier 정확도 : 0.982456
 # XGBClassifier 정확도 : 0.991228
 # LGBMClassifier 정확도 : 0.982456
+# DecisionTreeClassifier 정확도 : 0.947368
 
 
 
