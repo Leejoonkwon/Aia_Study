@@ -85,8 +85,8 @@ from sklearn.ensemble import BaggingRegressor,RandomForestRegressor
 from sklearn.tree import DecisionTreeClassifier,DecisionTreeRegressor
 from xgboost import XGBClassifier, XGBRegressor
 from sklearn.linear_model import LogisticRegression
-model = BaggingRegressor(RandomForestRegressor(),
-                          n_estimators=200,#해당 모델을 100번 훈련한다.
+model = BaggingRegressor(DecisionTreeRegressor(),
+                          n_estimators=100,#해당 모델을 100번 훈련한다.
                           n_jobs=-1,
                           random_state=123
                           )
@@ -101,10 +101,10 @@ model.fit(x_train,y_train)
 #4. 평가, 예측
 print('model.score :',model.score(x_test,y_test))
 ######Bagging 후 acc Df
-# 
+# model.score : 0.8779065734197633
 
 ######Bagging 후 acc model xgb
-# 
+# model.score : 0.9035555646696385
 
 ######Bagging 후 acc model rf
 # model.score : 0.8803616918885842

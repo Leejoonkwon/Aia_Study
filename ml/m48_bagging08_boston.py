@@ -1,15 +1,15 @@
 import numpy as np 
 import pandas as pd 
 from sklearn.datasets import load_breast_cancer,load_iris
-from sklearn.datasets import load_diabetes
+from sklearn.datasets import load_diabetes,load_boston
 from sklearn.preprocessing import StandardScaler 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 #1. 데이터
-datasets = load_diabetes()
+datasets = load_boston()
 x,y = datasets.data, datasets.target # 이렇게도 된다.초등생용 문법
-print(x.shape,y.shape) #(442, 10) (442,)
+print(x.shape,y.shape) #(506, 13) (506,)
 
 x_train,x_test,y_train,y_test =train_test_split(x,y,train_size=0.8,
         random_state=123,shuffle=True)
@@ -24,7 +24,7 @@ from sklearn.ensemble import BaggingRegressor,RandomForestRegressor
 from sklearn.tree import DecisionTreeClassifier,DecisionTreeRegressor
 from xgboost import XGBClassifier, XGBRegressor
 from sklearn.linear_model import LogisticRegression
-model = BaggingRegressor(XGBRegressor(),
+model = BaggingRegressor(RandomForestRegressor(),
                           n_estimators=100,#해당 모델을 100번 훈련한다.
                           n_jobs=-1,
                           random_state=123
@@ -40,13 +40,13 @@ model.fit(x_train,y_train)
 #4. 평가, 예측
 print('model.score :',model.score(x_test,y_test))
 ######Bagging 후 r2 Df
-# model.score : 0.5315357903044294
+# model.score : 0.7782134337024391
 
 ######Bagging 후 r2 model xgb
-# model.score : 0.5712713564199572
+# model.score : 0.8328611676849355
 
 ######Bagging 후 r2 model rf
-# model.score : 0.5531177065533573
+# model.score : 0.7780606806083734
 
 
 
