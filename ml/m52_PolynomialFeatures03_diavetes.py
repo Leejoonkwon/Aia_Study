@@ -26,7 +26,6 @@ model = make_pipeline(StandardScaler(),
 #3. 훈련
 model.fit(x_train,y_train)
 
-
 #4. 평가,예측
 kfold = KFold(n_splits=5,random_state=123,shuffle=True)
 print('기냥 스코어 :',model.score(x_test,y_test))

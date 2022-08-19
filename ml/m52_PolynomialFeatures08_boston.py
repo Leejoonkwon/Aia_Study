@@ -36,10 +36,7 @@ print("기냥 CV : ",scores)
 print("기냥 CV 엔빵 : ",np.mean(scores))
 model2 = make_pipeline
 
-# LinearRegression
-# model.score : 0.7665382927362872
-# CatBoostRegressor
-# model.score : 0.9244748735827965
+
 
 ################## PolynomialFeatures 후 
 
@@ -67,4 +64,14 @@ scores = cross_val_score(model,x_train,y_train,cv=kfold,scoring='r2')
 print("폴리 CV : ",scores)
 print("폴리 CV 엔빵 : ",np.mean(scores))
 # model.score : 0.8745129304823863
+
+# 기냥 스코어 : 0.7665382927362872
+# 기냥 CV :  [0.70659128 0.68526485 0.74370188 0.64025164 0.6334187 ]
+# 기냥 CV 엔빵 :  0.6818456717897765
+# (506, 104)
+# poly 스코어 : 0.8745129304823764
+# 폴리 CV :  [0.81940349 0.72676279 0.80079724 0.70671284 0.74682703]
+# 폴리 CV 엔빵 :  0.7601006782369402
+
+
 

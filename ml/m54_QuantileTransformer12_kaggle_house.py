@@ -62,63 +62,31 @@ print(x.columns)
 print(x.shape) #(1460, 75)
 
 y = train_set['SalePrice']
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import StandardScaler,PolynomialFeatures
 from sklearn.model_selection import train_test_split,KFold 
-from sklearn.preprocessing import MinMaxScaler,StandardScaler
-from sklearn.pipeline import make_pipeline
-from catboost import CatBoostRegressor
-from lightgbm import LGBMRegressor
-
-
 x_train,x_test,y_train,y_test = train_test_split(
     x,y,train_size=0.8,random_state=1234,
 )
+from sklearn.preprocessing import StandardScaler,PolynomialFeatures
+from sklearn.preprocessing import MinMaxScaler,MaxAbsScaler
+from sklearn.preprocessing import RobustScaler,QuantileTransformer # 이상치에 강함
+from sklearn.preprocessing import PowerTransformer
+from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
+import warnings
+warnings.filterwarnings('ignore')
 
-
-#2. 모델
-model = make_pipeline(StandardScaler(),
-                      LGBMRegressor())
-
-#3. 훈련
-model.fit(x_train,y_train)
-
-
-#4. 평가,예측
-kfold = KFold(n_splits=5,random_state=123,shuffle=True)
-print('기냥 스코어 :',model.score(x_test,y_test))
-from sklearn.model_selection import cross_val_score
-scores = cross_val_score(model,x_train,y_train,cv=kfold,scoring='r2')
-print("기냥 CV : ",scores)
-print("기냥 CV 엔빵 : ",np.mean(scores))
-
-
-
-################## PolynomialFeatures 후 
-
-pf = PolynomialFeatures(degree=2,include_bias=False)
-xp = pf.fit_transform(x)
-print(xp.shape) #(506, 105)
-
-x_train,x_test,y_train,y_test = train_test_split(
-    xp,y,train_size=0.8,random_state=1234,
-)
-
-#2. 모델
-model = make_pipeline(StandardScaler(),
-                      LGBMRegressor())
-
-#3. 훈련
-model.fit(x_train,y_train)
-
-
-#4. 평가,예측
-
-print('poly 스코어 :',model.score(x_test,y_test))
-from sklearn.model_selection import cross_val_score
-scores = cross_val_score(model,x_train,y_train,cv=kfold,scoring='r2')
-print("폴리 CV : ",scores)
-print("폴리 CV 엔빵 : ",np.mean(scores))
+aaa =[StandardScaler(),MinMaxScaler(),RobustScaler(),
+      QuantileTransformer(),PowerTransformer(method='yeo-johnson'),
+    #   PowerTransformer(method='box-cox')
+      ]
+for i in aaa:
+    scaler = i
+    x_train = scaler.fit_transform(x_train)
+    x_test = scaler.transform(x_test)
+    model = RandomForestRegressor()
+    model.fit(x_train,y_train)
+    y_predict =model.predict(x_test)
+    results = r2_score(y_test,y_predict)
+    print("{0} : {1:4f} ".format(i,round(results, 4)))
 ######Bagging 후 acc model xgb
 # model.score : 0.9035555646696385
 
@@ -128,18 +96,16 @@ print("폴리 CV 엔빵 : ",np.mean(scores))
 # LGBMRegressor score : 0.867253
 # RandomForestRegressor score : 0.883745
 
-
-# (1460, 75)
-# 기냥 스코어 : 0.8801005215711803
-# 기냥 CV :  [0.84033807 0.90070227 0.88397638 0.89246495 0.82031427]
-# 기냥 CV 엔빵 :  0.8675591853893287
-
 # (1460, 2925)
 # poly 스코어 : 0.8802481937385822
 # 폴리 CV :  [0.85104616 0.90133378 0.88180469 0.90954461 0.80214757]
 # 폴리 CV 엔빵 :  0.8691753619445459
 
-
+# StandardScaler() : 0.867300 
+# MinMaxScaler() : 0.864000 
+# RobustScaler() : 0.866100 
+# QuantileTransformer() : 0.869400 
+# PowerTransformer() : 0.864500
 
 
 
