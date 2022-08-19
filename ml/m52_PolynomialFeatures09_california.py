@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split,KFold 
 from sklearn.preprocessing import StandardScaler,PolynomialFeatures
-from sklearn.datasets import load_boston
+from sklearn.datasets import load_boston,fetch_california_housing
 import warnings
 warnings.filterwarnings('ignore')
 from sklearn.linear_model import LinearRegression
@@ -10,7 +10,7 @@ from catboost import CatBoostRegressor
 from sklearn.pipeline import make_pipeline
 
 #1. 데이터
-datasets = load_boston()
+datasets = fetch_california_housing()
 x, y =datasets.data, datasets.target 
 print(x.shape,y.shape) #(506, 13) (506,)
 
@@ -36,10 +36,6 @@ print("기냥 CV : ",scores)
 print("기냥 CV 엔빵 : ",np.mean(scores))
 model2 = make_pipeline
 
-# LinearRegression
-# model.score : 0.7665382927362872
-# CatBoostRegressor
-# model.score : 0.9244748735827965
 
 ################## PolynomialFeatures 후 
 
@@ -67,4 +63,11 @@ scores = cross_val_score(model,x_train,y_train,cv=kfold,scoring='r2')
 print("폴리 CV : ",scores)
 print("폴리 CV 엔빵 : ",np.mean(scores))
 # model.score : 0.8745129304823863
-
+# (20640, 8) (20640,)
+# 기냥 스코어 : 0.6065722122106434
+# 기냥 CV :  [0.11678787 0.61520602 0.57715973 0.61498804 0.59887989]
+# 기냥 CV 엔빵 :  0.5046043060069922
+# (20640, 44)
+# poly 스코어 : 0.5005165687197425
+# 폴리 CV :  [-9.60459459  0.6936112   0.46502495  0.68331427  0.67358888]
+# 폴리 CV 엔빵 :  -1.4178110591476991

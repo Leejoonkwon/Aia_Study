@@ -62,54 +62,62 @@ print(x.columns)
 print(x.shape) #(1460, 75)
 
 y = train_set['SalePrice']
-from xgboost import XGBClassifier,XGBRegressor
-from lightgbm import LGBMClassifier,LGBMRegressor
-from catboost import CatBoostClassifier,CatBoostRegressor
-from sklearn.ensemble import VotingClassifier,VotingRegressor
-from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import r2_score
-x_train,x_test,y_train,y_test = train_test_split(
-    x,y,train_size=0.8,shuffle=True,random_state=123,
-    )
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import StandardScaler,PolynomialFeatures
+from sklearn.model_selection import train_test_split,KFold 
+from sklearn.preprocessing import MinMaxScaler,StandardScaler
+from sklearn.pipeline import make_pipeline
 
-scaler = StandardScaler()
-x_train = scaler.fit_transform(x_train)
-x_test = scaler.transform(x_test)
+
+
+x_train,x_test,y_train,y_test = train_test_split(
+    x,y,train_size=0.8,random_state=1234,
+)
+
 
 #2. 모델
-
-xg = XGBRegressor(random_state=123)
-lg = LGBMRegressor(random_state=123,
-                    learning_rate=0.2)
-cat = CatBoostRegressor(verbose=False,random_state=123)
-rf =RandomForestRegressor()
-models = [('XG', xg), ('LG', lg),('CAT', cat),('RF', rf)]
-
-voting_regressor = VotingRegressor(models, n_jobs=-1)
-
-
-# hard 는 결과 A 0 B 0 C 1이라면 결과는 0으로 다수결에 따른다.
-# soft 는 클래스파이어간의 평균으로 결정
+model = make_pipeline(StandardScaler(),
+                      LinearRegression())
 
 #3. 훈련
-voting_regressor.fit(x_train,y_train)
+model.fit(x_train,y_train)
+
 
 #4. 평가,예측
-y_predict = voting_regressor.predict(x_test)
+kfold = KFold(n_splits=5,random_state=123,shuffle=True)
+print('기냥 스코어 :',model.score(x_test,y_test))
+from sklearn.model_selection import cross_val_score
+scores = cross_val_score(model,x_train,y_train,cv=kfold,scoring='r2')
+print("기냥 CV : ",scores)
+print("기냥 CV 엔빵 : ",np.mean(scores))
 
-score = r2_score(y_test,y_predict)
-print("보팅 결과 :",round(score,4))
 
 
-Regressor = [cat,xg,lg,rf]
-for model2 in Regressor:
-    model2.fit(x_train,y_train)
-    y_predict = model2.predict(x_test)
-    score2 = r2_score(y_test,y_predict)
-    class_name = model2.__class__.__name__ # 해당 커맨드로 이름 반환
-    print('{0} score : {1:4f}'.format(class_name,score2))
+################## PolynomialFeatures 후 
 
+pf = PolynomialFeatures(degree=2,include_bias=False)
+xp = pf.fit_transform(x)
+print(xp.shape) #(506, 105)
+
+x_train,x_test,y_train,y_test = train_test_split(
+    xp,y,train_size=0.8,random_state=1234,
+)
+
+#2. 모델
+model = make_pipeline(StandardScaler(),
+                      LinearRegression())
+
+#3. 훈련
+model.fit(x_train,y_train)
+
+
+#4. 평가,예측
+
+print('poly 스코어 :',model.score(x_test,y_test))
+from sklearn.model_selection import cross_val_score
+scores = cross_val_score(model,x_train,y_train,cv=kfold,scoring='r2')
+print("폴리 CV : ",scores)
+print("폴리 CV 엔빵 : ",np.mean(scores))
 ######Bagging 후 acc model xgb
 # model.score : 0.9035555646696385
 
@@ -118,3 +126,18 @@ for model2 in Regressor:
 # XGBRegressor score : 0.885783
 # LGBMRegressor score : 0.867253
 # RandomForestRegressor score : 0.883745
+
+# (1460, 75)
+# 기냥 스코어 : 0.8533867643895423
+# 기냥 CV :  [ 7.82612779e-01 -3.14560787e+21  7.86157968e-01  8.22331307e-01
+#   4.53064179e-01]
+# 기냥 CV 엔빵 :  -6.291215741017242e+20
+# (1460, 2925)
+# poly 스코어 : 0.17028575290794246
+# 폴리 CV :  [ 0.45121297  0.59015328  0.42475165  0.5745154  -1.02118429]
+# 폴리 CV 엔빵 :  0.20388980113782562
+
+
+
+
+
