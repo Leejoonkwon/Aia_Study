@@ -25,7 +25,7 @@ model = make_pipeline(StandardScaler(),
               
 #3. 훈련
 model.fit(x_train,y_train)
- 
+   
 
 #4. 평가,예측
 
