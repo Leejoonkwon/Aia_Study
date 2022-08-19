@@ -32,7 +32,7 @@ model = BaggingClassifier(RandomForestClassifier(),
 # Bagging 할 때는 스케일링이 무조건 필요하다.
 # Bagging(Bootstrap Aggregating)
 # 한가지 모델을 여러번 훈련한다.대표적인 Ensemble 모데 랜덤포레스트
-
+ 
 #3. 훈련
 model.fit(x_train,y_train)
 
