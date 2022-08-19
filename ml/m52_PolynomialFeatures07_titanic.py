@@ -148,55 +148,62 @@ x = train_set.drop(['Survived'],axis=1) #axis는 컬럼
 
 print(x) #(891, 7)
 y = train_set['Survived']
-from sklearn.metrics import accuracy_score
-from xgboost import XGBClassifier
-from lightgbm import LGBMClassifier
+from sklearn.preprocessing import StandardScaler,PolynomialFeatures
+from sklearn.model_selection import train_test_split,KFold 
+from sklearn.preprocessing import MinMaxScaler,StandardScaler
+from sklearn.pipeline import make_pipeline
+from sklearn.ensemble import RandomForestClassifier
 from catboost import CatBoostClassifier
-from sklearn.ensemble import VotingClassifier,RandomForestClassifier
 
-from sklearn.preprocessing import StandardScaler
+
 x_train,x_test,y_train,y_test = train_test_split(
-    x,y,train_size=0.8,shuffle=True,random_state=123,
-    stratify=y)
-
-scaler = StandardScaler()
-x_train = scaler.fit_transform(x_train)
-x_test = scaler.transform(x_test)
-
-#2. 모델
-
-xg = XGBClassifier(random_state=123)
-lg = LGBMClassifier(random_state=123,
-                    learning_rate=0.2)
-cat = CatBoostClassifier(verbose=False,random_state=123)
-rf =RandomForestClassifier()
-model = VotingClassifier(
-    estimators=[('XG', xg), ('LG', lg),('CAT', cat),
-                ('RF',rf)],
-    voting='soft'    # hard 옵션도 있다.
+    x,y,train_size=0.8,random_state=1234,
 )
 
-# hard 는 결과 A 0 B 0 C 1이라면 결과는 0으로 다수결에 따른다.
-# soft 는 클래스파이어간의 평균으로 결정
+
+#2. 모델
+model = make_pipeline(StandardScaler(),
+                      CatBoostClassifier(verbose=False))
 
 #3. 훈련
 model.fit(x_train,y_train)
 
+
 #4. 평가,예측
-y_predict = model.predict(x_test)
+kfold = KFold(n_splits=5,random_state=123,shuffle=True)
+print('기냥 스코어 :',model.score(x_test,y_test))
+from sklearn.model_selection import cross_val_score
+scores = cross_val_score(model,x_train,y_train,cv=kfold,scoring='r2')
+print("기냥 CV : ",scores)
+print("기냥 CV 엔빵 : ",np.mean(scores))
 
-score = accuracy_score(y_test,y_predict)
-print("보팅 결과 :",round(score,4))
 
 
-classifiers = [cat,xg,lg,rf]
-for model2 in classifiers:
-    model2.fit(x_train,y_train)
-    y_predict = model2.predict(x_test)
-    score2 = accuracy_score(y_test,y_predict)
-    class_name = model2.__class__.__name__ # 해당 커맨드로 이름 반환
-    print('{0} 정확도 : {1:4f}'.format(class_name,score2))
+################## PolynomialFeatures 후 
 
+pf = PolynomialFeatures(degree=2,include_bias=False)
+xp = pf.fit_transform(x)
+print(xp.shape) #(506, 105)
+
+x_train,x_test,y_train,y_test = train_test_split(
+    xp,y,train_size=0.8,random_state=1234,
+)
+
+#2. 모델
+model = make_pipeline(StandardScaler(),
+                      CatBoostClassifier(verbose=False))
+
+#3. 훈련
+model.fit(x_train,y_train)
+
+
+#4. 평가,예측
+
+print('poly 스코어 :',model.score(x_test,y_test))
+from sklearn.model_selection import cross_val_score
+scores = cross_val_score(model,x_train,y_train,cv=kfold,scoring='r2')
+print("폴리 CV : ",scores)
+print("폴리 CV 엔빵 : ",np.mean(scores))
 #==================gridsearch
 # 최적의 매개변수 : RandomForestClassifier(max_depth=6, min_samples_leaf=3, n_jobs=-1)
 # 최적의 파라미터 : {'max_depth': 6, 'min_samples_leaf': 3, 'min_samples_split': 2, 'n_estimators': 100, 'n_jobs': -1}  
@@ -215,6 +222,13 @@ for model2 in classifiers:
 # LGBMClassifier 정확도 : 0.843575
 # RandomForestClassifier 정확도 : 0.837989
 
+# 기냥 스코어 : 0.8268156424581006
+# 기냥 CV :  [0.2955665  0.01896691 0.28330042 0.36282051 0.14493355]
+# 기냥 CV 엔빵 :  0.22111757916784605
+# (891, 35)
+# poly 스코어 : 0.8324022346368715
+# 폴리 CV :  [0.20751232 0.01896691 0.22097871 0.36282051 0.2333887 ]
+# 폴리 CV 엔빵 :  0.20873343105481493
 
 
 
