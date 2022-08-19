@@ -74,7 +74,7 @@ print(xgb_bo.max)
 # QuantileTransformer() : 0.804700 
 # PowerTransformer() : 0.803000 
 
-# Catboost                
+# Catboost     
 # StandardScaler() : 0.845600 
 # MinMaxScaler() : 0.845600 
 # RobustScaler() : 0.845600 
