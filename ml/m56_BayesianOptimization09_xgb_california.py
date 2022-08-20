@@ -67,7 +67,7 @@ xgb_bo.maximize(init_points=2,
                 n_iter=50)
 
 print(xgb_bo.max)
-
+    
 # StandardScaler() : 0.805900 
 # MinMaxScaler() : 0.807500 
 # RobustScaler() : 0.802200 
