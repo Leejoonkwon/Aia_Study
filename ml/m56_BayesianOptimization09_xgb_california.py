@@ -64,11 +64,11 @@ xgb_bo = BayesianOptimization(f=xgb_hamsu,
                               random_state=123)
 
 xgb_bo.maximize(init_points=2,
-                n_iter=30)
+                n_iter=40)
 
 print(xgb_bo.max)
     
-# StandardScaler() : 0.80
+# StandardScaler() : 0.805900 
 # MinMaxScaler() : 0.807500 
 # RobustScaler() : 0.802200 
 # QuantileTransformer() : 0.804700 
