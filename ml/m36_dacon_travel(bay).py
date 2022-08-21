@@ -221,12 +221,17 @@ kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
 # model_size_reg : float, [default=None] range: [0,+inf]
 # l2_leaf_reg : float, [default=3.0]  range: [0,+inf]
 
-cat_paramets = {"learning_rate" : (0,1),
-                'depth' : (5,9),
-                'od_pval' :(0,1),
+cat_paramets = {"learning_rate" : (0.05,0.7),
+                'depth' : (3,7),
+                'od_pval' :(0.01,0.5),
                 'model_size_reg' : (0,1),
-                'l2_leaf_reg' :(2,4)}
-
+                'l2_leaf_reg' :(3,5)}
+# {'target': 0.936046511627907, 
+#  'params': {'depth': 6.163299421088441, 
+#             'l2_leaf_reg': 3.9816859450705295,
+#             'learning_rate': 0.32097448471544043, 
+#             'model_size_reg': 0.41854673954527577, 
+#             'od_pval': 0.13164599250802034}}
 cat = CatBoostClassifier(random_state=123,verbose=False)
 
 
@@ -259,7 +264,7 @@ xgb_bo = BayesianOptimization(f=xgb_hamsu,
                               random_state=123)
 
 xgb_bo.maximize(init_points=2,
-                n_iter=40)
+                n_iter=150)
 
 print(xgb_bo.max)
 '''

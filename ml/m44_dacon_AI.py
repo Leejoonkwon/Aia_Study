@@ -6,7 +6,7 @@ matplotlib.rcParams['axes.unicode_minus']=False
 import pandas as pd
 import numpy as np 
 from sklearn.model_selection import KFold, StratifiedKFold, train_test_split
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV,RandomizedSearchCV
 from sklearn.feature_selection import SelectFromModel
 from sklearn.decomposition import PCA
 
@@ -22,10 +22,10 @@ train_x = train_set.filter(regex='X') # Input : X Featrue : 56
 train_y = train_set.filter(regex='Y') # Output : Y Feature : 14
 # print(test_set.isnull().sum())
 # print(train_y.isnull().sum())
-pca = PCA(n_components=17) # 차원 축소 (차원=컬럼,열,피처)
+# pca = PCA(n_components=17) # 차원 축소 (차원=컬럼,열,피처)
 
-x = pca.fit_transform(train_x)
-test_set = pca.transform(test_set) 
+# x = pca.fit_transform(train_x)
+# test_set = pca.transform(test_set) 
 # pca_EVR = pca.explained_variance_ratio_ # PCA로 압축 후에 새로 생성된 피쳐 임포턴스를 보여준다.
 # print(sum(pca_EVR)) #0.999998352533973
 # print(pca_EVR)
@@ -47,6 +47,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, Ma
 # x_train = scaler.fit_transform(x_train)
 # x_test= scaler.transform(x_test)
 from xgboost import XGBClassifier,XGBRegressor
+from catboost import CatBoostRegressor
 from sklearn.metrics import r2_score
 
 # 2. 모델
@@ -81,10 +82,10 @@ parameters = {'n_estimators':[100],
 #2. 모델 
 xgb = XGBRegressor(random_state=123,
                     n_estimators=100,
-                    tree_method='gpu_hist'
+                    # tree_method='gpu_hist'
                 )
 
-model = GridSearchCV(xgb,parameters,cv=kfold,n_jobs=-1)
+model = RandomizedSearchCV(xgb,parameters,cv=kfold,n_jobs=-1)
 import time
 start_time = time.time()
 model.fit(x_train,y_train)

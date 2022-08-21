@@ -172,7 +172,7 @@ from xgboost import XGBClassifier,XGBRegressor
 from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
 from imblearn.over_sampling import SMOTE
 
-x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.82,shuffle=True,random_state=72)
+x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.9,shuffle=True,random_state=72)
 # smote = SMOTE(random_state=123)
 # x_train,y_train = smote.fit_resample(x_train,y_train)
 
@@ -203,7 +203,7 @@ from bayes_opt import BayesianOptimization
 #             'reg_alpha': 0.33804598214965165, 
 #             'reg_lambda': 0.2992936058040399, 
 #             'subsample': 1.0}} 
-n_splits = 5 
+n_splits = 5
 
 kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
 # xgb_parameters={'colsample_bytree': [0,1,2], 
@@ -215,11 +215,17 @@ kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
 #         'reg_lambda': [0.2992936058040399], 
 #         'subsample': [1.0]}
 # xgb = XGBClassifier(random_state=123,tree_method='gpu_hist')
-
-cat_paramets = {"learning_rate" : [0.01,0.05,0.1,0.2,0.3],
-                'depth' : [7,8,9,10],
-                'od_pval' : [0.01,0.1,0.2],
-                'l2_leaf_reg' :[3,4,5]}
+# {'target': 0.936046511627907, 
+#  'params': {'depth': 6.163299421088441, 
+#             'l2_leaf_reg': 3.9816859450705295,
+#             'learning_rate': 0.32097448471544043, 
+#             'model_size_reg': 0.41854673954527577, 
+#             'od_pval': 0.13164599250802034}}
+cat_paramets = {"learning_rate" : [0.32097448471544043],
+                'depth' : [6],
+                'od_pval' : [0.13164599250802034],
+                'model_size_reg': [0.41854673954527577],
+                'l2_leaf_reg' :[3.9816859450705295]}
 cat = CatBoostClassifier(random_state=123,verbose=False)
 model = RandomizedSearchCV(cat,cat_paramets,cv=kfold,n_jobs=-1)
 
@@ -244,21 +250,14 @@ submission.to_csv('test32.csv',index=False)
 
 
 ##########
-   
-# 최적의 매개변수 :  {'gamma': 0.1, 'learning_rate': 0.1, 
-# 'max_depth': 8, 'min_child_weight': 1, 'n_estimators': 100, 'subsample': 1}
-# 최상의 점수 :  0.8574873774873775
-# model.socre :  0.8478260869565217
-# 걸린 시간 :  3.814527034759521
+# 최상의 점수 :  0.8775014753464522
+# acc : 0.9127906976744186
+# 걸린 시간 : 6.720353841781616
 
-# 최적의 매개변수 :  {'gamma': 0.1, 'learning_rate': 0.3, 
-# 'max_depth': 8, 'min_child_weight': 1, 'n_estimators': 100, 'subsample': 1}
-# 최상의 점수 :  0.8676363636363635
-# model.socre :  0.869281045751634
-# 걸린 시간 :  6.3972249031066895
+# 최상의 점수 :  0.8691819118951928
+# acc : 0.9127906976744186
+# 걸린 시간 : 6.517234563827515
 
-# 최적의 매개변수 :  {'gamma': 0.1, 'learning_rate': 0.3,
-# 'max_depth': 8, 'min_child_weight': 1, 'n_estimators': 100, 'subsample': 1}
-# 최상의 점수 :  0.8879985754985755
-# model.socre :  0.8622448979591837
-# 걸린 시간 :  3.593817949295044
+# 최상의 점수 :  0.8877093362261848
+# acc : 0.9427083333333334
+# 걸린 시간 : 7.248791933059692
