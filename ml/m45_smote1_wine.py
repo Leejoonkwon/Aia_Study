@@ -4,7 +4,7 @@ from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split 
 from sklearn.metrics import accuracy_score,f1_score
 from imblearn.over_sampling import SMOTE
-# imblearnd은 cmd에서 pip 인스톨해야 사용 가능 
+# imblearn은 cmd에서 pip 인스톨해야 사용 가능 
 import sklearn as sk 
 print('사이킷런 :',sk.__version__) #사이킷런 : 1.1.2
 # 사이킷런이 업데이트 되었으니 문제 생길 가능성 있다.

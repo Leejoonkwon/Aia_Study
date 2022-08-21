@@ -11,7 +11,6 @@ import warnings
 warnings.filterwarnings('ignore')
 from sklearn.linear_model import LinearRegression,LogisticRegression
 from sklearn.ensemble import RandomForestRegressor,RandomForestClassifier
-from catboost import CatBoostRegressor
 from sklearn.pipeline import make_pipeline
 import matplotlib.pyplot as plt
 #1. 데이터
@@ -23,6 +22,7 @@ x_train,x_test,y_train,y_test = train_test_split(
     x,y, train_size=0.8,random_state=123
 )
 from xgboost import XGBClassifier,XGBRegressor
+from catboost import CatBoostRegressor
 from bayes_opt import BayesianOptimization
 
 xgb_parameters = {'max_depth': (3, 6),

@@ -65,10 +65,10 @@ kfold = KFold(n_splits=n_splits,shuffle=True,random_state=123)
 # 'reg_alpha' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=0] 0~inf /L1 절댓값 가중치 규제 
 # 'reg_lambda' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=1] 0~inf /L2 절댓값 가중치 규제 
 ####
-parameters = {'n_estimators':[100,200],
-              'learning_rate':[0.1,0.2,0.3],
-              'max_depth': [5,6,7],
-              'gamma' : [0,0.1,0.3],
+parameters = {'n_estimators':[100],
+              'learning_rate':[0.1],
+              'max_depth': [7],
+              'gamma' : [0],
             #   'min_child_weight' : [1],
             #   'subsample' : [1],
             #   'colsample_bytree' : [0.5],
@@ -81,7 +81,7 @@ parameters = {'n_estimators':[100,200],
 #2. 모델 
 xgb = XGBRegressor(random_state=123,
                     n_estimators=100,
-                    # tree_method='gpu_hist'
+                    tree_method='gpu_hist'
                 )
 
 model = GridSearchCV(xgb,parameters,cv=kfold,n_jobs=-1)
@@ -105,7 +105,7 @@ for idx, col in enumerate(submission.columns):
         continue
     submission[col] = y_summit[:,idx-1]
 print('Done.')
-submission.to_csv('test23.csv',index=False)
+submission.to_csv('test43.csv',index=False)
 
 # 최적의 매개변수 :  {'learning_rate': 0.1, 'n_estimators': 100}
 # 최상의 점수 :  0.06523837244168644
