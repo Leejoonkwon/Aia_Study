@@ -116,7 +116,7 @@ submission.to_csv('test43.csv',index=False)
 # 최적의 매개변수 :  {'learning_rate': 0.1, 'n_estimators': 100}
 # 최상의 점수 :  0.06577843806588209   
 # 걸린 시간 :  309.3102035522461      
-# model.socre :  0.0678021185  
+# model.socre :  0.0678021185      
 
 # 최적의 매개변수 :  {'learning_rate': 0.1, 'n_estimators': 100}
 # 최상의 점수 :  0.06970460808498297
