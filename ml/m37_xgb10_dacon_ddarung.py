@@ -134,108 +134,82 @@ print(x.shape) #(1459, 9)
 y = train_set_clean['count']
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
 from sklearn.experimental import enable_halving_search_cv
-from sklearn.model_selection import GridSearchCV,RandomizedSearchCV,HalvingGridSearchCV,KFold,StratifiedKFold
+from sklearn.model_selection import GridSearchCV,RandomizedSearchCV,HalvingGridSearchCV,KFold
+from xgboost import XGBClassifier,XGBRegressor
 x = np.array(x)
 y = np.array(y)
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, train_size=0.7, random_state=1234)
 
-# 2. 모델구성
-from sklearn.tree import DecisionTreeRegressor
-from xgboost import XGBRegressor
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.tree import DecisionTreeRegressor #공부하자 
-from sklearn.ensemble import RandomForestRegressor #공부하자 
-from sklearn.linear_model import LinearRegression 
-from sklearn.svm import SVR
-# models = [DecisionTreeClassifier(), RandomForestClassifier(), GradientBoostingClassifier(), XGBClassifier()]
-def models(model):
-    if model == 'knn':
-        mod = KNeighborsRegressor()
-    elif model == 'svr':
-        mod = SVR()
-    elif model == 'tree':
-        mod =  DecisionTreeRegressor()
-    elif model == 'forest':
-        mod =  RandomForestRegressor()
-    elif model == 'linear':
-        mod =  LinearRegression ()    
-    elif model == 'xgb':
-        mod =  XGBRegressor ()        
-    return mod
-model_list = ['knn', 'svr',  'tree', 'forest','linear','xgb']
-empty_list = [] #empty list for progress bar in tqdm library
-for model in (model_list):
-    empty_list.append(model) # fill empty_list to fill progress bar
-    #classifier
-    clf = models(model)
-    #Training
-    clf.fit(x_train, y_train) 
-    #Predict
-    result = clf.score(x_test,y_test)
-    pred = clf.predict(x_test) 
-    print('{}-{}'.format(model,result))
-    
-        
-#============= pipe HalvingGridSearchCV
-# 최적의 매개변수 : Pipeline(steps=[('minmax', MinMaxScaler()),
-#                 ('RF',
-#                  RandomForestRegressor(max_depth=6, min_samples_leaf=5,
-#                                        min_samples_split=3, n_jobs=2))])
-# 최적의 파라미터 : {'RF__max_depth': 6, 'RF__min_samples_leaf': 5, 'RF__min_samples_split': 3, 
-# 'RF__n_estimators': 100, 'RF__n_jobs': 2}      
-# best_score : 0.7507959223647331
-# model_score : 0.7591141162607191
-# accuracy_score : 0.7591141162607191
-# 최적 튠  ACC : 0.7591141162607191
-# 걸린 시간 : 25.3 초
-#============= pipe GridSearchCV
-# 최적의 매개변수 : Pipeline(steps=[('minmax', MinMaxScaler()),
-#                 ('RF',
-#                  RandomForestRegressor(max_depth=8, min_samples_leaf=3,
-#                                        min_samples_split=3, n_estimators=200,
-#                                        n_jobs=-1))])
-# 최적의 파라미터 : {'RF__max_depth': 8, 'RF__min_samples_leaf': 3, 'RF__min_samples_split': 3, 
-# 'RF__n_estimators': 200, 'RF__n_jobs': -1}     
-# best_score : 0.7655431824311288
-# model_score : 0.7796496700810223
-# accuracy_score : 0.7796496700810222
-# 최적 튠  ACC : 0.7796496700810222
-# 걸린 시간 : 30.97 초
+scaler = MinMaxScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
 
-#============= pipe RandomizedSearchCV
-# 최적의 매개변수 : Pipeline(steps=[('minmax', MinMaxScaler()),
-#                 ('RF',
-#                  RandomForestRegressor(max_depth=8, min_samples_leaf=3,
-#                                        min_samples_split=3, n_estimators=200,
-#                                        n_jobs=-1))])
-# 최적의 파라미터 : {'RF__n_jobs': -1, 'RF__n_estimators': 200, 'RF__min_samples_split': 3, 'RF__min_samples_leaf': 3, 'RF__max_depth': 8}     
-# best_score : 0.7655627301006306
-# model_score : 0.7795832657214612
-# accuracy_score : 0.7795832657214612
-# 최적 튠  ACC : 0.7795832657214612
-# 걸린 시간 : 6.5 초
-#=================  결측치 median 처리  =============  
-# knn-0.05005421109390007
-# svr-0.0371351609788686
-# tree-0.5338291078101032
-# forest-0.7827754490472193
-# linear-0.6110695353409068
-# xgb-0.7864238734420762   
-#=================  결측치 interpolate 처리  =============  
-# knn--0.021160213099664205
-# svr-0.0392869877072497
-# tree-0.65829171863489
-# forest-0.7879504683704567
-# linear-0.6131357757567988
-# xgb-0.7914603072315469
-#=================  결측치 mean 처리  =============  
-# knn--0.0029500086857461305
-# svr-0.024037253858829266
-# tree-0.6058261668039286
-# forest-0.7857045058880551
-# linear-0.6151305845513807
-# xgb-0.7967861479060181
-#=================  결측치 drop 처리  =============  
+n_splits = 5
+kfold = KFold(n_splits=n_splits,shuffle=True,random_state=123)
+# parameters = {'n_estimators':[100,200,300,400,500,1000], # 디폴트 100/ 1~inf 무한대 
+# eta[기본값=0.3, 별칭: learning_rate] learning_rate':[0.1,0.2,0.3,0.4,0.5,0.7,1]
+# max_depth': [None,3,4,5,6,7][기본값=6]
+# gamma[기본값=0, 별칭: min_split_loss] [0,0.1,0.3,0.5,0.7,0.8,0.9,1]
+# min_child_weight[기본값=1] 0~inf
+# subsample[기본값=1][0,0.1,0.3,0.5,0.7,1] 0~1
+# colsample_bytree [0,0.1,0.2,0.3,0.5,0.7,1]    [기본값=1] 0~1
+# colsample_bylevel': [0,0.1,0.2,0.3,0.5,0.7,1] [기본값=1] 0~1
+# 'colsample_bynode': [0,0.1,0.2,0.3,0.5,0.7,1] [기본값=1] 0~1
+# 'reg_alpha' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=0] 0~inf /L1 절댓값 가중치 규제 
+# 'reg_lambda' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=1] 0~inf /L2 절댓값 가중치 규제 
+# max_delta_step[기본값=0]
 
+parameters = {'n_estimators':[100],
+              'learning_rate':[0.1],
+            #   'max_depth': [None,3,4,5,6,7],
+              'gamma' : [0,0.1,0.3,0.5,0.7,0.8,0.9,1],
+            #   'min_child_weight' : [1],
+            #   'subsample' : [1],
+            #   'colsample_bytree' : [0.5],
+            #   'colsample_bylevel': [1],
+            #   'colsample_bynode': [1],
+            #   'alpha' : [0],
+            #   'lambda' : [0]
+              } # 디폴트 6 
+# 통상 max_depth의 디폴트인 6보다 작을 파라미터를 줄 때 성능이 좋다 -> 너무 깊어지면 훈련 데이터에 특화되어 과적합이 될 수 있다.
+# 통상 min_depth의 디폴트인 6보다 큰 파라미터를 줄 때 성능이 좋다
+
+
+#2. 모델 
+xgb = XGBRegressor(random_state=123,
+                   
+                )
+
+model = GridSearchCV(xgb,parameters,cv=kfold,n_jobs=-1)
+import time
+start_time= time.time()
+model.fit(x_train,y_train)
+end_time= time.time()-start_time
+# model.score(x_test,y_test)
+result = model.score(x_test,y_test)
+print('최적의 매개변수 : ',model.best_params_)
+print('최상의 점수 : ',model.best_score_)
+print('model.score :',result)
+print('걸린 시간 : ',end_time)
+#############################################
+# 최적의 매개변수 :  {'n_estimators': 100}
+# 최상의 점수 :  0.7358984636021871
+# model.score : 0.7861693605495705
+# 걸린 시간 :  4.022421360015869
+#############################################
+# 최적의 매개변수 :  {'learning_rate': 0.1, 'n_estimators': 100}
+# 최상의 점수 :  0.7371412466144399
+# model.score : 0.8116761666300953
+# 걸린 시간 :  3.11710786819458
+#############################################
+# 최적의 매개변수 :  {'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 100}
+# 최상의 점수 :  0.752499485599918
+# model.score : 0.7817660603161196
+# 걸린 시간 :  3.0197927951812744
+#############################################
+# 최적의 매개변수 :  {'gamma': 0.8, 'learning_rate': 0.1, 'n_estimators': 100}
+# 최상의 점수 :  0.7395168530914326
+# model.score : 0.8121190578078334
+# 걸린 시간 :  3.17083740234375
 

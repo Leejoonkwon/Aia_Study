@@ -108,10 +108,6 @@ train_set_clean = train_set_clean.reset_index(drop=True)
 print(train_set_clean)
 x = train_set_clean.drop([ 'casual', 'registered','count'],axis=1) #axis는 컬럼 
 
-
-# print(x.columns)
-# print(x.shape) #(10886, 8)
-
 y = train_set_clean['count']
 
 from sklearn.model_selection import KFold,cross_val_score,cross_val_predict
@@ -119,114 +115,68 @@ from sklearn.model_selection import KFold,cross_val_score,cross_val_predict
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
 from sklearn.experimental import enable_halving_search_cv
 from sklearn.model_selection import GridSearchCV,RandomizedSearchCV,HalvingGridSearchCV,KFold,StratifiedKFold
+from xgboost import XGBClassifier,XGBRegressor
 
 from sklearn.model_selection import train_test_split
 x_train,x_test,y_train,y_test = train_test_split(x, y, train_size=0.8
        ,random_state=1234,shuffle=True)
 
-# scaler = MinMaxScaler()
-# x_train = scaler.fit_transform(x_train) 
-# x_test = scaler.transform(x_test)
+scaler = MinMaxScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
+
+n_splits = 5
+kfold = KFold(n_splits=n_splits,shuffle=True,random_state=123)
+# parameters = {'n_estimators':[100,200,300,400,500,1000], # 디폴트 100/ 1~inf 무한대 
+# eta[기본값=0.3, 별칭: learning_rate] learning_rate':[0.1,0.2,0.3,0.4,0.5,0.7,1]
+# max_depth': [None,3,4,5,6,7][기본값=6]
+# gamma[기본값=0, 별칭: min_split_loss] [0,0.1,0.3,0.5,0.7,0.8,0.9,1]
+# min_child_weight[기본값=1] 0~inf
+# subsample[기본값=1][0,0.1,0.3,0.5,0.7,1] 0~1
+# colsample_bytree [0,0.1,0.2,0.3,0.5,0.7,1]    [기본값=1] 0~1
+# colsample_bylevel': [0,0.1,0.2,0.3,0.5,0.7,1] [기본값=1] 0~1
+# 'colsample_bynode': [0,0.1,0.2,0.3,0.5,0.7,1] [기본값=1] 0~1
+# 'reg_alpha' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=0] 0~inf /L1 절댓값 가중치 규제 
+# 'reg_lambda' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=1] 0~inf /L2 절댓값 가중치 규제 
+# max_delta_step[기본값=0]
+
+parameters = {'n_estimators':[100],
+              'learning_rate':[0.1],
+              'max_depth': [None,3,4,5,6,7],
+            #   'gamma' : [1],
+            #   'min_child_weight' : [1],
+            #   'subsample' : [1],
+            #   'colsample_bytree' : [0.5],
+            #   'colsample_bylevel': [1],
+            #   'colsample_bynode': [1],
+            #   'alpha' : [0],
+            #   'lambda' : [0]
+              } # 디폴트 6 
+
 
 #2. 모델 
-# 2. 모델구성
-from sklearn.tree import DecisionTreeRegressor
-from xgboost import XGBRegressor
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.tree import DecisionTreeRegressor #공부하자 
-from sklearn.ensemble import RandomForestRegressor #공부하자 
-from sklearn.linear_model import LinearRegression 
-from sklearn.svm import SVR
-# models = [DecisionTreeClassifier(), RandomForestClassifier(), GradientBoostingClassifier(), XGBClassifier()]
-def models(model):
-    if model == 'knn':
-        mod = KNeighborsRegressor()
-    elif model == 'svr':
-        mod = SVR()
-    elif model == 'tree':
-        mod =  DecisionTreeRegressor()
-    elif model == 'forest':
-        mod =  RandomForestRegressor()
-    elif model == 'linear':
-        mod =  LinearRegression ()    
-    elif model == 'xgb':
-        mod =  XGBRegressor () 
-    return mod
-model_list = ['knn', 'svr',  'tree', 'forest','linear','xgb']
-empty_list = [] #empty list for progress bar in tqdm library
-for model in (model_list):
-    empty_list.append(model) # fill empty_list to fill progress bar
-    #classifier
-    clf = models(model)
-    #Training
-    clf.fit(x_train, y_train) 
-    #Predict
-    result = clf.score(x_test,y_test)
-    pred = clf.predict(x_test) 
-    print('{}-{}'.format(model,result))
-    
-# 최적의 매개변수 : RandomForestRegressor(max_depth=8, min_samples_leaf=3, n_jobs=2)
-# 최적의 파라미터 : {'max_depth': 8, 'min_samples_leaf': 3, 'min_samples_split': 2, 'n_estimators': 100, 'n_jobs': 2}   
-# best_score : 0.35497017372207595
-# model_score : 0.33946365731794803
-# accuracy_score : 0.33946365731794803
-# 최적 튠  ACC : 0.33946365731794803
-# 걸린 시간 : 62.29 초      
-#============= pipe HalvingGridSearchCV
-# 최적의 매개변수 : Pipeline(steps=[('minmax', MinMaxScaler()),
-#                 ('RF',
-#                  RandomForestRegressor(max_depth=8, min_samples_leaf=7,
-#                                        min_samples_split=4, n_estimators=400,
-#                                        n_jobs=4))])
-# 최적의 파라미터 : {'RF__max_depth': 8, 'RF__min_samples_leaf': 7, 'RF__min_samples_split': 4, 
-# 'RF__n_estimators': 400, 'RF__n_jobs': 4}      
-# best_score : 0.3453183955420628
-# model_score : 0.36446649478414794
-# accuracy_score : 0.36446649478414794
-# 최적 튠  ACC : 0.36446649478414794
-# 걸린 시간 : 41.58 초
-#============= pipe GridSearchCV
-# 최적의 매개변수 : Pipeline(steps=[('minmax', MinMaxScaler()),
-#                 ('RF',
-#                  RandomForestRegressor(max_depth=8, min_samples_leaf=3,
-#                                        n_estimators=200, n_jobs=-1))])
-# 최적의 파라미터 : {'RF__max_depth': 8, 'RF__min_samples_leaf': 3, 'RF__min_samples_split': 2, 
-# 'RF__n_estimators': 200, 'RF__n_jobs': -1}     
-# best_score : 0.3485804362554507
-# model_score : 0.36661184664654445
-# accuracy_score : 0.36661184664654445
-# 최적 튠  ACC : 0.36661184664654445
-# 걸린 시간 : 63.97 초
-#============= pipe RandomizedSearchCV
-# 최적의 매개변수 : Pipeline(steps=[('minmax', MinMaxScaler()),
-#                 ('RF',
-#                  RandomForestRegressor(max_depth=8, min_samples_leaf=3,
-#                                        n_estimators=200, n_jobs=-1))])
-# 최적의 파라미터 : {'RF__n_jobs': -1, 'RF__n_estimators': 200, 'RF__min_samples_split': 2, 'RF__min_samples_leaf': 3, 'RF__max_depth': 8}     
-# best_score : 0.34827446376168886
-# model_score : 0.36599775368477017
-# accuracy_score : 0.36599775368477017
-# 최적 튠  ACC : 0.36599775368477017
-# 걸린 시간 : 11.36 초
-#=================  결측치 중위 처리  =============  
-# knn-0.24136135449131146
-# svr-0.19683139616790846
-# tree--0.12026844846386475
-# forest-0.321936838554558
-# linear-0.2584876622834902
-# xgb-0.3502573587090576
-#=================  결측치 interpolate 처리  =============  
-# knn-0.24136135449131146
-# svr-0.19683139616790846
-# tree--0.11376865104990008
-# forest-0.3279615739262881
-# linear-0.2584876622834902
-# xgb-0.3502573587090576
-#=================  결측치 mean 처리  ============= 
-# knn-0.24136135449131146
-# svr-0.19683139616790846
-# tree--0.13303611825704742
-# forest-0.3261881704467139
-# linear-0.2584876622834902
-# xgb-0.3502573587090576
+xgb = XGBRegressor(random_state=123,
+                   )
 
+model = GridSearchCV(xgb,parameters,cv=kfold,n_jobs=-1)
+import time
+start_time= time.time()
+model.fit(x_train,y_train)
+end_time= time.time()-start_time
+# model.score(x_test,y_test)
+result = model.score(x_test,y_test)
+print('최적의 매개변수 : ',model.best_params_)
+print('최상의 점수 : ',model.best_score_)
+print('model.score :',result)
+print('걸린 시간 : ',end_time
+      )
+###################################################
+# 최적의 매개변수 :  {'n_estimators': 100}
+# 최상의 점수 :  0.2985623764677555
+# model.score : 0.3500904794006279
+# 걸린 시간 :  9.94803237915039
+###################################################
+# 최적의 매개변수 :  {'learning_rate': 0.1, 'n_estimators': 100}
+# 최상의 점수 :  0.3406808756484905
+# model.score : 0.36434781056156407
+# 걸린 시간 :  4.5136213302612305
