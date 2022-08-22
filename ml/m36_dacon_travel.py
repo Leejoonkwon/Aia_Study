@@ -89,6 +89,9 @@ test_set['NumberOfChildrenVisiting'].fillna(test_set.groupby('MaritalStatus')['N
 # print(train_set.isnull().sum()) 
 # print("================")
 # print(test_set.isnull().sum()) 
+train_set.loc[ train_set['Gender'] =='Fe Male' , 'Gender'] = 'Female'
+print(test_set['Occupation'].value_counts()) # Free Lancer         1 는 제거해라 소득 천원이다.
+'''
 cols = ['TypeofContact','Occupation','Gender','ProductPitched','MaritalStatus','Designation']
 from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm_notebook
@@ -172,7 +175,7 @@ from xgboost import XGBClassifier,XGBRegressor
 from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
 from imblearn.over_sampling import SMOTE
 
-x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.9,shuffle=True,random_state=72)
+x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.9,shuffle=True,random_state=100,stratify=y)
 # smote = SMOTE(random_state=123)
 # x_train,y_train = smote.fit_resample(x_train,y_train)
 
@@ -246,7 +249,7 @@ submission = pd.read_csv(path + 'sample_submission.csv',#예측에서 쓸거야!
                       )
 submission['ProdTaken'] = y_summit
 
-submission.to_csv('test32.csv',index=False)
+submission.to_csv('test12.csv',index=False)
 
 
 ##########
@@ -261,3 +264,12 @@ submission.to_csv('test32.csv',index=False)
 # 최상의 점수 :  0.8877093362261848
 # acc : 0.9427083333333334
 # 걸린 시간 : 7.248791933059692
+
+############ RandomState = 100
+# 최상의 점수 :  0.8813139873889755
+# acc : 0.921875
+# 걸린 시간 : 7.259145259857178
+'''
+
+
+
