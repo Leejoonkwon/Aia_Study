@@ -11,7 +11,7 @@ print(sess.run(tf.rank(x)))
 '''
 W = tf.Variable(1, dtype = tf.float32)
 b = tf.Variable(1, dtype = tf.float32)
- 
+     
 #2. 모델 구성
 hypothesis = x * W + b # y = wx + b 대반전  y= w *x+b가 아니라 y =  x *w + b이다.
 # hypothesis  통상 y를 이렇게 표현 
