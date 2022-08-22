@@ -34,5 +34,5 @@ for step in range(epochs):
         print(step,sess.run(loss),sess.run(W),sess.run(b))
 # 첫번째 sess.run(train)이  연산이다.sess.run(W)와(b)는 연산후 역전파 후 갱신된 W와 b의 값을 반환        
 sess.close()    # 메모리 부하를 줄이기 위해 close 한다!
-'''
+
 
