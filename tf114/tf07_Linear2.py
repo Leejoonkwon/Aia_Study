@@ -6,11 +6,11 @@ tf.compat.v1.set_random_seed(123) # 랜덤시드 고정 명령어
 x = [1, 2, 3, 4, 5]
 y = [1, 2, 3, 4, 5]
 sess = tf.compat.v1.Session()
-sess.run(tf.compat.v1.global_variables_initializer()) # 변수를 사용하기 전 모든 변수 초기화
-print(sess.run(tf.rank(x)))
-'''
+sess.run(tf.compat.v1.global_variables_initializer()) 
+
 W = tf.Variable(1, dtype = tf.float32)
-b = tf.Variable(1, dtype = tf.float32
+b = tf.Variable(1, dtype = tf.float32)
+
 #2. 모델 구성
 hypothesis = x * W + b # y = wx + b 대반전  y= w *x+b가 아니라 y =  x *w + b이다.
 # hypothesis  통상 y를 이렇게 표현 
@@ -25,7 +25,7 @@ train = optimizer.minimize(loss)
 
 #3-2. 훈련
 sess = tf.compat.v1.Session()
-sess.run(tf.global_variables_initializer())
+sess.run(tf.global_variables_initializer()) # 변수를 사용하기 전 모든 변수 초기화
 
 epochs = 5400
 for step in range(epochs):
