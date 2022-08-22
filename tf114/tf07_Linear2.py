@@ -20,7 +20,7 @@ loss  = tf.reduce_mean(tf.square(hypothesis - y))
 # mse 랜덤한 기울기와 예측 값 사이에 오차를 square(제곱)해서 양수화 한다. 
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
 # GradientDescentOptimizer 경사 하강법 
-train = optimizer.minimize(loss)
+train = optimizer.minimize(loss) # 최솟값 찾기
 # model.compile(loss='mse',optimizer = 'sgd')
 
 #3-2. 훈련
