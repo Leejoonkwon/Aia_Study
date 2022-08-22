@@ -6,7 +6,7 @@ tf.compat.v1.set_random_seed(123) # 랜덤시드 고정 명령어
 x = [1, 2, 3, 4, 5]
 y = [1, 2, 3, 4, 5]
 sess = tf.compat.v1.Session()
-sess.run(tf.compat.v1.global_variables_initializer())
+sess.run(tf.compat.v1.global_variables_initializer()) # 변수를 사용하기 전 모든 
 print(sess.run(tf.rank(x)))
 '''
 W = tf.Variable(1, dtype = tf.float32)
