@@ -1,6 +1,6 @@
 # y =wx + b 
 import tensorflow as tf
-tf.compat.v1.set_random_seed(123)
+tf.compat.v1.set_random_seed(123) # 랜덤시드 
 
 #1. 데이터
 x = [1, 2, 3, 4, 5]
