@@ -1,14 +1,17 @@
 # y =wx + b 
 import tensorflow as tf
-tf.set_random_seed(123)
+tf.compat.v1.set_random_seed(123)
 
 #1. 데이터
 x = [1, 2, 3, 4, 5]
 y = [1, 2, 3, 4, 5]
-
+sess = tf.compat.v1.Session()
+sess.run(tf.compat.v1.global_variables_initializer())
+print(sess.run(tf.rank(x)))
+'''
 W = tf.Variable(1, dtype = tf.float32)
 b = tf.Variable(1, dtype = tf.float32)
-
+ 
 #2. 모델 구성
 hypothesis = x * W + b # y = wx + b 대반전  y= w *x+b가 아니라 y =  x *w + b이다.
 # hypothesis  통상 y를 이렇게 표현 
@@ -32,5 +35,5 @@ for step in range(epochs):
         print(step,sess.run(loss),sess.run(W),sess.run(b))
 # 첫번째 sess.run(train)이  연산이다.sess.run(W)와(b)는 연산후 역전파 후 갱신된 W와 b의 값을 반환        
 sess.close()    # 메모리 부하를 줄이기 위해 close 한다!
-
+'''
 
