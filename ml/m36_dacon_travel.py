@@ -1,9 +1,12 @@
+from time import time
 from tensorflow.python.keras.models import Sequential,load_model
 from tensorflow.python.keras.layers import Dense,Dropout,Conv2D,Flatten,LSTM,Conv1D
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
+from sklearn.decomposition import PCA
+
 import matplotlib
 matplotlib.rcParams['font.family']='Malgun Gothic'
 matplotlib.rcParams['axes.unicode_minus']=False
@@ -42,18 +45,9 @@ test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
 #  17  MonthlyIncome             1855 non-null   float64 직급?나이?
 #  18  ProdTaken                 1955 non-null   int64
 ######### 결측치 채우기 (클래스별 괴리가 큰 컬럼으로 평균 채우기)
-print(train_set.shape)
-index1 = train_set[train_set['MonthlyIncome'] >= 90000].index
-index2 = train_set[train_set['MonthlyIncome'] <= 2000].index
-index3 = test_set[test_set['MonthlyIncome'] <= 5000].index
-print(index1,index2,index3)
-
-
-
 
 # train_set = train_set.drop([190,605,1339],inplace=True)
 # test_set = test_set.drop(index3,index=True)
-
 
 train_set['TypeofContact'].fillna('Self Enquiry', inplace=True)
 test_set['TypeofContact'].fillna('Self Enquiry', inplace=True)
@@ -120,8 +114,6 @@ def outliers(data_out):
 
 
 Age_out_index= outliers(train_set['Age'])[0]
-print("이상치의 위치 :",Age_out_index)
-
 TypeofContact_out_index= outliers(train_set['TypeofContact'])[0]
 CityTier_out_index= outliers(train_set['CityTier'])[0]
 DurationOfPitch_out_index= outliers(train_set['DurationOfPitch'])[0]
@@ -139,25 +131,23 @@ NumberOfChildrenVisiting_out_index= outliers(train_set['NumberOfChildrenVisiting
 Designation_out_index= outliers(train_set['Designation'])[0]
 MonthlyIncome_out_index= outliers(train_set['MonthlyIncome'])[0]
 
-
-
-lead_outlier_index = np.concatenate((Age_out_index,
-                                     TypeofContact_out_index,
-                                     CityTier_out_index,
-                                     DurationOfPitch_out_index,
-                                     Gender_out_index,
-                                     NumberOfPersonVisiting_out_index,
-                                     NumberOfFollowups_out_index,
-                                     ProductPitched_index,
-                                     PreferredPropertyStar_out_index,
-                                     MaritalStatus_out_index,
-                                     NumberOfTrips_out_index,
-                                     Passport_out_index,
-                                     PitchSatisfactionScore_out_index,
-                                     OwnCar_out_index,
-                                     NumberOfChildrenVisiting_out_index,
-                                     Designation_out_index,
-                                     MonthlyIncome_out_index
+lead_outlier_index = np.concatenate((#Age_out_index,                            # acc : 0.8650306748466258
+                                    #  TypeofContact_out_index,                 # acc : 0.8920454545454546
+                                    #  CityTier_out_index,                      # acc : 0.8920454545454546
+                                     DurationOfPitch_out_index,               # acc : 0.9156976744186046
+                                    #  Gender_out_index,                        # acc : 0.8920454545454546
+                                    #  NumberOfPersonVisiting_out_index,        # acc : 0.8835227272727273
+                                    #  NumberOfFollowups_out_index,             # acc : 0.8942598187311178
+                                    #  ProductPitched_index,                    # acc : 0.8920454545454546
+                                    #  PreferredPropertyStar_out_index,         # acc : 0.8920454545454546
+                                    #  MaritalStatus_out_index,                 # acc : 0.8920454545454546
+                                    #  NumberOfTrips_out_index,                 # acc : 0.8670520231213873
+                                    #  Passport_out_index,                      # acc : 0.8920454545454546
+                                    #  PitchSatisfactionScore_out_index,        # acc : 0.8920454545454546
+                                    #  OwnCar_out_index,                        # acc : 0.8920454545454546
+                                    #  NumberOfChildrenVisiting_out_index,      # acc : 0.8920454545454546
+                                    #  Designation_out_index,                   # acc : 0.8869047619047619
+                                    #  MonthlyIncome_out_index                  # acc : 0.8932926829268293
                                      ),axis=None)
 print(len(lead_outlier_index)) #577
 # print(lead_outlier_index)
@@ -173,86 +163,101 @@ train_set_clean = train_set_clean.reset_index(drop=True)
 x = train_set_clean.drop(['ProdTaken'], axis=1)
 
 y = train_set_clean['ProdTaken']
-# print(x.shape,y.shape) #(1528, 18) (1528,)
-from sklearn.model_selection import GridSearchCV
+
+
+from sklearn.model_selection import GridSearchCV,RandomizedSearchCV
 from sklearn.model_selection import KFold,StratifiedKFold
 from sklearn.preprocessing import StandardScaler,MinMaxScaler 
 from xgboost import XGBClassifier,XGBRegressor
 from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
-x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.8,shuffle=True,random_state=1234)
+from imblearn.over_sampling import SMOTE
 
-# scaler = StandardScaler()
-# x_train = scaler.fit_transform(x_train)
-# x_test = scaler.transform(x_test)
+x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.9,shuffle=True,random_state=72)
+# smote = SMOTE(random_state=123)
+# x_train,y_train = smote.fit_resample(x_train,y_train)
 
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-# lda = LinearDiscriminantAnalysis() 
-# lda.fit(x_train,y_train)
-# x_train = lda.transform(x_train)
-# x_test = lda.transform(x_test)
-# test_set = lda.transform(test_set)
-n_splits = 5 
-    ##3$$###########
+from xgboost import XGBClassifier,XGBRegressor
+from sklearn.metrics import r2_score,accuracy_score
+from catboost import CatBoostRegressor,CatBoostClassifier
+from bayes_opt import BayesianOptimization
+# 2. 모델
+
+
+# parameters = {'n_estimators':[100,200,300,400,500,1000], # 디폴트 100/ 1~inf 무한대 
+# eta[기본값=0.3, 별칭: learning_rate] learning_rate':[0.1,0.2,0.3,0.4,0.5,0.7,1]
+# max_depth': [1,2,3,4,5,6,7][기본값=6]
+# gamma[기본값=0, 별칭: min_split_loss] [0,0.1,0.3,0.5,0.7,0.8,0.9,1]
+# min_child_weight[기본값=1] 0~inf
+# subsample[기본값=1][0,0.1,0.3,0.5,0.7,1] 0~1
+# colsample_bytree [0,0.1,0.2,0.3,0.5,0.7,1]    [기본값=1] 0~1
+# colsample_bylevel': [0,0.1,0.2,0.3,0.5,0.7,1] [기본값=1] 0~1
+# 'colsample_bynode': [0,0.1,0.2,0.3,0.5,0.7,1] [기본값=1] 0~1
+# 'reg_alpha' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=0] 0~inf /L1 절댓값 가중치 규제 
+# 'reg_lambda' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=1] 0~inf /L2 절댓값 가중치 규제 
+####
+
+# {'target': 0.9090909090909091, 
+#  'params': {'colsample_bytree': 0.7202467452324443, 
+#             'max_depth': 8.862756519530688, 
+#             'min_child_weight': 0.07779580210084443, 
+#             'reg_alpha': 0.33804598214965165, 
+#             'reg_lambda': 0.2992936058040399, 
+#             'subsample': 1.0}} 
+n_splits = 5
+
 kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
+# xgb_parameters={'colsample_bytree': [0,1,2], 
+#         'n_estimators':[500],
+#         "learning_rate":[0.2],
+#         'max_depth':[5,6,7], 
+#         'min_child_weight': [0.07779580210084443], 
+#         'reg_alpha': [0.33804598214965165], 
+#         'reg_lambda': [0.2992936058040399], 
+#         'subsample': [1.0]}
+# xgb = XGBClassifier(random_state=123,tree_method='gpu_hist')
+# {'target': 0.936046511627907, 
+#  'params': {'depth': 6.163299421088441, 
+#             'l2_leaf_reg': 3.9816859450705295,
+#             'learning_rate': 0.32097448471544043, 
+#             'model_size_reg': 0.41854673954527577, 
+#             'od_pval': 0.13164599250802034}}
+cat_paramets = {"learning_rate" : [0.32097448471544043],
+                'depth' : [6],
+                'od_pval' : [0.13164599250802034],
+                'model_size_reg': [0.41854673954527577],
+                'l2_leaf_reg' :[3.9816859450705295]}
+cat = CatBoostClassifier(random_state=123,verbose=False)
+model = RandomizedSearchCV(cat,cat_paramets,cv=kfold,n_jobs=-1)
 
-parameters = {'gamma': [0.1], 'learning_rate': [0.1,0.3,0.5], 
-             'max_depth': [6,7,8], 'min_child_weight': [1], 'n_estimators': [100], 'subsample': [1]}
-
-# parameters = [
-#     {'n_estimators':[100, 200],'max_depth':[6, 8],'min_samples_leaf':[3,5],
-#      'min_samples_split':[2, 3],'n_jobs':[-1, 2]},
-#     {'n_estimators':[300, 400],'max_depth':[6, 8],'min_samples_leaf':[7, 10],
-#      'min_samples_split':[4, 7],'n_jobs':[-1, 4]}
-   
-#     ]    
-
-xgb = XGBClassifier()
-
-model = GridSearchCV(xgb,parameters,cv=kfold,n_jobs=-1)
-import time
-start_time =time.time()
-model.fit(x_train,y_train)
-end_time = time.time()-start_time
-# model.score(x_test,y_test)
-results = model.score(x_test,y_test)
+import time 
+start_time = time.time()
+model.fit(x_train,y_train)   
+end_time = time.time()-start_time 
+y_predict = model.predict(x_test)
+results = accuracy_score(y_test,y_predict)
 print('최적의 매개변수 : ',model.best_params_)
 print('최상의 점수 : ',model.best_score_)
-print('model.socre : ',results)
-print('걸린 시간 : ',end_time)
+print('acc :',results)
+print('걸린 시간 :',end_time)
+
 y_summit = model.predict(test_set)
 y_summit = np.round(y_summit,0)
 submission = pd.read_csv(path + 'sample_submission.csv',#예측에서 쓸거야!!
                       )
-#
 submission['ProdTaken'] = y_summit
-# submission = submission.fillna(submission.mean())
-# submission = submission.astype(int)
-submission.to_csv('test22.csv',index=False)
+
+submission.to_csv('test32.csv',index=False)
 
 
+##########
+# 최상의 점수 :  0.8775014753464522
+# acc : 0.9127906976744186
+# 걸린 시간 : 6.720353841781616
 
-# 최적의 매개변수 :  {'n_estimators': 100}
-# 최상의 점수 :  0.8698661759785882       
-# model.socre :  0.8464052287581699       
-# 걸린 시간 :  5.060976505279541
+# 최상의 점수 :  0.8691819118951928
+# acc : 0.9127906976744186
+# 걸린 시간 : 6.517234563827515
 
-# 최적의 매개변수 :  {'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 100}  
-# 최상의 점수 :  0.8608899297423888       
-# model.socre :  0.8366013071895425       
-# 걸린 시간 :  3.698702096939087
-# 최적의 매개변수 :  {'learning_rate': 0.1, 'max_depth': 6, 'n_estimators': 100}  
-# 최상의 점수 :  0.8731549013047843       
-# model.socre :  0.826797385620915        
-# 걸린 시간 :  3.997284173965454
-
-# 최상의 점수 :  0.8747975911676147       
-# model.socre :  0.826797385620915        
-# 걸린 시간 :  4.118602991104126
-
-# 최적의 매개변수 :  {'gamma': 0.1, 'learning_rate': 0.1, 
-#              'max_depth': 6, 'min_child_weight': 1, 'n_estimators': 100, 'subsample': 1}
-# 최상의 점수 :  0.8747975911676147       
-# model.socre :  0.826797385620915        
-# 걸린 시간 :  3.917900800704956
-
-
+# 최상의 점수 :  0.8877093362261848
+# acc : 0.9427083333333334
+# 걸린 시간 : 7.248791933059692

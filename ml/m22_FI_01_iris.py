@@ -5,7 +5,7 @@
 import numpy as np  
 from sklearn.datasets import load_iris    
 
-
+ 
 #1. 데이터
 datasets = load_iris()
 
