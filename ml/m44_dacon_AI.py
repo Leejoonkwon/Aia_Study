@@ -82,7 +82,7 @@ parameters = {'n_estimators':[100],
 #2. 모델 
 xgb = XGBRegressor(random_state=123,
                     n_estimators=100,
-                    # tree_method='gpu_hist'
+                    tree_method='gpu_hist'
                 )
 
 model = RandomizedSearchCV(xgb,parameters,cv=kfold,n_jobs=-1)
