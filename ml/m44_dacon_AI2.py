@@ -92,7 +92,17 @@ model.fit(x_train,y_train)
 end_time = time.time() - start_time
 # model.score(x_test,y_test)
 results = model.score(x_test,y_test)
+from bayes_opt import BayesianOptimization
+# 앞으로 y 펑션에 모델 돌리고 난 점수의 계산식을 넣는다.
+# pbounds 는 파라미터를 딕셔너리 형태로 넣는다.
+optimizer = BayesianOptimization(f=y_function,
+                                 pbounds=param_bounds,
+                                 random_state=1234)
+optimizer.maximize(init_points=2, # 초기 탐색치(초기값)
+                   n_iter=20, # 반복횟수 
+                   )
 
+print(optimizer.max)
 print('최적의 매개변수 : ',model.best_params_)
 print('최상의 점수 : ',model.best_score_)
 print('걸린 시간 : ',end_time)

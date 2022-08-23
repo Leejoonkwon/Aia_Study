@@ -3,7 +3,6 @@ param_bounds ={'x1': (-1, 5),
 def y_function(x1,x2):
     return -x1 **2 - (x2 - 2) **2 + 10
 
-from pickletools import optimize
 from bayes_opt import BayesianOptimization
 # 앞으로 y 펑션에 모델 돌리고 난 점수의 계산식을 넣는다.
 # pbounds 는 파라미터를 딕셔너리 형태로 넣는다.
