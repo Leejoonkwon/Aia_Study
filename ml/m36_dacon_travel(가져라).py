@@ -53,14 +53,19 @@ train_set['TypeofContact'].fillna('Self Enquiry', inplace=True)
 test_set['TypeofContact'].fillna('Self Enquiry', inplace=True)
 train_set['Age'].fillna(train_set.groupby('Designation')['Age'].transform('mean'), inplace=True)
 test_set['Age'].fillna(test_set.groupby('Designation')['Age'].transform('mean'), inplace=True)
+train_set['Age']=np.round(train_set['Age'],0).astype(int)
+test_set['Age']=np.round(test_set['Age'],0).astype(int)
+
 # print(train_set.isnull().sum()) #(1955, 19)
-# print(train_set[train_set['MonthlyIncome'].notnull()].groupby(['Designation'])['MonthlyIncome'].mean())
+print(train_set[train_set['MonthlyIncome'].notnull()].groupby(['Designation'])['MonthlyIncome'].mean())
+
 train_set['MonthlyIncome'].fillna(train_set.groupby('Designation')['MonthlyIncome'].transform('mean'), inplace=True)
 test_set['MonthlyIncome'].fillna(test_set.groupby('Designation')['MonthlyIncome'].transform('mean'), inplace=True)
 # print(train_set.describe) #(1955, 19)
 # print(train_set[train_set['DurationOfPitch'].notnull()].groupby(['NumberOfChildrenVisiting'])['DurationOfPitch'].mean())
-train_set['DurationOfPitch'].fillna(train_set.groupby('Occupation')['DurationOfPitch'].transform('mean'), inplace=True)
-test_set['DurationOfPitch'].fillna(test_set.groupby('Occupation')['DurationOfPitch'].transform('mean'), inplace=True)
+train_set['DurationOfPitch']=train_set['DurationOfPitch'].fillna(0)
+test_set['DurationOfPitch']=test_set['DurationOfPitch'].fillna(0)
+
 # print(train_set[train_set['NumberOfFollowups'].notnull()].groupby(['NumberOfChildrenVisiting'])['NumberOfFollowups'].mean())
 train_set['NumberOfFollowups'].fillna(train_set.groupby('NumberOfChildrenVisiting')['NumberOfFollowups'].transform('mean'), inplace=True)
 test_set['NumberOfFollowups'].fillna(test_set.groupby('NumberOfChildrenVisiting')['NumberOfFollowups'].transform('mean'), inplace=True)
@@ -72,13 +77,13 @@ test_set['PreferredPropertyStar'].fillna(test_set.groupby('Occupation')['Preferr
 # print(train_set['AgeBand'])
 # [(17.957, 26.6] < (26.6, 35.2] < (35.2, 43.8] <
 # (43.8, 52.4] < (52.4, 61.0]]
-combine = [train_set,test_set]
-for dataset in combine:    
-    dataset.loc[ dataset['Age'] <= 26.6, 'Age'] = 0
-    dataset.loc[(dataset['Age'] > 26.6) & (dataset['Age'] <= 35.2), 'Age'] = 1
-    dataset.loc[(dataset['Age'] > 35.2) & (dataset['Age'] <= 43.8), 'Age'] = 2
-    dataset.loc[(dataset['Age'] > 43.8) & (dataset['Age'] <= 52.4), 'Age'] = 3
-    dataset.loc[ dataset['Age'] > 52.4, 'Age'] = 4
+# combine = [train_set,test_set]
+# for dataset in combine:    
+#     dataset.loc[ dataset['Age'] <= 26.6, 'Age'] = 0
+#     dataset.loc[(dataset['Age'] > 26.6) & (dataset['Age'] <= 35.2), 'Age'] = 1
+#     dataset.loc[(dataset['Age'] > 35.2) & (dataset['Age'] <= 43.8), 'Age'] = 2
+#     dataset.loc[(dataset['Age'] > 43.8) & (dataset['Age'] <= 52.4), 'Age'] = 3
+#     dataset.loc[ dataset['Age'] > 52.4, 'Age'] = 4
 # train_set = train_set.drop(['AgeBand'], axis=1)
 # print(train_set[train_set['NumberOfTrips'].notnull()].groupby(['DurationOfPitch'])['PreferredPropertyStar'].mean())
 train_set['NumberOfTrips'].fillna(train_set.groupby('DurationOfPitch')['NumberOfTrips'].transform('mean'), inplace=True)
@@ -90,8 +95,7 @@ test_set['NumberOfChildrenVisiting'].fillna(test_set.groupby('MaritalStatus')['N
 # print("================")
 # print(test_set.isnull().sum()) 
 train_set.loc[ train_set['Gender'] =='Fe Male' , 'Gender'] = 'Female'
-print(test_set['Occupation'].value_counts()) # Free Lancer         1 는 제거해라 소득 천원이다.
-'''
+test_set.loc[ test_set['Gender'] =='Fe Male' , 'Gender'] = 'Female'
 cols = ['TypeofContact','Occupation','Gender','ProductPitched','MaritalStatus','Designation']
 from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm_notebook
@@ -116,7 +120,7 @@ def outliers(data_out):
 
 
 
-Age_out_index= outliers(train_set['Age'])[0]
+# Age_out_index= outliers(train_set['Age'])[0]
 TypeofContact_out_index= outliers(train_set['TypeofContact'])[0]
 CityTier_out_index= outliers(train_set['CityTier'])[0]
 DurationOfPitch_out_index= outliers(train_set['DurationOfPitch'])[0]
@@ -162,10 +166,11 @@ for i in train_set.index:
 train_set_clean = train_set.loc[lead_not_outlier_index]      
 train_set_clean = train_set_clean.reset_index(drop=True)
 # print(train_set_clean)
-
-x = train_set_clean.drop(['ProdTaken'], axis=1)
-
+x = train_set_clean.drop(['ProdTaken','NumberOfChildrenVisiting','NumberOfPersonVisiting','OwnCar', 'MonthlyIncome', 'NumberOfTrips','NumberOfFollowups'], axis=1)
+# x = train_set_clean.drop(['ProdTaken'], axis=1)
+test_set = test_set.drop(['NumberOfChildrenVisiting','NumberOfPersonVisiting','OwnCar', 'MonthlyIncome', 'NumberOfTrips','NumberOfFollowups'], axis=1)
 y = train_set_clean['ProdTaken']
+print(x.shape)
 
 
 from sklearn.model_selection import GridSearchCV,RandomizedSearchCV
@@ -175,7 +180,8 @@ from xgboost import XGBClassifier,XGBRegressor
 from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
 from imblearn.over_sampling import SMOTE
 
-x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.9,shuffle=True,random_state=100,stratify=y)
+x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.91,shuffle=True,random_state=1234,stratify=y)
+# acc : 0.9418604651162791
 # smote = SMOTE(random_state=123)
 # x_train,y_train = smote.fit_resample(x_train,y_train)
 
@@ -185,51 +191,16 @@ from catboost import CatBoostRegressor,CatBoostClassifier
 from bayes_opt import BayesianOptimization
 # 2. 모델
 
-
-# parameters = {'n_estimators':[100,200,300,400,500,1000], # 디폴트 100/ 1~inf 무한대 
-# eta[기본값=0.3, 별칭: learning_rate] learning_rate':[0.1,0.2,0.3,0.4,0.5,0.7,1]
-# max_depth': [1,2,3,4,5,6,7][기본값=6]
-# gamma[기본값=0, 별칭: min_split_loss] [0,0.1,0.3,0.5,0.7,0.8,0.9,1]
-# min_child_weight[기본값=1] 0~inf
-# subsample[기본값=1][0,0.1,0.3,0.5,0.7,1] 0~1
-# colsample_bytree [0,0.1,0.2,0.3,0.5,0.7,1]    [기본값=1] 0~1
-# colsample_bylevel': [0,0.1,0.2,0.3,0.5,0.7,1] [기본값=1] 0~1
-# 'colsample_bynode': [0,0.1,0.2,0.3,0.5,0.7,1] [기본값=1] 0~1
-# 'reg_alpha' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=0] 0~inf /L1 절댓값 가중치 규제 
-# 'reg_lambda' : [0,0.1 ,0.01, 0.001, 1 ,2 ,10]  [기본값=1] 0~inf /L2 절댓값 가중치 규제 
-####
-
-# {'target': 0.9090909090909091, 
-#  'params': {'colsample_bytree': 0.7202467452324443, 
-#             'max_depth': 8.862756519530688, 
-#             'min_child_weight': 0.07779580210084443, 
-#             'reg_alpha': 0.33804598214965165, 
-#             'reg_lambda': 0.2992936058040399, 
-#             'subsample': 1.0}} 
-n_splits = 5
+n_splits = 6
 
 kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
-# xgb_parameters={'colsample_bytree': [0,1,2], 
-#         'n_estimators':[500],
-#         "learning_rate":[0.2],
-#         'max_depth':[5,6,7], 
-#         'min_child_weight': [0.07779580210084443], 
-#         'reg_alpha': [0.33804598214965165], 
-#         'reg_lambda': [0.2992936058040399], 
-#         'subsample': [1.0]}
-# xgb = XGBClassifier(random_state=123,tree_method='gpu_hist')
-# {'target': 0.936046511627907, 
-#  'params': {'depth': 6.163299421088441, 
-#             'l2_leaf_reg': 3.9816859450705295,
-#             'learning_rate': 0.32097448471544043, 
-#             'model_size_reg': 0.41854673954527577, 
-#             'od_pval': 0.13164599250802034}}
-cat_paramets = {"learning_rate" : [0.32097448471544043],
-                'depth' : [6],
-                'od_pval' : [0.13164599250802034],
-                'model_size_reg': [0.41854673954527577],
-                'l2_leaf_reg' :[3.9816859450705295]}
-cat = CatBoostClassifier(random_state=123,verbose=False)
+
+cat_paramets = {"learning_rate" : [0.20909079092170735],
+                'depth' : [8],
+                'od_pval' : [0.236844398775451],
+                'model_size_reg': [0.30614059763442997],
+                'l2_leaf_reg' :[5.535171839105427]}
+cat = CatBoostClassifier(random_state=123,verbose=False,n_estimators=500)
 model = RandomizedSearchCV(cat,cat_paramets,cv=kfold,n_jobs=-1)
 
 import time 
@@ -253,23 +224,15 @@ submission.to_csv('test12.csv',index=False)
 
 
 ##########
-# 최상의 점수 :  0.8775014753464522
-# acc : 0.9127906976744186
-# 걸린 시간 : 6.720353841781616
-
-# 최상의 점수 :  0.8691819118951928
-# acc : 0.9127906976744186
-# 걸린 시간 : 6.517234563827515
-
-# 최상의 점수 :  0.8877093362261848
-# acc : 0.9427083333333334
-# 걸린 시간 : 7.248791933059692
+# 최상의 점수 :  0.8930338463986
+# acc : 0.9418604651162791
+# 걸린 시간 : 11.291642665863037
 
 ############ RandomState = 100
 # 최상의 점수 :  0.8813139873889755
 # acc : 0.921875
 # 걸린 시간 : 7.259145259857178
-'''
+
 
 
 

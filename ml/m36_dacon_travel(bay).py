@@ -1,18 +1,7 @@
 from time import time
-from tensorflow.python.keras.models import Sequential,load_model
-from tensorflow.python.keras.layers import Dense,Dropout,Conv2D,Flatten,LSTM,Conv1D
 from sklearn.model_selection import train_test_split
-from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 import matplotlib.pyplot as plt
-from sklearn.metrics import r2_score
-from sklearn.decomposition import PCA
-
-import matplotlib
-matplotlib.rcParams['font.family']='Malgun Gothic'
-matplotlib.rcParams['axes.unicode_minus']=False
 import pandas as pd
-from sklearn.svm import LinearSVC 
-from sklearn.svm import LinearSVR 
 import numpy as np 
 #1. 데이터
 path = 'D:\study_data\_data\_csv\dacon_travel/' # ".은 현재 폴더"
@@ -53,14 +42,21 @@ train_set['TypeofContact'].fillna('Self Enquiry', inplace=True)
 test_set['TypeofContact'].fillna('Self Enquiry', inplace=True)
 train_set['Age'].fillna(train_set.groupby('Designation')['Age'].transform('mean'), inplace=True)
 test_set['Age'].fillna(test_set.groupby('Designation')['Age'].transform('mean'), inplace=True)
+train_set['Age']=np.round(train_set['Age'],0).astype(int)
+test_set['Age']=np.round(test_set['Age'],0).astype(int)
+
 # print(train_set.isnull().sum()) #(1955, 19)
 # print(train_set[train_set['MonthlyIncome'].notnull()].groupby(['Designation'])['MonthlyIncome'].mean())
 train_set['MonthlyIncome'].fillna(train_set.groupby('Designation')['MonthlyIncome'].transform('mean'), inplace=True)
 test_set['MonthlyIncome'].fillna(test_set.groupby('Designation')['MonthlyIncome'].transform('mean'), inplace=True)
 # print(train_set.describe) #(1955, 19)
 # print(train_set[train_set['DurationOfPitch'].notnull()].groupby(['NumberOfChildrenVisiting'])['DurationOfPitch'].mean())
-train_set['DurationOfPitch'].fillna(train_set.groupby('Occupation')['DurationOfPitch'].transform('mean'), inplace=True)
-test_set['DurationOfPitch'].fillna(test_set.groupby('Occupation')['DurationOfPitch'].transform('mean'), inplace=True)
+train_set['DurationOfPitch']=train_set['DurationOfPitch'].fillna(0)
+test_set['DurationOfPitch']=test_set['DurationOfPitch'].fillna(0)
+
+# print(train_set.isnull().sum())
+
+
 # print(train_set[train_set['NumberOfFollowups'].notnull()].groupby(['NumberOfChildrenVisiting'])['NumberOfFollowups'].mean())
 train_set['NumberOfFollowups'].fillna(train_set.groupby('NumberOfChildrenVisiting')['NumberOfFollowups'].transform('mean'), inplace=True)
 test_set['NumberOfFollowups'].fillna(test_set.groupby('NumberOfChildrenVisiting')['NumberOfFollowups'].transform('mean'), inplace=True)
@@ -72,13 +68,13 @@ test_set['PreferredPropertyStar'].fillna(test_set.groupby('Occupation')['Preferr
 # print(train_set['AgeBand'])
 # [(17.957, 26.6] < (26.6, 35.2] < (35.2, 43.8] <
 # (43.8, 52.4] < (52.4, 61.0]]
-combine = [train_set,test_set]
-for dataset in combine:    
-    dataset.loc[ dataset['Age'] <= 26.6, 'Age'] = 0
-    dataset.loc[(dataset['Age'] > 26.6) & (dataset['Age'] <= 35.2), 'Age'] = 1
-    dataset.loc[(dataset['Age'] > 35.2) & (dataset['Age'] <= 43.8), 'Age'] = 2
-    dataset.loc[(dataset['Age'] > 43.8) & (dataset['Age'] <= 52.4), 'Age'] = 3
-    dataset.loc[ dataset['Age'] > 52.4, 'Age'] = 4
+# combine = [train_set,test_set]
+# for dataset in combine:    
+#     dataset.loc[ dataset['Age'] <= 26.6, 'Age'] = 0
+#     dataset.loc[(dataset['Age'] > 26.6) & (dataset['Age'] <= 35.2), 'Age'] = 1
+#     dataset.loc[(dataset['Age'] > 35.2) & (dataset['Age'] <= 43.8), 'Age'] = 2
+#     dataset.loc[(dataset['Age'] > 43.8) & (dataset['Age'] <= 52.4), 'Age'] = 3
+#     dataset.loc[ dataset['Age'] > 52.4, 'Age'] = 4
 # train_set = train_set.drop(['AgeBand'], axis=1)
 # print(train_set[train_set['NumberOfTrips'].notnull()].groupby(['DurationOfPitch'])['PreferredPropertyStar'].mean())
 train_set['NumberOfTrips'].fillna(train_set.groupby('DurationOfPitch')['NumberOfTrips'].transform('mean'), inplace=True)
@@ -89,6 +85,8 @@ test_set['NumberOfChildrenVisiting'].fillna(test_set.groupby('MaritalStatus')['N
 # print(train_set.isnull().sum()) 
 # print("================")
 # print(test_set.isnull().sum()) 
+train_set.loc[ train_set['Gender'] =='Fe Male' , 'Gender'] = 'Female'
+test_set.loc[ test_set['Gender'] =='Fe Male' , 'Gender'] = 'Female'
 cols = ['TypeofContact','Occupation','Gender','ProductPitched','MaritalStatus','Designation']
 from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm_notebook
@@ -113,7 +111,7 @@ def outliers(data_out):
 
 
 
-Age_out_index= outliers(train_set['Age'])[0]
+# Age_out_index= outliers(train_set['Age'])[0]
 TypeofContact_out_index= outliers(train_set['TypeofContact'])[0]
 CityTier_out_index= outliers(train_set['CityTier'])[0]
 DurationOfPitch_out_index= outliers(train_set['DurationOfPitch'])[0]
@@ -172,7 +170,7 @@ from xgboost import XGBClassifier,XGBRegressor
 from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
 from imblearn.over_sampling import SMOTE
 
-x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.82,shuffle=True,random_state=72)
+x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.91,shuffle=True,random_state=1234,stratify=y)
 # smote = SMOTE(random_state=123)
 # x_train,y_train = smote.fit_resample(x_train,y_train)
 
@@ -220,29 +218,41 @@ kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
 # od_pval : float, [default=None] range: [0,1]
 # model_size_reg : float, [default=None] range: [0,+inf]
 # l2_leaf_reg : float, [default=3.0]  range: [0,+inf]
+#  fold_permutation_block : int, [default=1] T[1, 256]. 
+# leaf_estimation_iterations : int, [default=None] range: [1,+inf]
+######################################################################
+# {'target': 0.9534883720930233, 
+#  'params': {'depth': 8.643164721326524,
+#             'fold_permutation_block': 4.900444375352221, 
+#             'l2_leaf_reg': 5.67551909436081, 
+#             'learning_rate': 0.5051241299099046, 
+#             'model_size_reg': 0.34031605722854896, 
+#             'od_pval': 0.36986398305915213}}
+cat_paramets = {"learning_rate" : (0.2,0.6),
+                'depth' : (7,10),
+                'od_pval' :(0.2,0.5),
+                'model_size_reg' : (0.3,0.5),
+                'l2_leaf_reg' :(4,8),
+                'fold_permutation_block':(1,10),
+                # 'leaf_estimation_iterations':(1,10)
+                }
 
-cat_paramets = {"learning_rate" : (0.05,0.7),
-                'depth' : (3,7),
-                'od_pval' :(0.01,0.5),
-                'model_size_reg' : (0,1),
-                'l2_leaf_reg' :(3,5)}
-# {'target': 0.936046511627907, 
-#  'params': {'depth': 6.163299421088441, 
-#             'l2_leaf_reg': 3.9816859450705295,
-#             'learning_rate': 0.32097448471544043, 
-#             'model_size_reg': 0.41854673954527577, 
-#             'od_pval': 0.13164599250802034}}
-cat = CatBoostClassifier(random_state=123,verbose=False)
+cat = CatBoostClassifier(random_state=1234,verbose=False)
 
 
-def xgb_hamsu(learning_rate,depth,od_pval,model_size_reg,l2_leaf_reg) :
+def xgb_hamsu(learning_rate,depth,od_pval,model_size_reg,l2_leaf_reg,
+              fold_permutation_block,
+            #   leaf_estimation_iterations
+              ) :
     params = {
-        'n_estimators':500,
+        'n_estimators':200,
         "learning_rate":max(min(learning_rate,1),0),
         'depth' : int(round(depth)),  #무조건 정수
         'l2_leaf_reg' : int(round(l2_leaf_reg)),
         'model_size_reg' : max(min(model_size_reg,1),0), # 0~1 사이의 값이 들어가도록 한다.
         'od_pval' : max(min(od_pval,1),0),
+        'fold_permutation_block' : int(round(fold_permutation_block)),  #무조건 정수
+        # 'leaf_estimation_iterations' : int(round(leaf_estimation_iterations)),  #무조건 정수
                 }
     
     # *여러개의 인자를 받겠다.
@@ -264,9 +274,11 @@ xgb_bo = BayesianOptimization(f=xgb_hamsu,
                               random_state=123)
 
 xgb_bo.maximize(init_points=2,
-                n_iter=150)
+                n_iter=200)
 
 print(xgb_bo.max)
+
+
 '''
 import time 
 start_time = time.time()
@@ -306,3 +318,5 @@ submission.to_csv('test32.csv',index=False)
 # 최상의 점수 :  0.8879985754985755
 # model.socre :  0.8622448979591837
 # 걸린 시간 :  3.593817949295044
+
+
