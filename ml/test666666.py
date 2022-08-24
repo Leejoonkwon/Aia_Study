@@ -12,7 +12,7 @@ all_target_list = sorted(glob.glob(path + 'train_target/*.csv'))
 test_input_list2 = sorted(glob.glob(path + 'test_input/*.csv'))
 test_target_list2 = sorted(glob.glob(path + 'test_target/*.csv'))
 
-
+  
 
 train_input_list = all_input_list[:50]
 train_target_list = all_target_list[:50]
