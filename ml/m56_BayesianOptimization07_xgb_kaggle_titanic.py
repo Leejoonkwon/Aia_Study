@@ -128,9 +128,9 @@ train_set['Embarked'].fillna('S', inplace=True)
 for dataset in combine:
     dataset['Embarked'] = dataset['Embarked'].map( {'S': 0, 'C': 1, 'Q': 2} ).astype(int)
 
-train_set.head()
-train_set['FareBand'] = pd.qcut(train_set['Fare'], 4)
-a = train_set[['FareBand', 'Survived']].groupby(['FareBand'], as_index=False).mean().sort_values(by='FareBand', ascending=True)
+# train_set.head()
+# train_set['FareBand'] = pd.qcut(train_set['Fare'], 4)
+# a = train_set[['FareBand', 'Survived']].groupby(['FareBand'], as_index=False).mean().sort_values(by='FareBand', ascending=True)
 
 for dataset in combine:
     dataset.loc[ dataset['Fare'] <= 7.91, 'Fare'] = 0
