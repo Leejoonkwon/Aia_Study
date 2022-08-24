@@ -20,6 +20,8 @@ b = tf.Variable(tf.random_normal([1],dtype=tf.float32))
 sess = tf.compat.v1.Session()
 sess.run(tf.compat.v1.global_variables_initializer()) 
 print(sess.run(W)) # [-1.5080816]
+optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
+
 '''
 #2. 모델 구성
 hypothesis = x * W + b # y = wx + b 대반전  y= w *x+b가 아니라 y =  x *w + b이다.

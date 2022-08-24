@@ -168,7 +168,6 @@ from sklearn.model_selection import KFold,StratifiedKFold
 from sklearn.preprocessing import StandardScaler,MinMaxScaler 
 from xgboost import XGBClassifier,XGBRegressor
 from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
-from imblearn.over_sampling import SMOTE
 
 x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.91,shuffle=True,random_state=1234,stratify=y)
 # smote = SMOTE(random_state=123)

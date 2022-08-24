@@ -166,9 +166,19 @@ for i in train_set.index:
 train_set_clean = train_set.loc[lead_not_outlier_index]      
 train_set_clean = train_set_clean.reset_index(drop=True)
 # print(train_set_clean)
-x = train_set_clean.drop(['ProdTaken','NumberOfChildrenVisiting','NumberOfPersonVisiting','OwnCar', 'MonthlyIncome', 'NumberOfTrips','NumberOfFollowups'], axis=1)
+x = train_set_clean.drop(['ProdTaken','NumberOfChildrenVisiting',
+                          'NumberOfPersonVisiting',
+                          'OwnCar', 
+                          'MonthlyIncome', 
+                          'NumberOfTrips',
+                          'NumberOfFollowups'], axis=1)
 # x = train_set_clean.drop(['ProdTaken'], axis=1)
-test_set = test_set.drop(['NumberOfChildrenVisiting','NumberOfPersonVisiting','OwnCar', 'MonthlyIncome', 'NumberOfTrips','NumberOfFollowups'], axis=1)
+test_set = test_set.drop(['NumberOfChildrenVisiting',
+                          'NumberOfPersonVisiting',
+                          'OwnCar', 
+                          'MonthlyIncome', 
+                          'NumberOfTrips',
+                          'NumberOfFollowups'], axis=1)
 y = train_set_clean['ProdTaken']
 print(x.shape)
 
@@ -214,13 +224,14 @@ print('최상의 점수 : ',model.best_score_)
 print('acc :',results)
 print('걸린 시간 :',end_time)
 
+model.fit(x,y)
 y_summit = model.predict(test_set)
 y_summit = np.round(y_summit,0)
 submission = pd.read_csv(path + 'sample_submission.csv',#예측에서 쓸거야!!
                       )
 submission['ProdTaken'] = y_summit
 
-submission.to_csv('test12.csv',index=False)
+submission.to_csv('test13.csv',index=False)
 
 
 ##########
