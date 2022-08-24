@@ -38,20 +38,21 @@ loss = tf.compat.v1.reduce_mean(-tf.reduce_sum(y*tf.log(hypothesis), axis=1))
 # model.compile(loss='categorical_crossentropy)
 # optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
 # train = optimizer.minimize(loss)
-train = tf.train.GradientDescentOptimizer(learning_rate=0.000001).minimize(loss)
+train = tf.train.GradientDescentOptimizer(learning_rate=0.01).minimize(loss)
 
 # [실습]
 # 맹그러
 sess = tf.compat.v1.Session()
 sess.run(tf.compat.v1.global_variables_initializer())
-epoch = 1500
+epoch = 3500
 import time
 start_time = time.time()
 for epochs in range(epoch):
     cost_val,h_val,_ = sess.run([loss,hypothesis,train],
                                            feed_dict={x:x_train,y:y_train})
     if epochs %10 == 0 :
-        print(epochs,'\t',"loss :",cost_val,'\n',h_val)    
+        # print(epochs,'\t',"loss :",cost_val,'\n',h_val)    
+        print(epochs,'\t',"loss :",cost_val)
    
 y_predict = sess.run(hypothesis,feed_dict={x:x_test,y:y_test})
 
@@ -66,5 +67,5 @@ print(y_test.shape)
 acc = accuracy_score(y_test,y_predict)
 print('acc :',acc)
 
-# acc : 0.4444444444444444
+# acc : 0.8888888888888888
 
