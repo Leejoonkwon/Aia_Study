@@ -1,21 +1,24 @@
 import tensorflow as tf
 tf.compat.v1.set_random_seed(26)
-from sklearn.datasets import load_breast_cancer,load_diabetes
+from sklearn.datasets import load_breast_cancer,load_diabetes,load_boston
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 #1. 데이터
-datasets = load_diabetes()
-x_data = datasets.data     # (442, 10)
-y_data = datasets.target  # (442,)
-y_data = y_data.reshape(442,1)
-# print(x_data.shape,y_data.shape)
+datasets = load_boston()
+x_data = datasets.data       
+y_data = datasets.target   
+y_data = y_data.reshape(-1, 1)
+print(x_data.shape,y_data.shape) #(506, 13) (506,)
 
 x_train,x_test,y_train,y_test = train_test_split(x_data,y_data,train_size=0.75,shuffle=True,random_state=72)
-
-x = tf.compat.v1.placeholder(tf.float32,shape = [None,10])
+scaler = MinMaxScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
+x = tf.compat.v1.placeholder(tf.float32,shape = [None,13])
 y = tf.compat.v1.placeholder(tf.float32,shape = [None,1])
 
-w = tf.compat.v1.Variable(tf.compat.v1.random_normal([10,1]),name='weight') 
+w = tf.compat.v1.Variable(tf.compat.v1.random_normal([13,1]),name='weight') 
 # x값 열의 맞추어 행 값,y값 열의 맞추어 열 값 부여 (weight는 무조건 X값의 열에 맞게 행부여!!!)
 b = tf.compat.v1.Variable(tf.compat.v1.random_normal([1]),name='bias')
 
@@ -30,7 +33,7 @@ loss = tf.reduce_mean(tf.square(hypothesis-y)) #mse
 # loss = -tf.reduce_mean(y*tf.log(hypothesis)+(1-y)*tf.log(1-hypothesis)) 
 #binary_crossentropy
 # model.compile(loss='binary_crossentropy)
-optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.3)
+optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
 train = optimizer.minimize(loss)
 
 #3-2. 훈련
@@ -59,9 +62,8 @@ print('r2 :', r2)
 print('걸린 시간 :',end_time)
 sess.close()   
 
-# r2 : 0.7734158078067879
-
-
+# r2 : 0.4159635527761246
+# 걸린 시간 : 0.8641953468322754
 
 
 
