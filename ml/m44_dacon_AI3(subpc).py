@@ -116,7 +116,7 @@ lead_outlier_index = np.concatenate((X_01_out_index,    # 1145
                                      X_28_out_index,    # 1034              
                                      X_29_out_index,    # 1168              
                                      X_30_out_index,    # 5926              
-                                     X_31_out_index,                  
+                                     X_31_out_index,    # 1848              
                                      X_32_out_index,                  
                                      X_33_out_index,             
                                      X_38_out_index,                  
