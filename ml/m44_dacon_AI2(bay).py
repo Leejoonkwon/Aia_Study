@@ -24,6 +24,9 @@ train_y = train_set.filter(regex='Y') # Output : Y Feature : 14
 
 # print(train_x.shape,train_y.shape)  #(39607, 56) (39607, 14)     
 # print(test_set.shape) # (39608, 56)
+train_x = train_x.drop(['X_02','X_08','X_30','X_33','X_46'],axis=1)
+test_set = test_set.drop(['X_02','X_08','X_30','X_33','X_46'],axis=1)
+
 def outliers(data_out):
     quartile_1, q2 , quartile_3 = np.percentile(data_out,
                                                [25,50,75]) # percentile 백분위
@@ -40,117 +43,117 @@ def outliers(data_out):
 print(train_x.info())
 
 
-X_01_out_index= outliers(train_set['X_01'])[0] # 1145
-X_02_out_index= outliers(train_set['X_02'])[0] # 6587
-X_03_out_index= outliers(train_set['X_03'])[0] # 699
-X_06_out_index= outliers(train_set['X_06'])[0] # 419
-X_07_out_index= outliers(train_set['X_07'])[0] # 2052
-X_08_out_index= outliers(train_set['X_08'])[0] # 8193
-X_09_out_index= outliers(train_set['X_09'])[0] # 1400
-X_10_out_index= outliers(train_set['X_10'])[0] # 32
-X_11_out_index= outliers(train_set['X_11'])[0] # 27
-X_12_out_index= outliers(train_set['X_12'])[0] # 315
-X_13_out_index= outliers(train_set['X_13'])[0] # 820
-X_14_out_index= outliers(train_set['X_14'])[0] # 282
-X_15_out_index= outliers(train_set['X_15'])[0] # 60
-X_16_out_index= outliers(train_set['X_16'])[0] # 257
-X_17_out_index= outliers(train_set['X_17'])[0] # 513
-X_18_out_index= outliers(train_set['X_18'])[0] # 247
-X_19_out_index= outliers(train_set['X_19'])[0] # 152
-X_20_out_index= outliers(train_set['X_20'])[0] # 18
-X_21_out_index= outliers(train_set['X_21'])[0] # 61
-X_22_out_index= outliers(train_set['X_22'])[0] # 20
-X_24_out_index= outliers(train_set['X_24'])[0] # 64
-X_25_out_index= outliers(train_set['X_25'])[0] # 135
-X_26_out_index= outliers(train_set['X_26'])[0] # 229
-X_27_out_index= outliers(train_set['X_27'])[0] # 589
-X_28_out_index= outliers(train_set['X_28'])[0] # 1034
-X_29_out_index= outliers(train_set['X_29'])[0] # 1168
-X_30_out_index= outliers(train_set['X_30'])[0] # 5926
-X_31_out_index= outliers(train_set['X_31'])[0] # 1848
-X_32_out_index= outliers(train_set['X_32'])[0] # 1862
-X_33_out_index= outliers(train_set['X_33'])[0] # 3942
-X_38_out_index= outliers(train_set['X_38'])[0] # 1524
-X_39_out_index= outliers(train_set['X_39'])[0] # 1499
-X_40_out_index= outliers(train_set['X_40'])[0] # 1449
-X_41_out_index= outliers(train_set['X_41'])[0] # 550
-X_42_out_index= outliers(train_set['X_42'])[0] # 209
-X_43_out_index= outliers(train_set['X_43'])[0] # 246
-X_44_out_index= outliers(train_set['X_44'])[0] # 255
-X_45_out_index= outliers(train_set['X_45'])[0] # 59
-X_46_out_index= outliers(train_set['X_46'])[0] # 5519
-X_49_out_index= outliers(train_set['X_49'])[0] # 2826
-X_50_out_index= outliers(train_set['X_50'])[0] # 464
-X_51_out_index= outliers(train_set['X_51'])[0] # 487
-X_52_out_index= outliers(train_set['X_52'])[0] # 442
-X_53_out_index= outliers(train_set['X_53'])[0] # 423
-X_54_out_index= outliers(train_set['X_54'])[0] # 411
-X_55_out_index= outliers(train_set['X_55'])[0] # 384
-X_56_out_index= outliers(train_set['X_56'])[0] # 433
+X_01_out_index= outliers(train_x['X_01'])[0] # 1145
+# X_02_out_index= outliers(train_x['X_02'])[0] # 6587
+X_03_out_index= outliers(train_x['X_03'])[0] # 699
+X_06_out_index= outliers(train_x['X_06'])[0] # 419
+X_07_out_index= outliers(train_x['X_07'])[0] # 2052
+# X_08_out_index= outliers(train_x['X_08'])[0] # 8193
+X_09_out_index= outliers(train_x['X_09'])[0] # 1400
+X_10_out_index= outliers(train_x['X_10'])[0] # 32
+X_11_out_index= outliers(train_x['X_11'])[0] # 27
+X_12_out_index= outliers(train_x['X_12'])[0] # 315
+X_13_out_index= outliers(train_x['X_13'])[0] # 820
+X_14_out_index= outliers(train_x['X_14'])[0] # 282
+X_15_out_index= outliers(train_x['X_15'])[0] # 60
+X_16_out_index= outliers(train_x['X_16'])[0] # 257
+X_17_out_index= outliers(train_x['X_17'])[0] # 513
+X_18_out_index= outliers(train_x['X_18'])[0] # 247
+X_19_out_index= outliers(train_x['X_19'])[0] # 152
+X_20_out_index= outliers(train_x['X_20'])[0] # 18
+X_21_out_index= outliers(train_x['X_21'])[0] # 61
+X_22_out_index= outliers(train_x['X_22'])[0] # 20
+X_24_out_index= outliers(train_x['X_24'])[0] # 64
+X_25_out_index= outliers(train_x['X_25'])[0] # 135
+X_26_out_index= outliers(train_x['X_26'])[0] # 229
+X_27_out_index= outliers(train_x['X_27'])[0] # 589
+X_28_out_index= outliers(train_x['X_28'])[0] # 1034
+X_29_out_index= outliers(train_x['X_29'])[0] # 1168
+# X_30_out_index= outliers(train_x['X_30'])[0] # 5926
+X_31_out_index= outliers(train_x['X_31'])[0] # 1848
+X_32_out_index= outliers(train_x['X_32'])[0] # 1862
+# X_33_out_index= outliers(train_x['X_33'])[0] # 3942
+X_38_out_index= outliers(train_x['X_38'])[0] # 1524
+X_39_out_index= outliers(train_x['X_39'])[0] # 1499
+X_40_out_index= outliers(train_x['X_40'])[0] # 1449
+X_41_out_index= outliers(train_x['X_41'])[0] # 550
+X_42_out_index= outliers(train_x['X_42'])[0] # 209
+X_43_out_index= outliers(train_x['X_43'])[0] # 246
+X_44_out_index= outliers(train_x['X_44'])[0] # 255
+X_45_out_index= outliers(train_x['X_45'])[0] # 59
+# X_46_out_index= outliers(train_x['X_46'])[0] # 5519
+X_49_out_index= outliers(train_x['X_49'])[0] # 2826
+X_50_out_index= outliers(train_x['X_50'])[0] # 464
+X_51_out_index= outliers(train_x['X_51'])[0] # 487
+X_52_out_index= outliers(train_x['X_52'])[0] # 442
+X_53_out_index= outliers(train_x['X_53'])[0] # 423
+X_54_out_index= outliers(train_x['X_54'])[0] # 411
+X_55_out_index= outliers(train_x['X_55'])[0] # 384
+X_56_out_index= outliers(train_x['X_56'])[0] # 433
 
 
-lead_outlier_index = np.concatenate((X_01_out_index,                 # acc : 0.8920454545454546
-                                     X_02_out_index,                      # acc : 0.8920454545454546
-                                     X_03_out_index,               # acc : 0.9156976744186046
-                                     X_06_out_index,             # acc : 0.8942598187311178
-                                     X_07_out_index,                    # acc : 0.8920454545454546
-                                     X_08_out_index,         # acc : 0.8920454545454546
-                                     X_09_out_index,                 # acc : 0.8920454545454546
-                                     X_10_out_index,                 # acc : 0.8670520231213873
-                                     X_11_out_index,                      # acc : 0.8920454545454546
-                                     X_12_out_index,        # acc : 0.8920454545454546
-                                     X_13_out_index,                        # acc : 0.8920454545454546
-                                     X_14_out_index,      # acc : 0.8920454545454546
-                                     X_15_out_index,                   # acc : 0.8869047619047619
-                                     X_16_out_index,                  # acc : 0.8932926829268293
-                                     X_17_out_index,                  # acc : 0.8932926829268293
-                                     X_18_out_index,                  # acc : 0.8932926829268293
-                                     X_19_out_index,                  # acc : 0.8932926829268293
-                                     X_20_out_index,                  # acc : 0.8932926829268293
-                                     X_21_out_index,                  # acc : 0.8932926829268293
-                                     X_22_out_index,                  # acc : 0.8932926829268293
-                                     X_24_out_index,                  # acc : 0.8932926829268293
-                                     X_25_out_index,                  # acc : 0.8932926829268293
-                                     X_26_out_index,                  # acc : 0.8932926829268293
-                                     X_27_out_index,                  # acc : 0.8932926829268293
-                                     X_28_out_index,                  # acc : 0.8932926829268293
-                                     X_29_out_index,                  # acc : 0.8932926829268293
-                                     X_30_out_index,                  # acc : 0.8932926829268293
-                                     X_31_out_index,                  # acc : 0.8932926829268293
-                                     X_32_out_index,                  # acc : 0.8932926829268293
-                                     X_33_out_index,             # acc : 0.8932926829268293
-                                     X_38_out_index,                  # acc : 0.8932926829268293
-                                     X_39_out_index,                  # acc : 0.8932926829268293
-                                     X_40_out_index,                  # acc : 0.8932926829268293
-                                     X_41_out_index,                  # acc : 0.8932926829268293
-                                     X_42_out_index,                  # acc : 0.8932926829268293
-                                     X_43_out_index,                  # acc : 0.8932926829268293
-                                     X_44_out_index,                  # acc : 0.8932926829268293
-                                     X_45_out_index,                  # acc : 0.8932926829268293
-                                     X_46_out_index,                  # acc : 0.8932926829268293
+lead_outlier_index = np.concatenate((#X_01_out_index,                 # acc : 0.8920454545454546
+                                    #  X_02_out_index,                      # acc : 0.8920454545454546
+                                    #  X_03_out_index,               # acc : 0.9156976744186046
+                                    #  X_06_out_index,             # acc : 0.8942598187311178
+                                    #  X_07_out_index,                    # acc : 0.8920454545454546
+                                    #  X_08_out_index,         # acc : 0.8920454545454546
+                                    #  X_09_out_index,                 # acc : 0.8920454545454546
+                                    #  X_10_out_index,                 # acc : 0.8670520231213873
+                                    #  X_11_out_index,                      # acc : 0.8920454545454546
+                                    #  X_12_out_index,        # acc : 0.8920454545454546
+                                    #  X_13_out_index,                        # acc : 0.8920454545454546
+                                    #  X_14_out_index,      # acc : 0.8920454545454546
+                                    #  X_15_out_index,                   # acc : 0.8869047619047619
+                                    #  X_16_out_index,                  # acc : 0.8932926829268293
+                                    #  X_17_out_index,                  # acc : 0.8932926829268293
+                                    #  X_18_out_index,                  # acc : 0.8932926829268293
+                                    #  X_19_out_index,                  # acc : 0.8932926829268293
+                                    #  X_20_out_index,                  # acc : 0.8932926829268293
+                                    #  X_21_out_index,                  # acc : 0.8932926829268293
+                                    #  X_22_out_index,                  # acc : 0.8932926829268293
+                                    #  X_24_out_index,                  # acc : 0.8932926829268293
+                                    #  X_25_out_index,                  # acc : 0.8932926829268293
+                                    #  X_26_out_index,                  # acc : 0.8932926829268293
+                                    #  X_27_out_index,                  # acc : 0.8932926829268293
+                                    #  X_28_out_index,                  # acc : 0.8932926829268293
+                                    #  X_29_out_index,                  # acc : 0.8932926829268293
+                                    #  X_30_out_index,                  # acc : 0.8932926829268293
+                                    #  X_31_out_index,                  # acc : 0.8932926829268293
+                                    #  X_32_out_index,                  # acc : 0.8932926829268293
+                                    #  X_33_out_index,             # acc : 0.8932926829268293
+                                    #  X_38_out_index,                  # acc : 0.8932926829268293
+                                    #  X_39_out_index,                  # acc : 0.8932926829268293
+                                    #  X_40_out_index,                  # acc : 0.8932926829268293
+                                    #  X_41_out_index,                  # acc : 0.8932926829268293
+                                    #  X_42_out_index,                  # acc : 0.8932926829268293
+                                    #  X_43_out_index,                  # acc : 0.8932926829268293
+                                    #  X_44_out_index,                  # acc : 0.8932926829268293
+                                    #  X_45_out_index,                  # acc : 0.8932926829268293
+                                    #  X_46_out_index,                  # acc : 0.8932926829268293
                                      X_49_out_index,                  # acc : 0.8932926829268293
-                                     X_50_out_index,                  # acc : 0.8932926829268293
-                                     X_51_out_index,                  # acc : 0.8932926829268293
-                                     X_52_out_index,                  # acc : 0.8932926829268293
-                                     X_53_out_index,                  # acc : 0.8932926829268293
-                                     X_54_out_index,                  # acc : 0.8932926829268293
-                                     X_55_out_index,                  # acc : 0.8932926829268293
-                                     X_56_out_index,                  # acc : 0.8932926829268293
+                                    #  X_50_out_index,                  # acc : 0.8932926829268293
+                                    #  X_51_out_index,                  # acc : 0.8932926829268293
+                                    #  X_52_out_index,                  # acc : 0.8932926829268293
+                                    #  X_53_out_index,                  # acc : 0.8932926829268293
+                                    #  X_54_out_index,                  # acc : 0.8932926829268293
+                                    #  X_55_out_index,                  # acc : 0.8932926829268293
+                                    #  X_56_out_index,                  # acc : 0.8932926829268293
                                      ),axis=None)
 print(len(lead_outlier_index)) #577
 # print(lead_outlier_index)
 
 lead_not_outlier_index = []
-for i in train_set.index:
+for i in train_x.index:
     if i not in lead_outlier_index :
         lead_not_outlier_index.append(i)
-train_set_clean = train_set.loc[lead_not_outlier_index]      
-train_set_clean = train_set_clean.reset_index(drop=True)
+train_x_clean = train_x.loc[lead_not_outlier_index]      
+train_x_clean = train_x_clean.reset_index(drop=True)
 
 from catboost import CatBoostRegressor
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.metrics import r2_score
-x_train,x_test,y_train,y_test=train_test_split(train_x,train_y,shuffle=True,random_state=1234,train_size=0.9)
+x_train,x_test,y_train,y_test=train_test_split(train_x_clean,train_y,shuffle=True,random_state=72,train_size=0.9)
 
 # 2. 모델
 
@@ -174,7 +177,7 @@ cat_paramets = {"learning_rate" : (0.2,0.6),
                 'fold_permutation_block':(1,10),
                 # 'leaf_estimation_iterations':(1,10)
                 }
-
+'''
 # lr = MultiOutputRegressor(CatBoostRegressor(random_state=1234,verbose=False))
 import time
 start_time = time.time()
@@ -201,7 +204,7 @@ results = r2_score(y_test,y_predict)
 print('최적의 매개변수 : ',model.best_params_)
 print('최상의 점수 : ',model.best_score_)
 print('걸린 시간 : ',end_time)
-print('model.socre : ',results)
+print('model.score : ',results)
 '''
 def xgb_hamsu(learning_rate,depth,od_pval,model_size_reg,l2_leaf_reg,
               fold_permutation_block,
@@ -238,7 +241,7 @@ xgb_bo.maximize(init_points=2,
 
 print(xgb_bo.max)
 
-
+'''
 results = cat.predict(x_test)
 # print('최적의 매개변수 : ',cat.best_params_)
 print('최상의 점수 : ',cat.best_score_)
