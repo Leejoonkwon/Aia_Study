@@ -22,8 +22,8 @@ test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
 train_x = train_set.filter(regex='X') # Input : X Featrue : 56
 train_y = train_set.filter(regex='Y') # Output : Y Feature : 14
 
-train_x = train_x.drop(['X_02','X_08','X_30','X_33','X_46'],axis=1)
-test_set = test_set.drop(['X_02','X_08','X_30','X_33','X_46'],axis=1)
+train_x = train_x.drop(['X_04','X_10','X_11','X_23','X_34','X_36','X_47','X_48'],axis=1)
+test_set = test_set.drop(['X_04','X_10','X_11','X_23','X_34','X_36','X_47','X_48'],axis=1)
 
 def outliers(data_out):
     quartile_1, q2 , quartile_3 = np.percentile(data_out,
@@ -42,14 +42,14 @@ print(train_x.info())
 
 
 X_01_out_index= outliers(train_x['X_01'])[0] # 1145
-# X_02_out_index= outliers(train_x['X_02'])[0] # 6587
+X_02_out_index= outliers(train_x['X_02'])[0] # 6587
 X_03_out_index= outliers(train_x['X_03'])[0] # 699
 X_06_out_index= outliers(train_x['X_06'])[0] # 419
 X_07_out_index= outliers(train_x['X_07'])[0] # 2052
-# X_08_out_index= outliers(train_x['X_08'])[0] # 8193
+X_08_out_index= outliers(train_x['X_08'])[0] # 8193
 X_09_out_index= outliers(train_x['X_09'])[0] # 1400
-X_10_out_index= outliers(train_x['X_10'])[0] # 32
-X_11_out_index= outliers(train_x['X_11'])[0] # 27
+# X_10_out_index= outliers(train_x['X_10'])[0] # 32
+# X_11_out_index= outliers(train_x['X_11'])[0] # 27
 X_12_out_index= outliers(train_x['X_12'])[0] # 315
 X_13_out_index= outliers(train_x['X_13'])[0] # 820
 X_14_out_index= outliers(train_x['X_14'])[0] # 282
@@ -67,10 +67,10 @@ X_26_out_index= outliers(train_x['X_26'])[0] # 229
 X_27_out_index= outliers(train_x['X_27'])[0] # 589
 X_28_out_index= outliers(train_x['X_28'])[0] # 1034
 X_29_out_index= outliers(train_x['X_29'])[0] # 1168
-# X_30_out_index= outliers(train_x['X_30'])[0] # 5926
+X_30_out_index= outliers(train_x['X_30'])[0] # 5926
 X_31_out_index= outliers(train_x['X_31'])[0] # 1848
 X_32_out_index= outliers(train_x['X_32'])[0] # 1862
-# X_33_out_index= outliers(train_x['X_33'])[0] # 3942
+X_33_out_index= outliers(train_x['X_33'])[0] # 3942
 X_38_out_index= outliers(train_x['X_38'])[0] # 1524
 X_39_out_index= outliers(train_x['X_39'])[0] # 1499
 X_40_out_index= outliers(train_x['X_40'])[0] # 1449
@@ -79,7 +79,7 @@ X_42_out_index= outliers(train_x['X_42'])[0] # 209
 X_43_out_index= outliers(train_x['X_43'])[0] # 246
 X_44_out_index= outliers(train_x['X_44'])[0] # 255
 X_45_out_index= outliers(train_x['X_45'])[0] # 59
-# X_46_out_index= outliers(train_x['X_46'])[0] # 5519
+X_46_out_index= outliers(train_x['X_46'])[0] # 5519
 X_49_out_index= outliers(train_x['X_49'])[0] # 2826
 X_50_out_index= outliers(train_x['X_50'])[0] # 464
 X_51_out_index= outliers(train_x['X_51'])[0] # 487
@@ -91,11 +91,11 @@ X_56_out_index= outliers(train_x['X_56'])[0] # 433
 
 
 lead_outlier_index = np.concatenate((#X_01_out_index,                 # acc : 0.8920454545454546
-                                    #  X_02_out_index,                      # acc : 0.8920454545454546
+                                     X_02_out_index,                      # acc : 0.8920454545454546
                                     #  X_03_out_index,               # acc : 0.9156976744186046
                                     #  X_06_out_index,             # acc : 0.8942598187311178
-                                     X_07_out_index,                    # acc : 0.8920454545454546
-                                    #  X_08_out_index,         # acc : 0.8920454545454546
+                                    #  X_07_out_index,                    # acc : 0.8920454545454546
+                                     X_08_out_index,         # acc : 0.8920454545454546
                                     #  X_09_out_index,                 # acc : 0.8920454545454546
                                     #  X_10_out_index,                 # acc : 0.8670520231213873
                                     #  X_11_out_index,                      # acc : 0.8920454545454546
@@ -116,10 +116,10 @@ lead_outlier_index = np.concatenate((#X_01_out_index,                 # acc : 0.
                                     #  X_27_out_index,                  # acc : 0.8932926829268293
                                     #  X_28_out_index,                  # acc : 0.8932926829268293
                                     #  X_29_out_index,                  # acc : 0.8932926829268293
-                                    #  X_30_out_index,                  # acc : 0.8932926829268293
+                                     X_30_out_index,                  # acc : 0.8932926829268293
                                     #  X_31_out_index,                  # acc : 0.8932926829268293
                                     #  X_32_out_index,                  # acc : 0.8932926829268293
-                                    #  X_33_out_index,             # acc : 0.8932926829268293
+                                     X_33_out_index,             # acc : 0.8932926829268293
                                     #  X_38_out_index,                  # acc : 0.8932926829268293
                                     #  X_39_out_index,                  # acc : 0.8932926829268293
                                     #  X_40_out_index,                  # acc : 0.8932926829268293
@@ -128,8 +128,8 @@ lead_outlier_index = np.concatenate((#X_01_out_index,                 # acc : 0.
                                     #  X_43_out_index,                  # acc : 0.8932926829268293
                                     #  X_44_out_index,                  # acc : 0.8932926829268293
                                     #  X_45_out_index,                  # acc : 0.8932926829268293
-                                    #  X_46_out_index,                  # acc : 0.8932926829268293
-                                     X_49_out_index,                  # acc : 0.8932926829268293
+                                     X_46_out_index,                  # acc : 0.8932926829268293
+                                    #  X_49_out_index,                  # acc : 0.8932926829268293
                                     #  X_50_out_index,                  # acc : 0.8932926829268293
                                     #  X_51_out_index,                  # acc : 0.8932926829268293
                                     #  X_52_out_index,                  # acc : 0.8932926829268293

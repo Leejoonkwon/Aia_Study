@@ -121,27 +121,28 @@ def outliers(data_out):
 
 
 # Age_out_index= outliers(train_set['Age'])[0]
-TypeofContact_out_index= outliers(train_set['TypeofContact'])[0]
-CityTier_out_index= outliers(train_set['CityTier'])[0]
-DurationOfPitch_out_index= outliers(train_set['DurationOfPitch'])[0]
-Gender_out_index= outliers(train_set['Gender'])[0]
-NumberOfPersonVisiting_out_index= outliers(train_set['NumberOfPersonVisiting'])[0]
-NumberOfFollowups_out_index= outliers(train_set['NumberOfFollowups'])[0]
-ProductPitched_index= outliers(train_set['ProductPitched'])[0]
-PreferredPropertyStar_out_index= outliers(train_set['PreferredPropertyStar'])[0]
-MaritalStatus_out_index= outliers(train_set['MaritalStatus'])[0]
-NumberOfTrips_out_index= outliers(train_set['NumberOfTrips'])[0]
-Passport_out_index= outliers(train_set['Passport'])[0]
-PitchSatisfactionScore_out_index= outliers(train_set['PitchSatisfactionScore'])[0]
-OwnCar_out_index= outliers(train_set['OwnCar'])[0]
-NumberOfChildrenVisiting_out_index= outliers(train_set['NumberOfChildrenVisiting'])[0]
-Designation_out_index= outliers(train_set['Designation'])[0]
-MonthlyIncome_out_index= outliers(train_set['MonthlyIncome'])[0]
+TypeofContact_out_index= outliers(train_set['TypeofContact'])[0] # 0
+CityTier_out_index= outliers(train_set['CityTier'])[0] # 0
+DurationOfPitch_out_index= outliers(train_set['DurationOfPitch'])[0] #44
+Gender_out_index= outliers(train_set['Gender'])[0] # 0
+NumberOfPersonVisiting_out_index= outliers(train_set['NumberOfPersonVisiting'])[0] # 1
+NumberOfFollowups_out_index= outliers(train_set['NumberOfFollowups'])[0] # 0
+ProductPitched_index= outliers(train_set['ProductPitched'])[0] # 0
+PreferredPropertyStar_out_index= outliers(train_set['PreferredPropertyStar'])[0]  # 0
+MaritalStatus_out_index= outliers(train_set['MaritalStatus'])[0] # 0
+NumberOfTrips_out_index= outliers(train_set['NumberOfTrips'])[0] # 38
+Passport_out_index= outliers(train_set['Passport'])[0] # 0
+PitchSatisfactionScore_out_index= outliers(train_set['PitchSatisfactionScore'])[0] # 0
+OwnCar_out_index= outliers(train_set['OwnCar'])[0] # 0
+NumberOfChildrenVisiting_out_index= outliers(train_set['NumberOfChildrenVisiting'])[0] # 0
+Designation_out_index= outliers(train_set['Designation'])[0] # 89
+MonthlyIncome_out_index= outliers(train_set['MonthlyIncome'])[0] # 138
+# print(len(MonthlyIncome_out_index))
 
 lead_outlier_index = np.concatenate((#Age_out_index,                            # acc : 0.8650306748466258
-                                    #  TypeofContact_out_index,                 # acc : 0.8920454545454546
+                                     TypeofContact_out_index,                 # acc : 0.8920454545454546
                                     #  CityTier_out_index,                      # acc : 0.8920454545454546
-                                     DurationOfPitch_out_index,               # acc : 0.9156976744186046
+                                    #  DurationOfPitch_out_index,               # acc : 0.9156976744186046
                                     #  Gender_out_index,                        # acc : 0.8920454545454546
                                     #  NumberOfPersonVisiting_out_index,        # acc : 0.8835227272727273
                                     #  NumberOfFollowups_out_index,             # acc : 0.8942598187311178
@@ -166,19 +167,24 @@ for i in train_set.index:
 train_set_clean = train_set.loc[lead_not_outlier_index]      
 train_set_clean = train_set_clean.reset_index(drop=True)
 # print(train_set_clean)
-x = train_set_clean.drop(['ProdTaken','NumberOfChildrenVisiting',
+x = train_set_clean.drop(['ProdTaken',
+                          'NumberOfChildrenVisiting',
                           'NumberOfPersonVisiting',
                           'OwnCar', 
                           'MonthlyIncome', 
-                          'NumberOfTrips',
-                          'NumberOfFollowups'], axis=1)
+                        #   'NumberOfTrips',
+                          'NumberOfFollowups',
+                        'ProductPitched'
+                          ], axis=1)
 # x = train_set_clean.drop(['ProdTaken'], axis=1)
 test_set = test_set.drop(['NumberOfChildrenVisiting',
                           'NumberOfPersonVisiting',
                           'OwnCar', 
                           'MonthlyIncome', 
-                          'NumberOfTrips',
-                          'NumberOfFollowups'], axis=1)
+                        #   'NumberOfTrips',
+                          'NumberOfFollowups',
+                        'ProductPitched'
+                          ], axis=1)
 y = train_set_clean['ProdTaken']
 print(x.shape)
 
@@ -190,7 +196,7 @@ from xgboost import XGBClassifier,XGBRegressor
 from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
 from imblearn.over_sampling import SMOTE
 
-x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.91,shuffle=True,random_state=1234,stratify=y)
+x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.92,shuffle=True,random_state=1234,stratify=y)
 # acc : 0.9418604651162791
 # smote = SMOTE(random_state=123)
 # x_train,y_train = smote.fit_resample(x_train,y_train)
@@ -202,7 +208,9 @@ from bayes_opt import BayesianOptimization
 # 2. 모델
 
 n_splits = 6
-
+# 최상의 점수 :  0.9044520547945205
+# acc : 0.954248366013072
+# 걸린 시간 : 5.827547073364258 
 kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
 
 cat_paramets = {"learning_rate" : [0.20909079092170735],
@@ -231,7 +239,7 @@ submission = pd.read_csv(path + 'sample_submission.csv',#예측에서 쓸거야!
                       )
 submission['ProdTaken'] = y_summit
 
-submission.to_csv('test13.csv',index=False)
+submission.to_csv('test10.csv',index=False)
 
 
 ##########
