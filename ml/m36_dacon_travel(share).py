@@ -56,8 +56,8 @@ test_set['Age'].fillna(test_set.groupby('Designation')['Age'].transform('mean'),
 train_set['Age']=np.round(train_set['Age'],0).astype(int)
 test_set['Age']=np.round(test_set['Age'],0).astype(int)
 
-# print(train_set.isnull().sum()) #(1955, 19)
-print(train_set[train_set['MonthlyIncome'].notnull()].groupby(['Designation'])['MonthlyIncome'].mean())
+
+# print(train_set[train_set['MonthlyIncome'].notnull()].groupby(['Designation'])['MonthlyIncome'].mean())
 
 train_set['MonthlyIncome'].fillna(train_set.groupby('Designation')['MonthlyIncome'].transform('mean'), inplace=True)
 test_set['MonthlyIncome'].fillna(test_set.groupby('Designation')['MonthlyIncome'].transform('mean'), inplace=True)
@@ -77,13 +77,13 @@ test_set['PreferredPropertyStar'].fillna(test_set.groupby('Occupation')['Preferr
 # print(train_set['AgeBand'])
 # [(17.957, 26.6] < (26.6, 35.2] < (35.2, 43.8] <
 # (43.8, 52.4] < (52.4, 61.0]]
-# combine = [train_set,test_set]
-# for dataset in combine:    
-#     dataset.loc[ dataset['Age'] <= 26.6, 'Age'] = 0
-#     dataset.loc[(dataset['Age'] > 26.6) & (dataset['Age'] <= 35.2), 'Age'] = 1
-#     dataset.loc[(dataset['Age'] > 35.2) & (dataset['Age'] <= 43.8), 'Age'] = 2
-#     dataset.loc[(dataset['Age'] > 43.8) & (dataset['Age'] <= 52.4), 'Age'] = 3
-#     dataset.loc[ dataset['Age'] > 52.4, 'Age'] = 4
+combine = [train_set,test_set]
+for dataset in combine:    
+    dataset.loc[ dataset['Age'] <= 26.6, 'Age'] = 0
+    dataset.loc[(dataset['Age'] > 26.6) & (dataset['Age'] <= 35.2), 'Age'] = 1
+    dataset.loc[(dataset['Age'] > 35.2) & (dataset['Age'] <= 43.8), 'Age'] = 2
+    dataset.loc[(dataset['Age'] > 43.8) & (dataset['Age'] <= 52.4), 'Age'] = 3
+    dataset.loc[ dataset['Age'] > 52.4, 'Age'] = 4
 # train_set = train_set.drop(['AgeBand'], axis=1)
 # print(train_set[train_set['NumberOfTrips'].notnull()].groupby(['DurationOfPitch'])['PreferredPropertyStar'].mean())
 train_set['NumberOfTrips'].fillna(train_set.groupby('DurationOfPitch')['NumberOfTrips'].transform('mean'), inplace=True)
@@ -140,9 +140,9 @@ MonthlyIncome_out_index= outliers(train_set['MonthlyIncome'])[0] # 138
 # print(len(MonthlyIncome_out_index))
 
 lead_outlier_index = np.concatenate((#Age_out_index,                            # acc : 0.8650306748466258
-                                     TypeofContact_out_index,                 # acc : 0.8920454545454546
+                                    #  TypeofContact_out_index,                 # acc : 0.8920454545454546
                                     #  CityTier_out_index,                      # acc : 0.8920454545454546
-                                    #  DurationOfPitch_out_index,               # acc : 0.9156976744186046
+                                     DurationOfPitch_out_index,               # acc : 0.9156976744186046
                                     #  Gender_out_index,                        # acc : 0.8920454545454546
                                     #  NumberOfPersonVisiting_out_index,        # acc : 0.8835227272727273
                                     #  NumberOfFollowups_out_index,             # acc : 0.8942598187311178
@@ -167,23 +167,14 @@ for i in train_set.index:
 train_set_clean = train_set.loc[lead_not_outlier_index]      
 train_set_clean = train_set_clean.reset_index(drop=True)
 # print(train_set_clean)
-x = train_set_clean.drop(['ProdTaken',
-                          'NumberOfChildrenVisiting',
-                          'NumberOfPersonVisiting',
-                          'OwnCar', 
-                          'MonthlyIncome', 
-                        #   'NumberOfTrips',
-                          'NumberOfFollowups',
-                        'ProductPitched'
+x = train_set_clean.drop(['ProdTaken','NumberOfChildrenVisiting',
+                          'NumberOfPersonVisiting','OwnCar', 'MonthlyIncome', 'NumberOfFollowups',
+                        #   'Designation'
                           ], axis=1)
 # x = train_set_clean.drop(['ProdTaken'], axis=1)
-test_set = test_set.drop(['NumberOfChildrenVisiting',
-                          'NumberOfPersonVisiting',
-                          'OwnCar', 
-                          'MonthlyIncome', 
-                        #   'NumberOfTrips',
-                          'NumberOfFollowups',
-                        'ProductPitched'
+test_set = test_set.drop(['NumberOfChildrenVisiting','NumberOfPersonVisiting',
+                          'OwnCar', 'MonthlyIncome', 'NumberOfFollowups',
+                        #   'Designation'
                           ], axis=1)
 y = train_set_clean['ProdTaken']
 print(x.shape)
@@ -196,7 +187,7 @@ from xgboost import XGBClassifier,XGBRegressor
 from sklearn.ensemble import RandomForestClassifier,RandomForestRegressor
 from imblearn.over_sampling import SMOTE
 
-x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.92,shuffle=True,random_state=1234,stratify=y)
+x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.91,shuffle=True,random_state=1234,stratify=y)
 # acc : 0.9418604651162791
 # smote = SMOTE(random_state=123)
 # x_train,y_train = smote.fit_resample(x_train,y_train)
@@ -250,7 +241,6 @@ submission.to_csv('test10.csv',index=False)
 ############ RandomState = 100
 # 최상의 점수 :  0.8813139873889755
 # acc : 0.921875
-# 걸린 시간 : 7.259145259857178
 
 
 
