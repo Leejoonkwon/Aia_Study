@@ -117,7 +117,7 @@ def outliers(data_out):
     upper_bound = quartile_3 + (iqr * 1.5)
     return np.where((data_out>upper_bound)|
                     (data_out<lower_bound))
-                 
+                     
                            
 # print(train_set['Designation'].unique())
 '''
