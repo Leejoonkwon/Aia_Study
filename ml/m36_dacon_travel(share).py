@@ -118,8 +118,9 @@ def outliers(data_out):
     return np.where((data_out>upper_bound)|
                     (data_out<lower_bound))
 
-
-
+ 
+# print(train_set['Designation'].unique())
+'''
 # Age_out_index= outliers(train_set['Age'])[0]
 TypeofContact_out_index= outliers(train_set['TypeofContact'])[0] # 0
 CityTier_out_index= outliers(train_set['CityTier'])[0] # 0
@@ -137,7 +138,7 @@ OwnCar_out_index= outliers(train_set['OwnCar'])[0] # 0
 NumberOfChildrenVisiting_out_index= outliers(train_set['NumberOfChildrenVisiting'])[0] # 0
 Designation_out_index= outliers(train_set['Designation'])[0] # 89
 MonthlyIncome_out_index= outliers(train_set['MonthlyIncome'])[0] # 138
-# print(len(MonthlyIncome_out_index))
+print(len(Designation_out_index))
 
 lead_outlier_index = np.concatenate((#Age_out_index,                            # acc : 0.8650306748466258
                                     #  TypeofContact_out_index,                 # acc : 0.8920454545454546
@@ -241,7 +242,7 @@ submission.to_csv('test10.csv',index=False)
 ############ RandomState = 100
 # 최상의 점수 :  0.8813139873889755
 # acc : 0.921875
-
+'''
 
 
 
