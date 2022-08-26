@@ -118,7 +118,7 @@ def outliers(data_out):
     return np.where((data_out>upper_bound)|
                     (data_out<lower_bound))
      
-                
+                    
 # print(train_set['Designation'].unique())
 '''
 # Age_out_index= outliers(train_set['Age'])[0]
