@@ -118,7 +118,7 @@ path2 = 'D:\study_data\_data\_csv\dacon_grow\\test_target/' # ".은 현재 폴�
 targetlist = ['TEST_01.csv','TEST_02.csv','TEST_03.csv','TEST_04.csv','TEST_05.csv','TEST_06.csv']
 # [29, 35, 26, 32, 37, 36]
 empty_list = []
-for i in targetlist:
+for i in targetlist: 
     test_target2 = pd.read_csv(path2+i)
     empty_list.append(test_target2)
     
