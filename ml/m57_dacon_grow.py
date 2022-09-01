@@ -82,7 +82,11 @@ start_time = time.time()
 #3. 컴파일, 훈련
 model.compile(loss='mae', optimizer='adam',metrics=['acc'])
 # "".join은 " "사이에 있는 문자열을 합치겠다는 기능
+<<<<<<< HEAD:ml/m57_dacon_grow.py
 hist = model.fit(x_train, y_train, epochs=200, batch_size=5000, 
+=======
+hist = model.fit(x_train, y_train, epochs=20, batch_size=5000, 
+>>>>>>> 615410920864417e929eaa10b1de39c2006090bf:ml/test666666.py
                 validation_data=(val_data, val_target),
                 verbose=2,#callbacks = [earlyStopping]
                 )
@@ -95,6 +99,17 @@ y_predict = model.predict(x_test)
 r2 = r2_score(y_predict,y_test)
 
 
+<<<<<<< HEAD:ml/m57_dacon_grow.py
+=======
+# y_predict = model.predict(x_test)
+# print(y_test.shape) #(152,)
+# print(y_predict.shape) #(152, 13, 1)
+
+# from sklearn.metrics import accuracy_score, r2_score,accuracy_score
+# r2 = r2_score(y_test, y_predict)
+# print('r2스코어 :', r2)
+
+>>>>>>> 615410920864417e929eaa10b1de39c2006090bf:ml/test666666.py
 print(test_input_list2)
 model.fit(train_data,label_data)
 y_summit = model.predict(test_data)
@@ -121,6 +136,7 @@ empty_list[4].to_csv(path2+'TEST_05.csv')
 empty_list[5]['rate'] = y_summit[29+35+26+32+37:]
 empty_list[5].to_csv(path2+'TEST_06.csv')
 
+<<<<<<< HEAD:ml/m57_dacon_grow.py
 '''
 for i in range(6):
     thislen=0
@@ -129,6 +145,34 @@ for i in range(6):
     test['rate'] = y_summit[thislen:thislen+len(test['rate'])]
     test.to_csv(thisfile, index=False)
     thislen+=len(test['rate'])
+=======
+
+
+
+path2 = 'D:\study_data\_data\_csv\dacon_grow\\test_target/' # ".은 현재 폴더"
+targetlist = ['TEST_01.csv','TEST_02.csv','TEST_03.csv','TEST_04.csv','TEST_05.csv','TEST_06.csv']
+# [29, 35, 26, 32, 37, 36]
+empty_list = []
+for i in targetlist:
+    test_target2 = pd.read_csv(path2+i)
+    empty_list.append(test_target2)
+    
+empty_list[0]['rate'] = y_summit[:29]
+empty_list[0].to_csv(path2+'TEST_01.csv')
+empty_list[1]['rate'] = y_summit[29:29+35]
+empty_list[1].to_csv(path2+'TEST_02.csv')
+empty_list[2]['rate'] = y_summit[29+35:29+35+26]
+empty_list[2].to_csv(path2+'TEST_03.csv')
+empty_list[3]['rate'] = y_summit[29+35+26:29+35+26+32]
+empty_list[3].to_csv(path2+'TEST_04.csv')
+empty_list[4]['rate'] = y_summit[29+35+26+32:29+35+26+32+37]
+empty_list[4].to_csv(path2+'TEST_05.csv')
+empty_list[5]['rate'] = y_summit[29+35+26+32+37:29+35+26+32+37+36]
+empty_list[5].to_csv(path2+'TEST_06.csv')
+# submission = submission.fillna(submission.mean())
+# submission = submission.astype(int)
+
+>>>>>>> 615410920864417e929eaa10b1de39c2006090bf:ml/test666666.py
 import os
 import zipfile
 filelist = ['TEST_01.csv','TEST_02.csv','TEST_03.csv','TEST_04.csv','TEST_05.csv', 'TEST_06.csv']
@@ -138,7 +182,10 @@ with zipfile.ZipFile("D:\study_data\_data\_csv\dacon_grow/submission.zip", 'w') 
         my_zip.write(i)
     my_zip.close()
 print('Done')
+<<<<<<< HEAD:ml/m57_dacon_grow.py
 print(r2)
+=======
+>>>>>>> 615410920864417e929eaa10b1de39c2006090bf:ml/test666666.py
 print('걸린 시간:', end_time)
 
 
