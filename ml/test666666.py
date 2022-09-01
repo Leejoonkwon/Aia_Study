@@ -1,18 +1,77 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+
+# ## Import
+
+# In[1]:
+
+
+import random
 import pandas as pd
 import numpy as np
+import os
 import glob
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import LSTM,GRU,Dense,Dropout
-from sklearn.model_selection import train_test_split
 
-path = 'D:\study_data\_data\_csv\dacon_grow/'
-all_input_list = sorted(glob.glob(path + 'train_input/*.csv'))
-all_target_list = sorted(glob.glob(path + 'train_target/*.csv'))
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torch.nn.functional as F
+from torch.utils.data import Dataset, DataLoader
 
-test_input_list2 = sorted(glob.glob(path + 'test_input/*.csv'))
-test_target_list2 = sorted(glob.glob(path + 'test_target/*.csv'))
+from tqdm.auto import tqdm
 
-  
+import warnings
+warnings.filterwarnings(action='ignore') 
+
+
+# In[2]:
+
+
+device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+
+
+# ## Hyperparameter Setting
+
+# In[3]:
+
+
+CFG = {
+    'EPOCHS':5,
+    'LEARNING_RATE':1e-3,
+    'BATCH_SIZE':16,
+    'SEED':41
+}
+
+
+# ## Fixed RandomSeed
+
+# In[4]:
+
+
+def seed_everything(seed):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = True
+
+seed_everything(CFG['SEED']) # Seed 고정
+
+
+# ## Data Pre-processing
+
+# In[5]:
+
+
+all_input_list = sorted(glob.glob('D:\study_data\_data\_csv\dacon_grow/train_input/*.csv'))
+all_target_list = sorted(glob.glob('D:\study_data\_data\_csv\dacon_grow/train_target/*.csv'))
+
+
+# In[6]:
+
 
 train_input_list = all_input_list[:50]
 train_target_list = all_target_list[:50]
@@ -20,109 +79,212 @@ train_target_list = all_target_list[:50]
 val_input_list = all_input_list[50:]
 val_target_list = all_target_list[50:]
 
-# print(all_input_list)
-print(val_input_list)
-print(len(val_input_list))  # 8
 
-def aaa(input_paths, target_paths): #, infer_mode):
-    input_paths = input_paths
-    target_paths = target_paths
-    # self.infer_mode = infer_mode
-   
-    data_list = []
-    label_list = []
-    print('시작...')
-    # for input_path, target_path in tqdm(zip(input_paths, target_paths)):
-    for input_path, target_path in zip(input_paths, target_paths):
-        input_df = pd.read_csv(input_path)
-        target_df = pd.read_csv(target_path)
-       
-        input_df = input_df.drop(columns=['시간'])
-        input_df = input_df.fillna(0)
-       
-        input_length = int(len(input_df)/1440)
-        target_length = int(len(target_df))
-        print(input_length, target_length)
-       
-        for idx in range(target_length):
-            time_series = input_df[1440*idx:1440*(idx+1)].values
-            # self.data_list.append(torch.Tensor(time_series))
-            data_list.append(time_series)
-        for label in target_df["rate"]:
-            label_list.append(label)
-    return np.array(data_list), np.array(label_list)
-    print('끗.')
+# ## CustomDataset
 
-train_data, label_data = aaa(train_input_list, train_target_list) #, False)
-val_data, val_target = aaa(val_input_list, val_target_list) #, False)
-test_data,test_target = aaa(test_input_list2, test_target_list2) #, False)
+# In[7]:
 
 
-# print(train_data[0])
-print(len(train_data), len(label_data)) # 1607 1607
-print(len(train_data[0]))   # 1440
-print(label_data)   # 1440
-print(train_data.shape, label_data.shape)   # (1607, 1440, 37) (1607,)
-print(val_data.shape, val_target.shape)   # (206, 1440, 37) (206,)
-# print(test_data.shape, submission_target.shape)   # (195, 1440, 37) (195,)
+class CustomDataset(Dataset):
+    def __init__(self, input_paths, target_paths, infer_mode):
+        self.input_paths = input_paths
+        self.target_paths = target_paths
+        self.infer_mode = infer_mode
+        
+        self.data_list = []
+        self.label_list = []
+        print('Data Pre-processing..')
+        for input_path, target_path in tqdm(zip(self.input_paths, self.target_paths)):
+            input_df = pd.read_csv(input_path)
+            target_df = pd.read_csv(target_path)
+            
+            input_df = input_df.drop(columns=['시간'])
+            input_df = input_df.fillna(0)
+            
+            input_length = int(len(input_df)/1440)
+            target_length = int(len(target_df))
+            
+            for idx in range(target_length):
+                time_series = input_df[1440*idx:1440*(idx+1)].values
+                self.data_list.append(torch.Tensor(time_series))
+            for label in target_df["rate"]:
+                self.label_list.append(label)
+        print('Done.')
+              
+    def __getitem__(self, index):
+        data = self.data_list[index]
+        label = self.label_list[index]
+        if self.infer_mode == False:
+            return data, label
+        else:
+            return data
+        
+    def __len__(self):
+        return len(self.data_list)
 
 
-x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.75,shuffle=False)
-
-#2. 모델 구성
-model = Sequential()
-model.add(GRU(10,input_shape=(1440,37)))
-model.add(Dense(32, activation='relu'))
-model.add(Dropout(0.2))
-model.add(Dense(16, activation='relu'))
-model.add(Dropout(0.2))
-model.add(Dense(8, activation='relu'))
-model.add(Dropout(0.2))
-model.add(Dense(1))
-model.summary()
+# In[8]:
 
 
-#3. 컴파일, 훈련
-model.compile(loss='mae', optimizer='adam',metrics=['acc'])
-# "".join은 " "사이에 있는 문자열을 합치겠다는 기능
-hist = model.fit(x_train, y_train, epochs=5, batch_size=1000, 
-                validation_data=(val_data, val_target),
-                verbose=2,#callbacks = [earlyStopping]
-                )
+train_dataset = CustomDataset(train_input_list, train_target_list, False)
+train_loader = DataLoader(train_dataset, batch_size = CFG['BATCH_SIZE'], shuffle=True, num_workers=0)
 
-#4. 평가,예측
-loss = model.evaluate(x_test, y_test)
-print('loss :', loss)
+val_dataset = CustomDataset(val_input_list, val_target_list, False)
+val_loader = DataLoader(val_dataset, batch_size=CFG['BATCH_SIZE'], shuffle=False, num_workers=0)
 
 
-# y_predict = model.predict(x_test)
-# print(y_test.shape) #(152,)
-# print(y_predict.shape) #(152, 13, 1)
+# ## Model Define
 
-# from sklearn.metrics import accuracy_score, r2_score,accuracy_score
-# r2 = r2_score(y_test, y_predict)
-# print('r2스코어 :', r2)
+# In[9]:
 
 
-y_summit = model.predict(test_data)
+class BaseModel(nn.Module):
+    def __init__(self):
+        super(BaseModel, self).__init__()
+        self.lstm = nn.LSTM(input_size=37, hidden_size=256, batch_first=True, bidirectional=False)
+        self.classifier = nn.Sequential(
+            nn.Linear(256, 1),
+        )
+        
+    def forward(self, x):
+        hidden, _ = self.lstm(x)
+        output = self.classifier(hidden[:,-1,:])
+        return output
 
 
- 
-test_target = pd.DataFrame(test_target,columns=['rate'])
-test_target['rate'] = y_summit
-# submission = submission.fillna(submission.mean())
-# submission = submission.astype(int)
-test_target.to_csv('D:\study_data\_data\_csv\dacon_grow\\test_target',index=False)
-import os
+# ## Train
+
+# In[10]:
+
+
+def train(model, optimizer, train_loader, val_loader, scheduler, device):
+    model.to(device)
+    criterion = nn.L1Loss().to(device)
+    
+    best_loss = 9999
+    best_model = None
+    for epoch in range(1, CFG['EPOCHS']+1):
+        model.train()
+        train_loss = []
+        for X, Y in tqdm(iter(train_loader)):
+            X = X.to(device)
+            Y = Y.to(device)
+            
+            optimizer.zero_grad()
+            
+            output = model(X)
+            loss = criterion(output, Y)
+            
+            loss.backward()
+            optimizer.step()
+            
+            train_loss.append(loss.item())
+                    
+        val_loss = validation(model, val_loader, criterion, device)
+        
+        print(f'Train Loss : [{np.mean(train_loss):.5f}] Valid Loss : [{val_loss:.5f}]')
+        
+        if scheduler is not None:
+            scheduler.step()
+            
+        if best_loss > val_loss:
+            best_loss = val_loss
+            best_model = model
+    return best_model
+
+
+# In[11]:
+
+
+def validation(model, val_loader, criterion, device):
+    model.eval()
+    val_loss = []
+    with torch.no_grad():
+        for X, Y in tqdm(iter(val_loader)):
+            X = X.float().to(device)
+            Y = Y.float().to(device)
+            
+            model_pred = model(X)
+            loss = criterion(model_pred, Y)
+            
+            val_loss.append(loss.item())
+            
+    return np.mean(val_loss)
+
+
+# ## Run!!
+
+def run():
+    torch.multiprocessing.freeze_support()
+    print('loop')
+    
+if __name__ == '__main__':
+    run()
+    
+        
+# In[12]:
+
+
+model = BaseModel()
+model.eval()
+optimizer = torch.optim.Adam(params = model.parameters(), lr = CFG["LEARNING_RATE"])
+scheduler = None
+
+best_model = train(model, optimizer, train_loader, val_loader, scheduler, device)
+
+
+# ## Inference
+
+# In[13]:
+
+
+test_input_list = sorted(glob.glob('D:\study_data\_data\_csv\dacon_grow/test_input/*.csv'))
+test_target_list = sorted(glob.glob('D:\study_data\_data\_csv\dacon_grow/test_target/*.csv'))
+
+
+# In[14]:
+
+
+def inference_per_case(model, test_loader, test_path, device):
+    model.to(device)
+    model.eval()
+    pred_list = []
+    with torch.no_grad():
+        for X in iter(test_loader):
+            X = X.float().to(device)
+            
+            model_pred = model(X)
+            
+            model_pred = model_pred.cpu().numpy().reshape(-1).tolist()
+            
+            pred_list += model_pred
+    
+    submit_df = pd.read_csv(test_path)
+    submit_df['rate'] = pred_list
+    submit_df.to_csv(test_path, index=False)
+
+
+# In[15]:
+
+
+for test_input_path, test_target_path in zip(test_input_list, test_target_list):
+    test_dataset = CustomDataset([test_input_path], [test_target_path], True)
+    test_loader = DataLoader(test_dataset, batch_size = CFG['BATCH_SIZE'], shuffle=False, num_workers=0)
+    inference_per_case(best_model, test_loader, test_target_path, device)
+
+
+# In[16]:
+
+
 import zipfile
-os.chdir("D:\study_data\_data\_csv\dacon_grow\\test_target/")
-submission = zipfile.ZipFile("D:\study_data\_data\_csv\dacon_grow\sample_submission.zip", 'w')
-for path in test_target_list2:
-    path = path.split('/')[-1]
-    submission.write(path)
-submission.close()
+filelist = ['TEST_01.csv','TEST_02.csv','TEST_03.csv','TEST_04.csv','TEST_05.csv', 'TEST_06.csv']
+os.chdir("D:\study_data\_data\_csv\dacon_grow/test_target")
+with zipfile.ZipFile("submission.zip", 'w') as my_zip:
+    for i in filelist:
+        my_zip.write(i)
+    my_zip.close()
 
+#===================================== 결과 =========================================#
+# Train Loss : [0.29276] Valid Loss : [0.24777]
 
-
-
-
+#====================================================================================#

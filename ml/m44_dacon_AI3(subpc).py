@@ -126,16 +126,16 @@ lead_outlier_index = np.concatenate((X_01_out_index,    # 1145
                                      X_42_out_index,    # 209              
                                      X_43_out_index,    # 246              
                                      X_44_out_index,    # 255              
-                                     X_45_out_index,                  
-                                     X_46_out_index,                  
-                                     X_49_out_index,                  
-                                     X_50_out_index,                  
-                                     X_51_out_index,                  
-                                     X_52_out_index,                  
-                                     X_53_out_index,                  
-                                     X_54_out_index,                  
-                                     X_55_out_index,                  
-                                     X_56_out_index,                  
+                                     X_45_out_index,    # 59              
+                                     X_46_out_index,    # 5519              
+                                     X_49_out_index,    # 2826              
+                                     X_50_out_index,    # 464              
+                                     X_51_out_index,    # 487              
+                                     X_52_out_index,    # 442              
+                                     X_53_out_index,    # 423              
+                                     X_54_out_index,    # 411              
+                                     X_55_out_index,    # 384              
+                                     X_56_out_index,    # 433              
                                      ),axis=None)
 print(len(lead_outlier_index)) #577
 # print(lead_outlier_index)

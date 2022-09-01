@@ -8,4 +8,4 @@ node3 = tf.add(node1,node2) # 이렇게도 가능하다.
 
 sess = tf.compat.v1.Session()         # sess 라고 정의
 print(sess.run(node3))      # 7.0
-
+  
