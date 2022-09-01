@@ -51,14 +51,6 @@ test_set['PreferredPropertyStar'].fillna(test_set.groupby('Occupation')['Preferr
 print(train_set[train_set['PreferredPropertyStar'].notnull()].groupby(['ProdTaken'])['PreferredPropertyStar'].mean())
 
 
-# train_set['Ageband'] = train_set['Age']
-# test_set['Ageband'] = test_set['Age']
-# 임의로 5개 그룹을 지정
-
-# [(17.957, 26.6] < (26.6, 35.2] < (35.2, 43.8] <
-# (43.8, 52.4] < (52.4, 61.0]]
-# print(train_set['Age'].unique())
-
 combine = [train_set,test_set]
 for dataset in combine:    
     dataset.loc[ dataset['Age'] <= 20, 'Age'] = 0
@@ -178,7 +170,6 @@ test_set = test_set.drop(['NumberOfChildrenVisiting',
 y = train_set_clean['ProdTaken']
 print(x.shape) #1911,13
 
-
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.model_selection import StratifiedKFold
 
@@ -186,72 +177,60 @@ x_train,x_test,y_train,y_test = train_test_split(x,y,train_size=0.91,shuffle=Tru
 
 from sklearn.metrics import accuracy_score
 from catboost import CatBoostClassifier
-# 2. 모델
-
-n_splits = 6
-# 최상의 점수 :  0.9044520547945205
-# acc : 0.954248366013072
-# 걸린 시간 : 5.827547073364258 
-kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
-# {'target': 0.9825581395348837, 
-#  'params': {'depth': 9.870692750101593,
-#             'fold_permutation_block': 8.315144786179879, 
-#             'l2_leaf_reg': 5.182351079272809, 
-#             'learning_rate': 0.20711118811391716, 
-#             'model_size_reg': 0.44979263197508923, 
-#             'od_pval': 0.442501612764838}}
-
-#  Trial 2 finished with value: 1.0 and parameters: 
-# {'n_estimators': 1872, 
-# 'depth': 14, 
-# 'fold_permutation_block': 137, 
-# 'od_pval': 0.4558538849228756, 
-# 'l2_leaf_reg': 0.32453261538080636}. 
-
-# Best trial : score 1.0,
-# params {'n_estimators': 1304,
-# 'depth': 8, 'fold_permutation_block': 142, 
-# 'learning_rate': 0.21616891196578603, 
-# 'od_pval': 0.12673190617341812, 
-# 'l2_leaf_reg': 0.33021257848638497}
-cat_paramets = {"learning_rate" : [0.01],
-                'depth' : [8],
-                'od_pval' : [0.12673190617341812],
-                # 'model_size_reg': [0.44979263197508923],
-                'fold_permutation_block': [142],
-                'l2_leaf_reg' :[0.33021257848638497]}
-cat = CatBoostClassifier(random_state=1127,verbose=False,n_estimators=1304)
-model = RandomizedSearchCV(cat,cat_paramets,cv=kfold,n_jobs=-1,)
-
-import time 
-start_time = time.time()
-model.fit(x_train,y_train)   
-end_time = time.time()-start_time 
-y_predict = model.predict(x_test)
-results = accuracy_score(y_test,y_predict)
-print('최적의 매개변수 : ',model.best_params_)
-print('최상의 점수 : ',model.best_score_)
-print('acc :',results)
-print('걸린 시간 :',end_time)
-
-model.fit(x,y)
-y_summit = model.predict(test_set)
-y_summit = np.round(y_summit,0)
-submission = pd.read_csv(path + 'sample_submission.csv',#예측에서 쓸거야!!
-                      )
-submission['ProdTaken'] = y_summit
-
-submission.to_csv('test100.csv',index=False)
 
 
-##########
-# 최상의 점수 :  0.8930338463986
-# acc : 0.9418604651162791
-# 걸린 시간 : 11.291642665863037
+import optuna
+from optuna import Trial, visualization
+from optuna.samplers import TPESampler
+from sklearn.metrics import mean_absolute_error
+# XGB 하이퍼 파라미터들 값 지정
+ 
+'''
+optuna.trial.Trial.suggest_categorical() : 리스트 범위 내에서 값을 선택한다.
+optuna.trial.Trial.suggest_int() : 범위 내에서 정수형 값을 선택한다.
+optuna.trial.Trial.suggest_float() : 범위 내에서 소수형 값을 선택한다.
+optuna.trial.Trial.suggest_uniform() : 범위 내에서 균일분포 값을 선택한다.
+optuna.trial.Trial.suggest_discrete_uniform() : 범위 내에서 이산 균일분포 값을 선택한다.
+optuna.trial.Trial.suggest_loguniform() : 범위 내에서 로그 함수 값을 선택한다.
+'''
+# learning_rate : float range: (0,1]
+# depth : int, [default=6]   range: [1,+inf]
+# od_pval : float, [default=None] range: [0,1]
+# model_size_reg : float, [default=None] range: [0,+inf]
+# l2_leaf_reg : float, [default=3.0]  range: [0,+inf]
+#  fold_permutation_block : int, [default=1] T[1, 256]. 
+def objectiveCAT(trial: Trial, x_train, y_train, x_test):
+    param = {
+        'n_estimators' : trial.suggest_int('n_estimators', 500, 4000),
+        'depth' : trial.suggest_int('depth', 8, 16),
+        'fold_permutation_block' : trial.suggest_int('fold_permutation_block', 1, 256),
+        'learning_rate' : trial.suggest_float('learning_rate', 0, 1),
+        'od_pval' : trial.suggest_float('od_pval', 0, 1),
+        'l2_leaf_reg' : trial.suggest_float('l2_leaf_reg', 0, 4),
+        'random_state' : 1127
+    }
+    
+    # 학습 모델 생성
+    model = CatBoostClassifier(**param)
+    CAT_model = model.fit(x_train, y_train, verbose=True) # 학습 진행
+    
+    # 모델 성능 확인
+    score = accuracy_score(CAT_model.predict(x_test), y_test)
+    
+    return score
+# MAE가 최소가 되는 방향으로 학습을 진행
+# TPESampler : Sampler using TPE (Tree-structured Parzen Estimator) algorithm.
+study = optuna.create_study(direction='maximize', sampler=TPESampler())
 
-############ RandomState = 100
-# 최상의 점수 :  0.8813139873889755
-# acc : 0.921875
+# n_trials 지정해주지 않으면, 무한 반복
+study.optimize(lambda trial : objectiveCAT(trial, x, y, x_test), n_trials = 5)
 
+print('Best trial : score {}, \nparams {}'.format(study.best_trial.value, study.best_trial.params))
 
+# # 하이퍼파라미터별 중요도를 확인할 수 있는 그래프
+# print(optuna.visualization.plot_param_importances(study))
 
+# # 하이퍼파라미터 최적화 과정을 확인
+# optuna.visualization.plot_optimization_history(study)
+
+# plt.show()
