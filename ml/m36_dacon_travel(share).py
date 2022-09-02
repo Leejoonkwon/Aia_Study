@@ -9,6 +9,11 @@ train_set = pd.read_csv(path + 'train.csv',
                         index_col=0)
 test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
                        index_col=0)
+print(train_set[train_set['ProdTaken'].notnull()].groupby(['ProductPitched'])['ProdTaken'].mean())
+print(train_set['ProductPitched'].value_counts())
+print(train_set[train_set['ProdTaken'].notnull()].groupby(['OwnCar'])['ProdTaken'].mean())
+print(train_set['OwnCar'].value_counts())
+# cols = ['TypeofContact','Occupation','Gender','ProductPitched','MaritalStatus','Designation']
 
 
 train_set['TypeofContact'].fillna('Self Enquiry', inplace=True)
@@ -48,7 +53,7 @@ print(train_set[train_set['DurationOfPitch'].notnull()].groupby(['NumberOfChildr
 
 train_set['PreferredPropertyStar'].fillna(train_set.groupby('Occupation')['PreferredPropertyStar'].transform('mean'), inplace=True)
 test_set['PreferredPropertyStar'].fillna(test_set.groupby('Occupation')['PreferredPropertyStar'].transform('mean'), inplace=True)
-print(train_set[train_set['PreferredPropertyStar'].notnull()].groupby(['ProdTaken'])['PreferredPropertyStar'].mean())
+# print(train_set[train_set['PreferredPropertyStar'].notnull()].groupby(['ProdTaken'])['PreferredPropertyStar'].mean())
 
 
 # train_set['Ageband'] = train_set['Age']
@@ -68,14 +73,7 @@ for dataset in combine:
     dataset.loc[(dataset['Age'] > 49) & (dataset['Age'] <= 59), 'Age'] = 4
     dataset.loc[ dataset['Age'] > 59, 'Age'] = 5
 
-# Trial 4 finished with value: 1.0 and
-# parameters: {'n_estimators': 2795, 
-#              'depth': 10, 
-#              'fold_permutation_block': 58,
-#              'od_pval': 0.05209401437557892, 
-# 'l2_leaf_reg': 0.8427440855520927}. Best is trial 0 with value: 1.0.    
-# train_set = train_set.drop(['AgeBand'], axis=1)
-# print(train_set[train_set['NumberOfTrips'].notnull()].groupby(['DurationOfPitch'])['PreferredPropertyStar'].mean())
+
 train_set['NumberOfTrips'].fillna(train_set.groupby('DurationOfPitch')['NumberOfTrips'].transform('mean'), inplace=True)
 test_set['NumberOfTrips'].fillna(test_set.groupby('DurationOfPitch')['NumberOfTrips'].transform('mean'), inplace=True)
 # print(train_set[train_set['NumberOfChildrenVisiting'].notnull()].groupby(['MaritalStatus'])['NumberOfChildrenVisiting'].mean())
@@ -131,7 +129,7 @@ OwnCar_out_index= outliers(train_set['OwnCar'])[0] # 0
 NumberOfChildrenVisiting_out_index= outliers(train_set['NumberOfChildrenVisiting'])[0] # 0
 Designation_out_index= outliers(train_set['Designation'])[0] # 89
 MonthlyIncome_out_index= outliers(train_set['MonthlyIncome'])[0] # 138
-
+'''
 lead_outlier_index = np.concatenate((#Age_out_index,                            # acc : 0.8650306748466258
                                     #  TypeofContact_out_index,                 # acc : 0.8920454545454546
                                     #  CityTier_out_index,                      # acc : 0.8920454545454546
@@ -150,6 +148,7 @@ lead_outlier_index = np.concatenate((#Age_out_index,                            
                                     #  Designation_out_index,                   # acc : 0.8869047619047619
                                     #  MonthlyIncome_out_index                  # acc : 0.8932926829268293
                                      ),axis=None)
+                              
 print(len(lead_outlier_index)) #577
 
 lead_not_outlier_index = []
@@ -159,23 +158,24 @@ for i in train_set.index:
 train_set_clean = train_set.loc[lead_not_outlier_index]      
 train_set_clean = train_set_clean.reset_index(drop=True)
 # print(train_set_clean)
-x = train_set_clean.drop(['ProdTaken',
+'''       
+x = train_set.drop(['ProdTaken',
                           'NumberOfChildrenVisiting',
                           'NumberOfPersonVisiting',
                           'OwnCar', 
                           'MonthlyIncome', 
                           'NumberOfFollowups',
-                          'NumberOfTrips',
+                        #   'TypeofContact',
                           ], axis=1)
-# x = train_set_clean.drop(['ProdTaken'], axis=1)
+# x = train_set.drop(['ProdTaken'], axis=1)
 test_set = test_set.drop(['NumberOfChildrenVisiting',
                           'NumberOfPersonVisiting',
                           'OwnCar', 
                           'MonthlyIncome', 
                           'NumberOfFollowups',
-                          'NumberOfTrips',
+                        #   'TypeofContact',
                           ], axis=1)
-y = train_set_clean['ProdTaken']
+y = train_set['ProdTaken']
 print(x.shape) #1911,13
 
 
@@ -252,6 +252,5 @@ submission.to_csv('test100.csv',index=False)
 ############ RandomState = 100
 # 최상의 점수 :  0.8813139873889755
 # acc : 0.921875
-
 
 
