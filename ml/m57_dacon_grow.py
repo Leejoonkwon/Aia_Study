@@ -98,7 +98,7 @@ y_predict = model.predict(x_test)
 r2 = r2_score(y_predict,y_test)
 from sklearn.metrics import mean_squared_error
 rmse = np.sqrt(mean_squared_error(y_test,y_predict))
-          
+           
                                  
 # y_predict = model.predict(x_test)
 # print(y_test.shape) #(152,)
