@@ -165,7 +165,6 @@ x = train_set.drop(['ProdTaken',
                           'OwnCar', 
                           'MonthlyIncome', 
                           'NumberOfFollowups',
-                        #   'TypeofContact',
                           ], axis=1)
 # x = train_set.drop(['ProdTaken'], axis=1)
 test_set = test_set.drop(['NumberOfChildrenVisiting',
@@ -173,7 +172,6 @@ test_set = test_set.drop(['NumberOfChildrenVisiting',
                           'OwnCar', 
                           'MonthlyIncome', 
                           'NumberOfFollowups',
-                        #   'TypeofContact',
                           ], axis=1)
 y = train_set['ProdTaken']
 print(x.shape) #1911,13
@@ -193,34 +191,32 @@ n_splits = 6
 # acc : 0.954248366013072
 # 걸린 시간 : 5.827547073364258 
 kfold = StratifiedKFold(n_splits=n_splits,shuffle=True,random_state=123)
-# {'target': 0.9825581395348837, 
-#  'params': {'depth': 9.870692750101593,
-#             'fold_permutation_block': 8.315144786179879, 
-#             'l2_leaf_reg': 5.182351079272809, 
-#             'learning_rate': 0.20711118811391716, 
-#             'model_size_reg': 0.44979263197508923, 
-#             'od_pval': 0.442501612764838}}
+# Best is trial 0 with value: 1.0.
 
-#  Trial 2 finished with value: 1.0 and parameters: 
-# {'n_estimators': 1872, 
-# 'depth': 14, 
-# 'fold_permutation_block': 137, 
-# 'od_pval': 0.4558538849228756, 
-# 'l2_leaf_reg': 0.32453261538080636}. 
+
+# Trial 4 finished with value: 1.0 and parameters:
+# {'n_estimators': 816, 
+# 'depth': 10, 
+# 'fold_permutation_block': 96,
+# 'learning_rate': 0.26143818318223366, 
+# 'od_pval': 0.12120216277270346,
+# 'l2_leaf_reg': 1.6309192357734479, 
+# 'random_state': 1372}.
 
 # Best trial : score 1.0,
-# params {'n_estimators': 1304,
-# 'depth': 8, 'fold_permutation_block': 142, 
-# 'learning_rate': 0.21616891196578603, 
-# 'od_pval': 0.12673190617341812, 
-# 'l2_leaf_reg': 0.33021257848638497}
-cat_paramets = {"learning_rate" : [0.01],
-                'depth' : [8],
-                'od_pval' : [0.12673190617341812],
-                # 'model_size_reg': [0.44979263197508923],
-                'fold_permutation_block': [142],
-                'l2_leaf_reg' :[0.33021257848638497]}
-cat = CatBoostClassifier(random_state=1127,verbose=False,n_estimators=1304)
+# params {'n_estimators': 3492, 
+# 'depth': 15,
+# 'fold_permutation_block': 9, 
+# 'learning_rate': 0.2673090678384735, 
+# 'od_pval': 0.80111988427855, 
+# 'l2_leaf_reg': 3.2785406529488514,
+# 'random_state': 1398}
+cat_paramets = {"learning_rate" : [0.2673090678384735],
+                'depth' : [15],
+                'od_pval' : [0.80111988427855],
+                'fold_permutation_block': [9],
+                'l2_leaf_reg' :[3.2785406529488514]}
+cat = CatBoostClassifier(random_state=1398,verbose=False,n_estimators=3492)
 model = RandomizedSearchCV(cat,cat_paramets,cv=kfold,n_jobs=-1,)
 
 import time 
@@ -252,4 +248,5 @@ submission.to_csv('test100.csv',index=False)
 ############ RandomState = 100
 # 최상의 점수 :  0.8813139873889755
 # acc : 0.921875
+
 

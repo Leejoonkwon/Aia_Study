@@ -207,7 +207,7 @@ def objectiveCAT(trial: Trial, x_train, y_train, x_test):
         'learning_rate' : trial.suggest_float('learning_rate', 0, 1),
         'od_pval' : trial.suggest_float('od_pval', 0, 1),
         'l2_leaf_reg' : trial.suggest_float('l2_leaf_reg', 0, 4),
-        'random_state' : 1127
+        'random_state' :trial.suggest_int('random_state', 1, 2000)
     }
     
     # 학습 모델 생성
