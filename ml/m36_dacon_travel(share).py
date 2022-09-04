@@ -2,6 +2,8 @@ from time import time
 from sklearn.model_selection import train_test_split
 import pandas as pd
 import numpy as np 
+from sklearn.preprocessing import LabelEncoder
+from tqdm import tqdm_notebook
 
 #1. 데이터
 path = 'D:\study_data\_data\_csv\dacon_travel/' # ".은 현재 폴더"
@@ -85,8 +87,6 @@ test_set.loc[ test_set['Occupation'] =='Free Lancer' , 'Occupation'] = 'Salaried
 train_set.loc[ train_set['Gender'] =='Fe Male' , 'Gender'] = 'Female'
 test_set.loc[ test_set['Gender'] =='Fe Male' , 'Gender'] = 'Female'
 cols = ['TypeofContact','Occupation','Gender','ProductPitched','MaritalStatus','Designation']
-from sklearn.preprocessing import LabelEncoder
-from tqdm import tqdm_notebook
 
 for col in tqdm_notebook(cols):
     le = LabelEncoder()
