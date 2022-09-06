@@ -56,12 +56,12 @@ def aaa(input_paths, target_paths): #, infer_mode):
 train_data, label_data = aaa(train_input_list, train_target_list) #, False)
 val_data, val_target = aaa(val_input_list, val_target_list) #, False)
 test_data,test_target = aaa(test_input_list2, test_target_list2) #, False)
-np.save('D:/study_data/_save/_npy/train_data12.npy',arr=train_data)
-np.save('D:/study_data/_save/_npy/label_data12.npy',arr=label_data)
-np.save('D:/study_data/_save/_npy/val_data12.npy',arr=val_data)
-np.save('D:/study_data/_save/_npy/val_target12.npy',arr=val_target)
-np.save('D:/study_data/_save/_npy/test_data12.npy',arr=test_data)
-np.save('D:/study_data/_save/_npy/test_target12.npy',arr=test_target)
+# np.save('D:/study_data/_save/_npy/train_data12.npy',arr=train_data)
+# np.save('D:/study_data/_save/_npy/label_data12.npy',arr=label_data)
+# np.save('D:/study_data/_save/_npy/val_data12.npy',arr=val_data)
+# np.save('D:/study_data/_save/_npy/val_target12.npy',arr=val_target)
+# np.save('D:/study_data/_save/_npy/test_data12.npy',arr=test_data)
+# np.save('D:/study_data/_save/_npy/test_target12.npy',arr=test_target)
 
 # print(train_data[0])
 print(len(train_data), len(label_data)) # 1607 1607
@@ -80,7 +80,7 @@ model.add(GRU(100))
 model.add(Dense(256, activation='relu'))
 model.add(Dense(128, activation='relu'))
 model.add(Dense(64, activation='relu'))
-model.add(Dense(1))
+model.add(Dense(1, activation='relu'))
 model.summary()
 
 import time

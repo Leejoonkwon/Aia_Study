@@ -11,6 +11,8 @@ from tensorflow.python.keras.optimizer_v2 import adam, adadelta, adagrad, adamax
 from tensorflow.python.keras.optimizer_v2 import rmsprop,nadam
 from sklearn.metrics import r2_score,accuracy_score
 from tensorflow.keras.utils import to_categorical
+import warnings
+warnings.filterwarnings('ignore')
 #1. 데이터 전처리
 # datasets = mnist.load_data()
 # x = datasets.data #데이터를 리스트 형태로 불러올 때 함
@@ -57,8 +59,7 @@ model.add(Dropout(0.3))
 model.add(Dense(10,activation='softmax'))
 
 #3. 컴파일 훈련
-optilist = [adam.Adam,adadelta.Adadelta,adagrad.Adagrad,
-        adagrad.Adagrad,adamax.Adamax,rmsprop.RMSprop,nadam.Nadam]
+optilist = [adam.Adam,adadelta.Adadelta,adagrad.Adagrad,adamax.Adamax]
 # Defaults to 0.001.
 start_time = time.time()
 emptylist =[]
@@ -72,9 +73,12 @@ for i in optilist:
     y_predict = model.predict(x_test)
     y_predict = np.argmax(y_predict,axis=1)
     y_predict = to_categorical(y_predict)
-    print(y_predict)    
-    print(i.__name__)
-    print(accuracy_score(y_test,y_predict))
+    print('optimizer:',i.__name__,'ACC :',accuracy_score(y_test,y_predict))
+
+# optimizer: Adam ACC : 0.9893
+# optimizer: Adadelta ACC : 0.9905
+# optimizer: Adagrad ACC : 0.9914
+# optimizer: Adamax ACC : 0.9921
 
 # loss : [0.03594522178173065, 0.9915000200271606]
 # acc 스코어 : 0.9915
