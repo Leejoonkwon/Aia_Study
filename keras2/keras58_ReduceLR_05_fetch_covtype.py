@@ -167,5 +167,6 @@ print("걸린 시간 :",end_time)
 ######LSTM
 # loss : 1.3015809059143066
 # accuracy: 0.4871
-######Conv1d + LR Reduce
+######Conv1d + LR Reduce  
+
 
