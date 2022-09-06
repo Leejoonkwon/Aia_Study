@@ -114,26 +114,30 @@ start_time = time.time()
 filepath = './_ModelCheckPoint/K24/'
 filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 #04d :                  4f : 
-earlyStopping = EarlyStopping(monitor='loss', patience=30, mode='min', 
+from tensorflow.python.keras.callbacks import EarlyStopping,ReduceLROnPlateau
+
+earlyStopping = EarlyStopping(monitor='loss', patience=10, mode='min', 
                               verbose=1,restore_best_weights=True)
+reduce_lr = ReduceLROnPlateau(monitor='val_loss',patience=10,
+                              mode='auto',verbose=1,factor=0.5)
 # mcp = ModelCheckpoint(monitor='val_loss',mode='auto',verbose=1,
 #                       save_best_only=True, 
-#                       filepath="".join([filepath,'k25_', date, '_fetcg_covtype_', filename])
+#                       filepath="".join([filepath,'k25_', date, '_wine_', filename])
 #                     )
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+from tensorflow.python.keras.optimizers import adam_v2
+learning_rate = 0.01
+optimizer = adam_v2.Adam(lr=learning_rate)
+
+
+model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 model.fit(x_train, y_train, epochs=50, batch_size=250000, 
                 validation_split=0.3,
-                callbacks = [earlyStopping],
-                verbose=2
-                )
-#다중 분류 모델은 'categorical_crossentropy'만 사용한다 !!!!
-
+                callbacks = [earlyStopping,reduce_lr],
+                verbose=2)
 #4.  평가,예측
 
 loss,acc = model.evaluate(x_test,y_test)
 print('loss :',loss)
-
-
 
 y_predict = model.predict(x_test)
 
@@ -147,8 +151,6 @@ y_predict = tf.argmax(y_predict,axis=1)
 print(y_predict) #(87152, )
 # print(y_test.shape) #(87152,7)
 # y_test와 y_predict의  shape가 일치해야한다.
-
-
 
 acc = accuracy_score(y_test, y_predict)
 print('acc 스코어 :', acc)
