@@ -17,13 +17,16 @@ from tensorflow.keras.utils import to_categorical
 # y_test = to_categorical(y_test)
 
 #2. 모델
-def build_model(drop=0.5, optimizer='adam', activation='relu'):
+def build_model(drop=0.3, optimizer='adam', activation='relu',
+                node1=512, node2=256, node3=128,node4=100):
     inputs = Input(shape=(28*28), name = 'input')
-    x = Dense(512, activation=activation, name= 'hidden1')(inputs)
+    x = Dense(node1, activation=activation, name= 'hidden1')(inputs)
     x = Dropout(drop)(x)
-    x = Dense(256, activation=activation, name='hidden2')(x)
+    x = Dense(node2, activation=activation, name='hidden2')(x)
     x = Dropout(drop)(x)
-    x = Dense(128, activation=activation, name='hidden3')(x)
+    x = Dense(node3, activation=activation, name='hidden3')(x)
+    x = Dropout(drop)(x)
+    x = Dense(node4, activation=activation, name='hidden4')(x)
     x = Dropout(drop)(x)
     outputs = Dense(10, activation='softmax', name='outputs')(x)
     
@@ -39,7 +42,8 @@ def create_hyperparameter():
     activation = ['relu','linear','sigmoid','selu','elu']
     return {"batch_size" : batchs, "optimizer":optimizers,
             "drop" : dropout, "activation": activation}
-    
+
+
 hyperparameters = create_hyperparameter()
 print(hyperparameters)
 # {'batch_size': [100, 200, 300, 400, 500],
@@ -50,10 +54,10 @@ from sklearn.model_selection import GridSearchCV,RandomizedSearchCV
 from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
 
 keras_model = KerasClassifier(build_fn=build_model, verbose=1)
-model = RandomizedSearchCV(keras_model,hyperparameters,cv=2, n_iter=2, refit=True) # cv,n_iter 각 최소 2번
+model = RandomizedSearchCV(keras_model,hyperparameters,cv=5, n_iter=5, refit=True) # cv,n_iter 각 최소 2번
 import time
 start_time = time.time()
-model.fit(x_train,y_train,epochs=2,validation_split=0.4)
+model.fit(x_train,y_train,epochs=500,validation_split=0.3)
 end_time =time.time()-start_time
 
 print('걸린 시간 :',end_time)
@@ -75,4 +79,4 @@ print(y_predict)
 print("accuracy_socre :",accuracy_score(y_test,y_predict))
 
 
-
+# accuracy_socre : 0.9818
