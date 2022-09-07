@@ -2,10 +2,8 @@ import pandas as pd
 import numpy as np
 import glob
 from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import LSTM,GRU,Dense,Dropout
+from tensorflow.python.keras.layers import Dense,LSTM,GRU
 from sklearn.model_selection import train_test_split
-
-
 
 path = 'D:\study_data\_data\_csv\dacon_grow/'
 all_input_list = sorted(glob.glob(path + 'train_input/*.csv'))
@@ -71,26 +69,33 @@ print(train_data.shape, label_data.shape)   # (1607, 1440, 37) (1607,)
 print(val_data.shape, val_target.shape)   # (206, 1440, 37) (206,)
 
 
-x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.91,shuffle=False)
+x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.90,shuffle=False)
 
 #2. 모델 구성
 model = Sequential()
 model.add(GRU(100,return_sequences=True,input_shape=(1440,37)))
 model.add(GRU(100))
-model.add(Dense(256, activation='relu'))
-model.add(Dense(128, activation='relu'))
-model.add(Dense(64, activation='relu'))
-model.add(Dense(1, activation='relu'))
+model.add(Dense(512, activation='swish'))
+model.add(Dense(256, activation='swish'))
+model.add(Dense(128, activation='swish'))
+model.add(Dense(1, activation='swish'))
 model.summary()
-
 import time
 start_time = time.time()
 #3. 컴파일, 훈련
+from tensorflow.python.keras.callbacks import EarlyStopping,ReduceLROnPlateau
+import time
+es = EarlyStopping(monitor='val_loss',patience=10,mode='min',verbose=1)
+
+from tensorflow.python.keras.optimizers import adam_v2
+learning_rate = 0.01
+optimizer = adam_v2.Adam(lr=learning_rate)
+
 model.compile(loss='mae', optimizer='adam',metrics=['acc'])
 # "".join은 " "사이에 있는 문자열을 합치겠다는 기능
-hist = model.fit(x_train, y_train, epochs=30, batch_size=3000, 
+hist = model.fit(x_train, y_train, epochs=200, batch_size=3000, 
                 validation_data=(val_data, val_target),
-                verbose=2,#callbacks = [earlyStopping]
+                verbose=2,callbacks = [es]
                 )
 model.save_weights("C:\Study\_save/keras57_12_save_weights1.h5")
 
