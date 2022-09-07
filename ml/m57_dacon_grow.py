@@ -70,7 +70,7 @@ print(val_data.shape, val_target.shape)   # (206, 1440, 37) (206,)
                    
                  
 x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.90,shuffle=False)
-
+     
 #2. 모델 구성
 model = Sequential()
 model.add(GRU(100,return_sequences=True,input_shape=(1440,37)))
