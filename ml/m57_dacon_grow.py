@@ -67,7 +67,7 @@ print(len(train_data[0]))   # 1440
 print(label_data)   # 1440
 print(train_data.shape, label_data.shape)   # (1607, 1440, 37) (1607,)
 print(val_data.shape, val_target.shape)   # (206, 1440, 37) (206,)
-                         
+                            
                           
 x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.90,shuffle=False)
      
