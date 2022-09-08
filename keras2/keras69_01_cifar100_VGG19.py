@@ -57,8 +57,8 @@ print("acc : ",acc)
 ################### model.trainable = False 로 진행
 # acc :  0.1021
 
-
-
+################### include_top=False 로 진행
+# acc :  0.0735
 
 
 
