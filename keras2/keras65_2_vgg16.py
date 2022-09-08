@@ -21,7 +21,7 @@ model.add(Flatten())
 model.add(Dense(100))
 model.add(Dense(10))
 # model.trainable =False
-model.summary()
+model.summary()  
 
                                     #Trainable: True  | VGG16 False  | # model False
 print(len(model.weights))                        # 30           # 30           # 30

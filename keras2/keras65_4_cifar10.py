@@ -24,16 +24,18 @@ VGG16 = vgg16.VGG16(weights='imagenet',include_top=False,
 model = Sequential()
 model.add(VGG16)
 model.add(Flatten())
-model.add(Dense(10))
+model.add(Dense(100))
 model.add(Dense(10,activation='softmax'))
 # model.trainable =False
 model.summary()
 
 #3. 컴파일, 훈련
-
+from tensorflow.python.keras.callbacks import EarlyStopping
+es = EarlyStopping(monitor='val_loss',patience=10,mode='auto')
 model.compile(loss='categorical_crossentropy',optimizer='adam')
 
-model.fit(x_train,y_train,epochs=10,batch_size=2000)
+model.fit(x_train,y_train,epochs=100,batch_size=4000,
+          callbacks=[es],validation_split=0.3)
 from sklearn.metrics import accuracy_score
 #4. 평가, 예측
 model.evaluate(x_test,y_test)
@@ -43,6 +45,13 @@ y_predcit = to_categorical(y_predcit)
 acc = accuracy_score(y_test,y_predcit)
 
 print("acc : ",acc)
+
+################### include_top=False 로 진행
+# acc :  0.7153
+################### VGG16.trainable = False 로 진행
+# acc :  0.579
+################### model.trainable = False 로 진행
+# acc :  0.1021
 
 
 
