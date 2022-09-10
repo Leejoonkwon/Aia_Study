@@ -19,16 +19,19 @@ print(test_data.shape,test_target.shape)    # (195, 1440, 37) (195,)
 # val_data = val_data.reshape(206, 1440, 37, 1)
 # test_data = test_data.reshape(195, 1440, 37, 1)
                                                          
-x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.93,shuffle=False)
+x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.91,shuffle=False)
 print(x_train.shape)
 #2. 모델 구성
 
 model = Sequential()
 model.add(Conv1D(64,kernel_size=1,input_shape=(1440, 37),activation='relu'))
 model.add(MaxPooling1D())
-model.add(GRU(50, activation='relu'))
-model.add(Dense(64, activation='swish'))
-model.add(Dense(1, activation='swish'))
+model.add(Conv1D(32))
+model.add(MaxPooling1D())
+model.add(GRU(100, activation='relu'))
+model.add(Dense(256, activation='relu'))
+model.add(Dense(128, activation='relu'))
+model.add(Dense(1, activation='relu'))
 model.summary()
 
 import time
