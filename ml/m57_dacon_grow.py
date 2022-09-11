@@ -33,7 +33,7 @@ model.add(Dense(256, activation='relu'))
 model.add(Dense(128, activation='relu'))
 model.add(Dense(1, activation='relu'))
 model.summary()
-
+  
 import time
 start_time = time.time()
 #3. 컴파일, 훈련
