@@ -22,7 +22,7 @@ print(test_data.shape,test_target.shape)    # (195, 1440, 37) (195,)
 x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.91,shuffle=False)
 print(x_train.shape)
 #2. 모델 구성      
-                                                                                            
+                                                                                              
 model = Sequential()  
 model.add(Conv1D(64,kernel_size=1,input_shape=(1440, 37),activation='relu'))
 model.add(MaxPooling1D())
