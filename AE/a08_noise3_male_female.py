@@ -50,9 +50,9 @@ model = autoencoder(hidden_layer_size=320)
 # 0.999 # 486
 # 1.0   # 713
 
-model.fit(x_train_noised, x_train, epochs=50, batch_size=128,
+model.fit(x_train_noised, x_train, epochs=50, batch_size=64,
                 validation_split=0.2)
-output = model.predict(x_test)
+output = model.predict(x_test_noised)
 output2 = model.predict(z_test_noised)
 print(output.shape)
 
