@@ -12,19 +12,19 @@ train = ImageDataGenerator(
     rescale=1./255,               # MinMax 스케일링과 같은 개념 
   )                               # 회전 축소 등으로 이미지에 여백이생겼을때 채우는 방법입니다.
 
-xydata = train.flow_from_directory(
-    'D:\\study_data\\_data\\image\\archive\\data',
-    target_size=(150,150),
-    class_mode='binary',
-    batch_size=500,
-    shuffle=True,) # 경로 및 폴더 설정
+# xydata = train.flow_from_directory(
+#     'D:\study_data\_data\data',
+#     target_size=(150,150),
+#     class_mode='binary',
+#     batch_size=500,
+#     shuffle=True,) # 경로 및 폴더 설정
 
 # print(xydata[0][0],xydata[0][0].shape) # (500, 150, 150, 3)
 
 # x = xydata[0][0]
 # y = xydata[0][1]
 my = train.flow_from_directory(
-    'D:\\study_data\\_data\\image\\archive\\images',
+    'D:\study_data\_data\data\my',
     target_size=(150,150),
     class_mode='binary',
     batch_size=1,
@@ -39,5 +39,5 @@ my = train.flow_from_directory(
 # np.save('D:/study_data/_save/_npy/keras47_4_test_x.npy',arr=x_test)
 # np.save('D:/study_data/_save/_npy/keras47_4_test_y.npy',arr=y_test)
 
-np.save('D:/study_data/_save/_npy/keras47_4_test_z.npy',arr=my[0][0])
+np.save('D:/study_data/_save/_npy/keras48_4_test_z.npy',arr=my[0][0])
 
