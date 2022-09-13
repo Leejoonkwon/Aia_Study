@@ -24,14 +24,14 @@ print(x_train.shape)
 #2. 모델 구성      
                                                                                               
 model = Sequential()  
-model.add(Conv1D(64,kernel_size=1,input_shape=(1440, 37),activation='relu'))
-model.add(MaxPooling1D())
-model.add(Conv1D(32))
-model.add(MaxPooling1D())
-model.add(GRU(100, activation='relu'))
+model = Sequential()
+model.add(GRU(50,return_sequences=True,input_shape=(1440,37)))
+model.add(GRU(50,return_sequences=True))
+model.add(GRU(50))
 model.add(Dense(256, activation='relu'))
 model.add(Dense(128, activation='relu'))
-model.add(Dense(1, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(1))
 model.summary()
   
 import time
