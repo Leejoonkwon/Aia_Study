@@ -42,7 +42,7 @@ def autoencoder(hidden_layer_size):
     model.summary()
     model.compile(optimizer='adam', loss='binary_crossentropy')
     return model
-                                
+                                  
 model = autoencoder(hidden_layer_size=320)
 # pca를 통해 0.95 이상인 n_component  몇개?
 # 0.95  # 154
