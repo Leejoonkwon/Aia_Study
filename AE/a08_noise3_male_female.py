@@ -105,19 +105,5 @@ image3.imshow(output2[0])
         
 plt.tight_layout()
 plt.show()    
-#3. 컴파일,훈련
-
-# #4. 평가,훈련
-# loss = model.evaluate(x_test, y_test)
-# print("loss :",loss)
-# print("====================")
-
-
-# y_predict = model.predict(z_test)
-
-# if 	y_predict >= 0.5 :
-#     print('여자다') # 출력값: 
-# else :
-#     print('남자다') # 출력값:
 
 
