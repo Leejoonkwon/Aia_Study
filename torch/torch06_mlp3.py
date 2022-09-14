@@ -11,48 +11,47 @@ DEVICE = torch.device('cuda:0' if USE_CUDA else 'cpu')
 print('torch :',torch.__version__,'\n','사용DEVICE : ',DEVICE)
 print(torch.cuda.device_count())
 
+x = np.array([range(10), range(21, 31), range(201, 211)])
 
-x = np.array([[1,2,3,4,5,6,7,8,9,10],
-              [1, 1, 1, 1, 2, 1.3, 1.4, 1.5, 1.6, 1.4],
-              [9,8,7,6,5,4,3,2,1,0]]
-             )
-y = np.array([11,12,13,14,15,16,17,18,19,20])
-A = np.array([[10, 1.4, 0]])
+x = np.transpose(x)
+print(x.shape)  # (10,3)
 
+y = np.array([[1,2,3,4,5,6,7,8,9,10],
+             [1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9]])
+y = np.transpose(y)   
+
+A = np.array([[9, 30, 210]])
 x = torch.FloatTensor(x).to(DEVICE)   # torch 타입으로 변환
-y = torch.FloatTensor(y).unsqueeze(-1).to(DEVICE)  # (10,) => # (10, 1)
+y = torch.FloatTensor(y).to(DEVICE)  # 
 A = torch.FloatTensor(A).to(DEVICE)  # 
 
 A = (A - torch.mean(x))/ torch.std(x) # Standard Scaler(transform)
 
 x = (x - torch.mean(x))/ torch.std(x) # Standard Scaler
 
-x = x.T
 
-print(A.shape) # torch.Size([3, 1])
+
+print(A.shape) # torch.Size([1, 3])
 
 # print(x, y) 
-print(x.shape,y.shape) # torch.Size([3, 10]) torch.Size([10, 1])
+print(x.shape,y.shape) # torch.Size([10, 3]) torch.Size([10, 2])
 
 #2. 모델 구성
 # model = Sequential()
-# model = nn.Linear(1, 5).to(DEVICE) # 인풋 x의 컬럼 / 아웃풋 y의 컬럼
-# model = nn.Linear(5, 3).to(DEVICE) # 인풋 x의 컬럼 / 아웃풋 y의 컬럼
-# model = nn.Linear(3, 4).to(DEVICE) # 인풋 x의 컬럼 / 아웃풋 y의 컬럼
-# model = nn.Linear(4, 2).to(DEVICE) # 인풋 x의 컬럼 / 아웃풋 y의 컬럼
-# model = nn.Linear(2, 1).to(DEVICE) # 인풋 x의 컬럼 / 아웃풋 y의 컬럼
+
 model = nn.Sequential(
     nn.Linear(3, 4),
     nn.Linear(4, 5),
     nn.ReLU(),
     nn.Linear(5, 3),
     nn.Linear(3, 2),
-    nn.Linear(2, 1)).to(DEVICE) # GPU 사용 시 data와 model에 무조건 wrapping하기!
+    nn.Linear(2, 2),
+    ).to(DEVICE) # GPU 사용 시 data와 model에 무조건 wrapping하기!
 
 #3. 컴파일, 훈련
 # model.compile(loss='mse',optimizer='SGD')
 criterion = nn.MSELoss() # criterion 표준,기준
-optimizer = optim.SGD(model.parameters(),lr=0.01) # 모든 parameters에 맞춰 optim 적용
+optimizer = optim.Adam(model.parameters(),lr=0.01) # 모든 parameters에 맞춰 optim 적용
 # optim.Adam(model.parameters(),lr=0.01) # 모든 parameters에 맞춰 optim 적용
 
 
@@ -67,7 +66,7 @@ def train(model, criterion, optimizer, x, y ):
     loss.backward()         # 2.가중치 역전파
     optimizer.step()        # 3.가중치 갱신
     return loss.item()
-epochs = 2000
+epochs = 5000
 for epoch in range(1, epochs +1):
     loss = train(model, criterion, optimizer, x, y)
     print('epoch : {}, loss : {}'.format(epoch,loss))
@@ -88,12 +87,10 @@ print('최종 loss : ',loss2)
 
 # y_predict = model.predict([4])
 
-results = model(torch.Tensor(A).to(DEVICE))
+results = model(A).to(DEVICE)
 
 
-print('result : ',results.item())
-
-# 최종 loss :  0.003939428832381964
-# result :  20.086225509643555
-
+print('result : ',results.tolist())
+# 최종 loss :  0.015954621136188507
+# result :  [[10.204804420471191, 1.9247193336486816]]
 
