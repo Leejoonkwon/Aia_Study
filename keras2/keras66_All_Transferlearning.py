@@ -1,3 +1,7 @@
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense,Flatten,GlobalAveragePooling2D
+from keras.datasets import cifar100
 from keras.applications import VGG16,VGG19
 from keras.applications import ResNet50,ResNet50V2
 from keras.applications import ResNet101,ResNet101V2,ResNet152,ResNet152V2
@@ -8,10 +12,7 @@ from keras.applications import MobileNetV3Small,MobileNetV3Large
 from keras.applications import NASNetLarge, NASNetMobile
 from keras.applications import EfficientNetB0, EfficientNetB1, EfficientNetB7
 from keras.applications import Xception
-import numpy as np
-from keras.models import Sequential
-from keras.layers import Dense,Flatten,GlobalAveragePooling2D
-from keras.datasets import cifar100
+
 pretrain = [VGG16,VGG19,ResNet50,ResNet50V2,ResNet101,ResNet101V2,ResNet152,
             ResNet152V2,DenseNet121,DenseNet169,DenseNet201,InceptionV3,InceptionResNetV2,
             MobileNet,MobileNetV2,MobileNetV3Small,MobileNetV3Large,NASNetLarge,NASNetMobile,
