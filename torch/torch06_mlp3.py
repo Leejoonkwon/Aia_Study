@@ -88,7 +88,7 @@ print('최종 loss : ',loss2)
 # y_predict = model.predict([4])
 
 results = model(A).to(DEVICE)
-       
+         
              
 print('result : ',results.tolist())
 # 최종 loss :  0.015954621136188507
