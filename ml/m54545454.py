@@ -1,284 +1,217 @@
 import pandas as pd
-import random
-import os
 import numpy as np
-from sklearn.experimental import enable_iterative_imputer
-from sklearn.impute import IterativeImputer
-from sklearn.linear_model import LinearRegression
+import glob
+from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.layers import Dense,LSTM,GRU
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score
-from sklearn.multioutput import MultiOutputRegressor
-from bayes_opt import BayesianOptimization
-from xgboost import XGBClassifier,XGBRegressor
+import matplotlib
+matplotlib.rcParams['font.family']='Malgun Gothic'
+matplotlib.rcParams['axes.unicode_minus']=False
 
+train_data = np.load('D:/study_data/_save/_npy/train_data12.npy')
+label_data = np.load('D:/study_data/_save/_npy/label_data12.npy')
+val_data = np.load('D:/study_data/_save/_npy/val_data12.npy')
+val_target = np.load('D:/study_data/_save/_npy/val_target12.npy')
+test_data = np.load('D:/study_data/_save/_npy/test_data12.npy')
+test_target = np.load('D:/study_data/_save/_npy/test_target12.npy')
 
-path = 'D:\study_data\_data\_csv\dacon_ai/'
+# print(train_data[0])
+# print(train_data.shape, label_data.shape) # (1607, 1440, 37) (1607,)
+# print(val_data.shape, val_target.shape) # (206, 1440, 37) (206,)
+# print(test_data.shape, test_target.shape)   # (195, 1440, 37) (195,)
+col_check = pd.read_csv('D:\study_data\_data\_csv\dacon_grow\\train_input/'+'CASE_01.csv',encoding='utf-8')
+# print(col_check.columns)
+Index=['번호','내부온도관측치', '내부습도관측치', 'CO2관측치', 'EC관측치', '외부온도관측치', '외부습도관측치', '펌프상태',
+       '펌프작동남은시간', '최근분무량', '일간누적분무량', '냉방상태', '냉방작동남은시간', '난방상태', '난방작동남은시간',
+       '내부유동팬상태', '내부유동팬작동남은시간', '외부환기팬상태', '외부환기팬작동남은시간', '화이트 LED상태',
+       '화이트 LED작동남은시간', '화이트 LED동작강도', '레드 LED상태', '레드 LED작동남은시간',
+       '레드 LED동작강도', '블루 LED상태', '블루 LED작동남은시간', '블루 LED동작강도', '카메라상태', '냉방온도',
+       '난방온도', '기준온도', '난방부하', '냉방부하', '총추정광량', '백색광추정광량', '적색광추정광량',
+       '청색광추정광량']
+m,n,r = train_data.shape
+out_arr = np.column_stack((np.repeat(np.arange(m),n),train_data.reshape(m*(n),-1)))
+out_df = pd.DataFrame(out_arr,columns=Index)
+# out_df = out_df.drop(columns='0', axis=1)
 
-def seed_everything(seed):
-    random.seed(seed)
-    os.environ['PYTHONHASHSEED'] = str(seed)
-    np.random.seed(seed)
-seed_everything(704) # Seed 고정
+# print(out_df['최근분무량'].value_counts())
+# print(out_df['최근분무량'].unique(),len(out_df['최근분무량'].unique()))
+import matplotlib.pyplot as plt
+# out_df.plot(kind='scatter',x='내부온도관측치',y='내부습도관측치')
+# out_df.boxplot(column=['내부온도관측치','내부습도관측치'])
 
+# plt.show()
 def outliers(data_out):
-    quartile_1, q2, quartile_3 = np.percentile(data_out, [25, 50, 75])
-
-    iqr = quartile_3-quartile_1 # interquartile range
+    quartile_1, q2 , quartile_3 = np.percentile(data_out,
+                                               [25,50,75]) # percentile 백분위
+    print("1사분위 : ",quartile_1) # 25% 위치인수를 기점으로 사이에 값을 구함
+    print("q2 : ",q2) # 50% median과 동일 
+    print("3사분위 : ",quartile_3) # 75% 위치인수를 기점으로 사이에 값을 구함
+    iqr =quartile_3-quartile_1  # 75% -25%
+    print("iqr :" ,iqr)
     lower_bound = quartile_1 - (iqr * 1.5)
     upper_bound = quartile_3 + (iqr * 1.5)
-    return np.where((data_out>upper_bound) | (data_out<lower_bound))
+    return np.where((data_out>upper_bound)|
+                    (data_out<lower_bound))
+Index1=['내부온도관측치', '내부습도관측치', 'CO2관측치', 'EC관측치', '외부온도관측치', '외부습도관측치', '펌프상태',
+       '펌프작동남은시간', '최근분무량', '일간누적분무량', '냉방상태', '냉방작동남은시간', '난방상태', '난방작동남은시간',
+       '내부유동팬상태', '내부유동팬작동남은시간', '외부환기팬상태', '외부환기팬작동남은시간', '화이트 LED상태',
+       '화이트 LED작동남은시간', '화이트 LED동작강도', '레드_LED상태', '레드_LED작동남은시간',
+       '레드 LED동작강도', '블루 LED상태', '블루 LED작동남은시간', '블루 LED동작강도', '카메라상태', '냉방온도',
+       '난방온도', '기준온도', '난방부하', '냉방부하', '총추정광량', '백색광추정광량', '적색광추정광량',
+       '청색광추정광량']                     
+  
+내부온도관측치_out_index= outliers(out_df['내부온도관측치'])[0]                        # 91405
+내부습도관측치_out_index= outliers(out_df['내부습도관측치'])[0]                        # 0
+CO2관측치_out_index= outliers(out_df['CO2관측치'])[0] # 0
+EC관측치_out_index= outliers(out_df['EC관측치'])[0] #44
+외부온도관측치_out_index= outliers(out_df['외부온도관측치'])[0] # 0
+외부습도관측치_out_index= outliers(out_df['외부습도관측치'])[0] # 1
+펌프상태_out_index= outliers(out_df['펌프상태'])[0] # 0
+펌프작동남은시간_index= outliers(out_df['펌프작동남은시간'])[0] # 0
+최근분무량_out_index= outliers(out_df['최근분무량'])[0]  # 0
+일간누적분무량_out_index= outliers(out_df['일간누적분무량'])[0] # 0
+냉방상태_out_index= outliers(out_df['냉방상태'])[0] # 38
+냉방작동남은시간_out_index= outliers(out_df['냉방작동남은시간'])[0] # 0
+난방상태_out_index= outliers(out_df['난방상태'])[0] # 0
+난방작동남은시간_out_index= outliers(out_df['난방작동남은시간'])[0] # 0
+내부유동팬상태_out_index= outliers(out_df['내부유동팬상태'])[0] # 0
+내부유동팬작동남은시간_out_index= outliers(out_df['내부유동팬작동남은시간'])[0] # 89
+외부환기팬상태_out_index= outliers(out_df['외부환기팬상태'])[0] # 138
+외부환기팬작동남은시간_out_index= outliers(out_df['외부환기팬작동남은시간'])[0] # 138
+화이트_LED상태_out_index= outliers(out_df['화이트 LED상태'])[0] # 138
+화이트_LED작동남은시간_out_index= outliers(out_df['화이트 LED작동남은시간'])[0] # 138
+화이트_LED동작강도_out_index= outliers(out_df['화이트 LED동작강도'])[0] # 138
+레드_LED상태_out_index= outliers(out_df['레드 LED상태'])[0] # 138
+레드_LED작동남은시간_out_index= outliers(out_df['레드 LED작동남은시간'])[0] # 138
+레드_LED동작강도_out_index= outliers(out_df['레드 LED동작강도'])[0] # 138
+블루_LED상태_out_index= outliers(out_df['블루 LED상태'])[0] # 138
+블루_LED작동남은시간_out_index= outliers(out_df['블루 LED작동남은시간'])[0] # 138
+블루_LED동작강도_out_index= outliers(out_df['블루 LED동작강도'])[0] # 138
+카메라상태_out_index= outliers(out_df['카메라상태'])[0] # 138
+냉방온도_out_index= outliers(out_df['냉방온도'])[0] # 138
+난방온도_out_index= outliers(out_df['난방온도'])[0] # 138
+기준온도_out_index= outliers(out_df['기준온도'])[0] # 138
+난방부하_out_index= outliers(out_df['난방부하'])[0] # 138
+냉방부하_out_index= outliers(out_df['냉방부하'])[0] # 138
+총추정광량_out_index= outliers(out_df['총추정광량'])[0] # 138
+백색광추정광량_out_index= outliers(out_df['백색광추정광량'])[0] # 138
+적색광추정광량_out_index= outliers(out_df['적색광추정광량'])[0] # 138
+청색광추정광량_out_index= outliers(out_df['청색광추정광량'])[0] # 138
+print(len(내부온도관측치_out_index))
 
-
-train_df = pd.read_csv(path + 'train.csv')
-test_x = pd.read_csv(path + 'test.csv').drop(columns=['ID'])
-
-# print(train_df.info())
-# print(train_df.columns.values)
-# print(train_df.isnull().sum())
-
- 
-train_x = train_df.filter(regex='X') # Input : X Featrue
-train_y = train_df.filter(regex='Y') # Output : Y Feature
-
-cols = ["X_10","X_11"]
-train_x[cols] = train_x[cols].replace(0, np.nan)
-
-imp = IterativeImputer(estimator = LinearRegression(), 
-                       tol= 1e-10, 
-                       max_iter=30, 
-                       verbose=2, 
-                       imputation_order='roman'
-                       )
-
-train_x = pd.DataFrame(imp.fit_transform(train_x), columns=train_x.columns)
-
-train_01 = outliers(train_x['X_01'])[0]
-train_02 = outliers(train_x['X_02'])[0]
-train_03 = outliers(train_x['X_03'])[0]
-train_04 = outliers(train_x['X_04'])[0]
-train_05 = outliers(train_x['X_05'])[0]
-train_06 = outliers(train_x['X_06'])[0]
-train_07 = outliers(train_x['X_07'])[0]
-train_08 = outliers(train_x['X_08'])[0]
-train_09 = outliers(train_x['X_09'])[0]
-train_10 = outliers(train_x['X_10'])[0]
-
-train_11 = outliers(train_x['X_11'])[0]
-train_12 = outliers(train_x['X_12'])[0]
-train_13 = outliers(train_x['X_13'])[0]
-train_14 = outliers(train_x['X_14'])[0]
-train_15 = outliers(train_x['X_15'])[0]
-train_16 = outliers(train_x['X_16'])[0]
-train_17 = outliers(train_x['X_17'])[0]
-train_18 = outliers(train_x['X_18'])[0]
-train_19 = outliers(train_x['X_19'])[0]
-train_20 = outliers(train_x['X_20'])[0]
-
-train_21 = outliers(train_x['X_21'])[0]
-train_22 = outliers(train_x['X_22'])[0]
-train_23 = outliers(train_x['X_23'])[0]
-train_24 = outliers(train_x['X_24'])[0]
-train_25 = outliers(train_x['X_25'])[0]
-train_26 = outliers(train_x['X_26'])[0]
-train_27 = outliers(train_x['X_27'])[0]
-train_28 = outliers(train_x['X_28'])[0]
-train_29 = outliers(train_x['X_29'])[0]
-train_30 = outliers(train_x['X_30'])[0]
-
-train_31 = outliers(train_x['X_31'])[0]
-train_32 = outliers(train_x['X_32'])[0]
-train_33 = outliers(train_x['X_33'])[0]
-train_34 = outliers(train_x['X_34'])[0]
-train_35 = outliers(train_x['X_35'])[0]
-train_36 = outliers(train_x['X_36'])[0]
-train_37 = outliers(train_x['X_37'])[0]
-train_38 = outliers(train_x['X_38'])[0]
-train_39 = outliers(train_x['X_39'])[0]
-train_40 = outliers(train_x['X_40'])[0]
-
-train_41 = outliers(train_x['X_41'])[0]
-train_42 = outliers(train_x['X_42'])[0]
-train_43 = outliers(train_x['X_43'])[0]
-train_44 = outliers(train_x['X_44'])[0]
-train_45 = outliers(train_x['X_45'])[0]
-train_46 = outliers(train_x['X_46'])[0]
-train_47 = outliers(train_x['X_47'])[0]
-train_48 = outliers(train_x['X_48'])[0]
-train_49 = outliers(train_x['X_49'])[0]
-train_50 = outliers(train_x['X_50'])[0]
-
-train_51 = outliers(train_x['X_51'])[0]
-train_52 = outliers(train_x['X_52'])[0]
-train_53 = outliers(train_x['X_53'])[0]
-train_54 = outliers(train_x['X_54'])[0]
-train_55 = outliers(train_x['X_55'])[0]
-train_56 = outliers(train_x['X_56'])[0]
-
-# tlist = [train_01,train_02,train_03,train_04,train_05,train_06,train_07,train_08,train_09,train_10,
-#          train_11,train_12,train_13,train_14,train_15,train_16,train_17,train_18,train_19,train_20,
-#          train_21,train_22,train_23,train_24,train_25,train_26,train_27,train_28,train_29,train_30,
-#          train_31,train_32,train_33,train_34,train_35,train_36,train_37,train_38,train_39,train_40,
-#          train_41,train_42,train_43,train_44,train_45,train_46,train_47,train_48,train_49,train_50,
-#          train_51,train_52,train_53,train_54,train_55,train_56]
-# for i, t in enumerate(tlist):
-#     print(i+1, ':', len(t))
-
-lead_outlier_index = np.concatenate((
-                            train_01, #1 : 1145
-                            # train_02, #2 : 6587
-                            train_03, #3 : 699
-                            
-                            train_06, #6 : 419
-                            # train_07, #7 : 2052
-                            # train_08, #8 : 8193
-                            train_09, #9 : 1400
-                            train_10, #10 : 783
-                            
-                            train_11, #11 : 878
-                            train_12, #12 : 315
-                            train_13, #13 : 820
-                            train_14, #14 : 282
-                            train_15, #15 : 60
-                            train_16, #16 : 257
-                            train_17, #17 : 513
-                            train_18, #18 : 247
-                            train_19, #19 : 152
-                            train_20, #20 : 18
-                            
-                            train_21, #21 : 61
-                            train_22, #22 : 20
-                            
-                            train_24, #24 : 64
-                            train_25, #25 : 135
-                            train_26, #26 : 229
-                            train_27, #27 : 589
-                            train_28, #28 : 1034
-                            train_29, #29 : 1168
-                            # train_30, #30 : 5926
-                            
-                            train_31, #31 : 1848
-                            train_32, #32 : 1862
-                            # train_33, #33 : 3942
-                           
-                            train_38, #38 : 1524
-                            train_39, #39 : 1499
-                            train_40, #40 : 1449
-                            
-                            train_41, #41 : 550
-                            train_42, #42 : 209
-                            train_43, #43 : 246
-                            train_44, #44 : 255
-                            train_45, #45 : 59
-                            # train_46, #46 : 5519
-                            
-                            train_49, #49 : 2826
-                            train_50, #50 : 464
-                            
-                            train_51, #51 : 487
-                            train_52, #52 : 442
-                            train_53, #53 : 423
-                            train_54, #54 : 411
-                            train_55, #55 : 384
-                            train_56  #56 : 433
-    
-    ),axis=None)
+'''
+lead_outlier_index = np.concatenate((#Age_out_index,                            # acc : 0.8650306748466258
+                                    #  TypeofContact_out_index,                 # acc : 0.8920454545454546
+                                    #  CityTier_out_index,                      # acc : 0.8920454545454546
+                                     DurationOfPitch_out_index,               # acc : 0.9156976744186046
+                                    #  Gender_out_index,                        # acc : 0.8920454545454546
+                                    #  NumberOfPersonVisiting_out_index,        # acc : 0.8835227272727273
+                                    #  NumberOfFollowups_out_index,             # acc : 0.8942598187311178
+                                    #  ProductPitched_index,                    # acc : 0.8920454545454546
+                                    #  PreferredPropertyStar_out_index,         # acc : 0.8920454545454546
+                                    #  MaritalStatus_out_index,                 # acc : 0.8920454545454546
+                                    #  NumberOfTrips_out_index,                 # acc : 0.8670520231213873
+                                    #  Passport_out_index,                      # acc : 0.8920454545454546
+                                    #  PitchSatisfactionScore_out_index,        # acc : 0.8920454545454546
+                                    #  OwnCar_out_index,                        # acc : 0.8920454545454546
+                                    #  NumberOfChildrenVisiting_out_index,      # acc : 0.8920454545454546
+                                    #  Designation_out_index,                   # acc : 0.8869047619047619
+                                    #  내부온도관측치_out_index                  # acc : 0.8932926829268293
+                                     ),axis=None)
+                              
+print(len(lead_outlier_index)) #577
 
 lead_not_outlier_index = []
-for i in train_x.index:
+for i in out_df.index:
     if i not in lead_outlier_index :
         lead_not_outlier_index.append(i)
-        
-trainX_set_clean = train_x.loc[lead_not_outlier_index]      
-trainX_set_clean = trainX_set_clean.reset_index(drop=True)
-trainY_set_clean = train_y.loc[lead_not_outlier_index]      
-trainY_set_clean = trainY_set_clean.reset_index(drop=True)
+out_df_clean = out_df.loc[lead_not_outlier_index]      
+out_df_clean = out_df_clean.reset_index(drop=True)
+# print(train_set_clean)
+                         
+x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.91,shuffle=False)
+     
+#2. 모델 구성
+model = Sequential()
+model.add(GRU(100,return_sequences=True,input_shape=(1440,37)))
+model.add(GRU(100))
+model.add(Dense(256, activation='swish'))
+model.add(Dense(128, activation='swish'))
+model.add(Dense(64, activation='swish'))
+model.add(Dense(32, activation='swish'))
+model.add(Dense(1, activation='swish'))
+model.summary()
+import time
+start_time = time.time()
+#3. 컴파일, 훈련
+from tensorflow.python.keras.callbacks import EarlyStopping,ReduceLROnPlateau
+import time
+es = EarlyStopping(monitor='val_loss',patience=10,mode='min',verbose=1)
 
-train_x = trainX_set_clean
-train_y = trainY_set_clean
-print(train_x.shape, train_y.shape)
+from tensorflow.python.keras.optimizers import adam_v2
+learning_rate = 0.01
+optimizer = adam_v2.Adam(lr=learning_rate)
 
-x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, train_size=0.85, random_state=1234)
-
-
-# 베이지안옵티마이제이션-------------------------------------------------------------------------------------------------------------------
-bayseian_params = {
-    'colsample_bytree' : (0.5, 1),
-    'max_depth' : (6,16),
-    'min_child_weight' : (1, 50),
-    'reg_alpha' : (0.01, 50),
-    'reg_lambda' : (0.001, 1),
-    'subsample' : (0.5, 1)
-}
-
-# bayseian_params = {
-#     'colsample_bytree' : (0.7, 1.5),
-#     'max_depth' : (5,15),
-#     'min_child_weight' : (4, 11),
-#     'reg_alpha' : (15, 35),
-#     'reg_lambda' : (0.3, 1.5),
-#     'subsample' : (0.2, 1.3)
-# }
+model.compile(loss='mae', optimizer='adam',metrics=['acc'])
+# "".join은 " "사이에 있는 문자열을 합치겠다는 기능
+hist = model.fit(x_train, y_train, epochs=200, batch_size=3000, 
+                validation_data=(val_data, val_target),
+                verbose=2,callbacks = [es]
+                )
+model.save_weights("C:\Study\_save/keras57_12_save_weights1.h5")
 
 
-def lgb_function(max_depth, min_child_weight,subsample, colsample_bytree, reg_lambda,reg_alpha):
-    params ={
-        'n_estimators' : 500, 'learning_rate' : 0.02,
-        'max_depth' : int(round(max_depth)),                    # 정수만
-        'min_child_weight' : int(round(min_child_weight)),
-        'subsample' : max(min(subsample,1),0),                  # 0~1 사이값만
-        'colsample_bytree' : max(min(colsample_bytree,1),0),
-        'reg_lambda' : max(reg_lambda,0),                       # 양수만
-        'reg_alpha' : max(reg_alpha,0),
-    }
+#4. 평가,예측
+loss = model.evaluate(x_test, y_test)
+print('loss :', loss)
+from sklearn.metrics import r2_score
+y_predict = model.predict(x_test)
+r2 = r2_score(y_predict,y_test)
+from sklearn.metrics import mean_squared_error
+rmse = np.sqrt(mean_squared_error(y_test,y_predict))
+                      
+                  
+
+print(test_input_list2)
+model.fit(train_data,label_data)
+y_summit = model.predict(test_data)
+
+path2 = 'D:\study_data\_data\_csv\dacon_grow\\test_target/' # ".은 현재 폴더"
+targetlist = ['TEST_01.csv','TEST_02.csv','TEST_03.csv','TEST_04.csv','TEST_05.csv','TEST_06.csv']
+# [29, 35, 26, 32, 37, 36]
+empty_list = []
+for i in targetlist:
+    test_target2 = pd.read_csv(path2+i)
+    empty_list.append(test_target2)
     
-    # *여러개의인자를받겠다
-    # **키워드받겠다(딕셔너리형태)
-    model = MultiOutputRegressor(XGBRegressor(**params))
-    model.fit(x_train, y_train)
-    y_pred = model.predict(x_test)
-    score = r2_score(y_test, y_pred)
-    
-    return score
+empty_list[0]['rate'] = y_summit[:29]
+empty_list[0].to_csv(path2+'TEST_01.csv')
+empty_list[1]['rate'] = y_summit[29:29+35]
+empty_list[1].to_csv(path2+'TEST_02.csv')
+empty_list[2]['rate'] = y_summit[29+35:29+35+26]
+empty_list[2].to_csv(path2+'TEST_03.csv')
+empty_list[3]['rate'] = y_summit[29+35+26:29+35+26+32]
+empty_list[3].to_csv(path2+'TEST_04.csv')
+empty_list[4]['rate'] = y_summit[29+35+26+32:29+35+26+32+37]
+empty_list[4].to_csv(path2+'TEST_05.csv')
+empty_list[5]['rate'] = y_summit[29+35+26+32+37:]
+empty_list[5].to_csv(path2+'TEST_06.csv')
+# submission = submission.fillna(submission.mean())
+# submission = submission.astype(int)
 
-lgb_bo = BayesianOptimization(f=lgb_function, pbounds=bayseian_params, random_state=123)
-
-lgb_bo.maximize(init_points=3, n_iter=50)
-print(lgb_bo.max)
-#----------------------------------------------------------------------------------------------------------------------------------
-
-
-# 2. 모델
-model = MultiOutputRegressor(XGBRegressor(n_estimators=100, learning_rate=0.08, gamma = 0, subsample=0.75, colsample_bytree = 1, max_depth=7,
-                                         ))
-
-# 3. 훈련
-model.fit(x_train, y_train)
-
-# 4. 평가, 예측
-preds = model.predict(x_test)
-print('r2:', r2_score(y_test, preds))
-print(model.score(train_x, train_y))
-
-
-# 5. 제출준비
-model.fit(train_x, train_y)
-preds = model.predict(test_x)
-
-submit = pd.read_csv(path + 'sample_submission.csv')
-
-for idx, col in enumerate(submit.columns):
-    if col=='ID':
-        continue
-    submit[col] = preds[:,idx-1]
-
-submit.to_csv(path + 'submission.csv', index=False)
+import os
+import zipfile
+filelist = ['TEST_01.csv','TEST_02.csv','TEST_03.csv','TEST_04.csv','TEST_05.csv', 'TEST_06.csv']
+os.chdir("D:\study_data\_data\_csv\dacon_grow/test_target")
+with zipfile.ZipFile("D:\study_data\_data\_csv\dacon_grow/sample_submission.zip", 'w') as my_zip:
+    for i in filelist:
+        my_zip.write(i)
+    my_zip.close()
+print('Done')
+print('R2 :', r2)
+print('RMSE :', rmse)
+end_time = time.time()-start_time
+print('걸린 시간:', end_time)
+'''
 
 
-
-# 0.28798862985210744
-
-# 0.38385531397806155 / 08
-
-# 0.3813003238320756
-
-# 0.38400226638667195
