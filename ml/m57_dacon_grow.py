@@ -3,7 +3,7 @@ import numpy as np
 import glob
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense,LSTM,GRU
-from tensorflow.python.keras.layers import Conv1D,MaxPooling1D
+# from tensorflow.keras.layers import Bidirectional,Dense,LSTM
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 train_data = np.load('D:/study_data/_save/_npy/train_data12.npy')
@@ -19,18 +19,18 @@ print(test_data.shape,test_target.shape)    # (195, 1440, 37) (195,)
 # val_data = val_data.reshape(206, 1440, 37, 1)
 # test_data = test_data.reshape(195, 1440, 37, 1)
                                                          
-x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.91,shuffle=False)
+x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.91,shuffle=True,random_state=123)
 print(x_train.shape)
 #2. 모델 구성      
                                                                                               
-model = Sequential()  
 model = Sequential()
-model.add(GRU(150,input_shape=(1440,37), activation='relu'))
-# model.add(GRU(50,return_sequences=True))
+model.add(LSTM(50,input_shape=(1440,37)))
+# model.add(GRU(50, activation='relu'))
 # model.add(GRU(50))
 model.add(Dense(256, activation='relu'))
 model.add(Dense(128, activation='relu'))
 model.add(Dense(64, activation='relu'))
+model.add(Dense(32, activation='relu'))
 model.add(Dense(1))
 model.summary()
   
@@ -47,7 +47,7 @@ optimizer = adam_v2.Adam(lr=learning_rate)
 
 model.compile(loss='mae', optimizer='adam',metrics=['acc'])
 # "".join은 " "사이에 있는 문자열을 합치겠다는 기능
-hist = model.fit(x_train, y_train, epochs=200, batch_size=1000, 
+hist = model.fit(x_train, y_train, epochs=200, batch_size=2000, 
                 validation_data=(val_data, val_target),
                 verbose=2,callbacks = [es]
                 )
