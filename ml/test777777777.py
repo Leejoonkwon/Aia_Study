@@ -16,7 +16,8 @@ test_target_list2 = sorted(glob.glob(path + 'test_target/*.csv'))
 
 train_input_list = all_input_list[:50]
 train_target_list = all_target_list[:50]
-
+print(train_input_list)
+'''
 val_input_list = all_input_list[50:]
 val_target_list = all_target_list[50:]
 
@@ -70,8 +71,8 @@ x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_siz
 
 #2. 모델 구성
 model = Sequential()
-model.add(GRU(128,return_sequences=True,input_shape=(1440,37)))
-model.add(GRU(128))
+model.add(GRU(50,return_sequences=True,input_shape=(1440,37)))
+model.add(GRU(50))
 model.add(Dense(256, activation='relu'))
 model.add(Dense(128, activation='relu'))
 model.add(Dense(64, activation='relu'))
@@ -88,7 +89,7 @@ hist = model.fit(x_train, y_train, epochs=20, batch_size=5000,
                 validation_data=(val_data, val_target),
                 verbose=2,#callbacks = [earlyStopping]
                 )
-# model.save_weights("C:\Study\_save/keras57_8_save_weights1.h5")
+model.save_weights("C:\Study\_save/keras57_8_save_weights1.h5")
 
 end_time = time.time()-start_time
 #4. 평가,예측
@@ -148,6 +149,6 @@ print('Done')
 print('R2 :', r2)
 print('RMSE :', rmse)
 print('걸린 시간:', end_time)
-
+'''
 
 

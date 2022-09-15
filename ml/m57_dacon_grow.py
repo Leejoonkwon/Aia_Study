@@ -1,11 +1,13 @@
 import pandas as pd
 import numpy as np
 import glob
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense,LSTM,GRU
+# from tensorflow.python.keras.models import Sequential
+# from tensorflow.python.keras.layers import Dense,LSTM,GRU
+from tensorflow.keras.layers import Bidirectional
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense,SimpleRNN,LSTM,GRU
 # from tensorflow.keras.layers import Bidirectional,Dense,LSTM
 from sklearn.model_selection import train_test_split
-import tensorflow as tf
 train_data = np.load('D:/study_data/_save/_npy/train_data12.npy')
 label_data = np.load('D:/study_data/_save/_npy/label_data12.npy')
 val_data = np.load('D:/study_data/_save/_npy/val_data12.npy')
@@ -18,18 +20,23 @@ print(test_data.shape,test_target.shape)    # (195, 1440, 37) (195,)
 # train_data = train_data.reshape(1607, 1440, 37, 1)
 # val_data = val_data.reshape(206, 1440, 37, 1)
 # test_data = test_data.reshape(195, 1440, 37, 1)
-                                                         
-x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.91,shuffle=True,random_state=123)
-print(x_train.shape)
+                                                  
+# x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.87,shuffle=False)
+# print(x_train.shape,x_test.shape) # (1462, 1440, 37) (145, 1440, 37)
+from sklearn.preprocessing import MinMaxScaler,StandardScaler
+# scaler = StandardScaler()
+# x_train = x_train.reshape(1462,53280)
+# x_test = x_test.reshape(145,53280)
+
+# x_train = scaler.fit_transform(x_train)
+# x_test = scaler.transform(x_test)
+# x_train = x_train.reshape(1462,1440,37)
+# x_test = x_test.reshape(145,1440,37)
+
 #2. 모델 구성      
                                                                                               
 model = Sequential()
-model.add(LSTM(50,input_shape=(1440,37)))
-# model.add(GRU(50, activation='relu'))
-# model.add(GRU(50))
-model.add(Dense(256, activation='relu'))
-model.add(Dense(128, activation='relu'))
-model.add(Dense(64, activation='relu'))
+model.add(Bidirectional(GRU(50,return_sequences=True),input_shape=(1440,37)))
 model.add(Dense(32, activation='relu'))
 model.add(Dense(1))
 model.summary()
@@ -39,29 +46,26 @@ start_time = time.time()
 #3. 컴파일, 훈련
 from tensorflow.python.keras.callbacks import EarlyStopping,ReduceLROnPlateau
 import time
-es = EarlyStopping(monitor='val_loss',patience=20,mode='min',verbose=1)
+es = EarlyStopping(monitor='val_loss',patience=5,mode='min',verbose=1)
 
-from tensorflow.python.keras.optimizers import adam_v2
-learning_rate = 0.01
-optimizer = adam_v2.Adam(lr=learning_rate)
 
-model.compile(loss='mae', optimizer='adam',metrics=['acc'])
+model.compile(loss='mae', optimizer='adam',metrics=['mse'])
 # "".join은 " "사이에 있는 문자열을 합치겠다는 기능
-hist = model.fit(x_train, y_train, epochs=200, batch_size=2000, 
+hist = model.fit(train_data, label_data, epochs=20, batch_size=2000, 
                 validation_data=(val_data, val_target),
                 verbose=2,callbacks = [es]
                 )
-model.save_weights("C:\Study\_save/keras57_12_save_weights1.h5")
+model.save_weights("C:\Study\_save/keras57_10_save_weights1.h5")
 
 
 #4. 평가,예측
-loss = model.evaluate(x_test, y_test)
-print('loss :', loss)
-from sklearn.metrics import r2_score
-y_predict = model.predict(x_test)
-r2 = r2_score(y_predict,y_test)
-from sklearn.metrics import mean_squared_error
-rmse = np.sqrt(mean_squared_error(y_test,y_predict))
+# loss = model.evaluate(x_test, y_test)
+# print('loss :', loss)
+# from sklearn.metrics import r2_score
+# y_predict = model.predict(x_test)
+# r2 = r2_score(y_predict,y_test)
+# from sklearn.metrics import mean_squared_error
+# rmse = np.sqrt(mean_squared_error(y_test,y_predict))
                       
                   
 # y_predict = model.predict(x_test)
@@ -72,9 +76,10 @@ rmse = np.sqrt(mean_squared_error(y_test,y_predict))
 # r2 = r2_score(y_test, y_predict)
 # print('r2스코어 :', r2)
 
-model.fit(train_data,label_data)
-y_summit = model.predict(test_data)
 
+# model.fit(train_data,label_data)
+y_summit = model.predict(test_data)
+model.save_weights("C:\Study\_save/keras57_15_save_weights1.h5")
 path2 = 'D:\study_data\_data\_csv\dacon_grow\\test_target/' # ".은 현재 폴더"
 targetlist = ['TEST_01.csv','TEST_02.csv','TEST_03.csv','TEST_04.csv','TEST_05.csv','TEST_06.csv']
 # [29, 35, 26, 32, 37, 36]
@@ -111,6 +116,9 @@ print('R2 :', r2)
 print('RMSE :', rmse)
 end_time = time.time()-start_time
 print('걸린 시간:', end_time)
-
-
+# Minmax
+# loss : [0.4065817594528198, 0.006896551698446274]
+# R2 : -46.606687007464885
+# RMSE : 1.6205276408795766
+# 걸린 시간: 1512.3487508296967
 
