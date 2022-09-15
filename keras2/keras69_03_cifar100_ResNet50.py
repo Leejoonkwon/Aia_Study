@@ -11,7 +11,7 @@
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense,Flatten,GlobalAveragePooling2D
-from keras.applications import VGG19,ResNet50
+from keras.applications import resnet
 from keras.datasets import cifar100
 (x_train,y_train),(x_test,y_test) = cifar100.load_data()
 print(x_train.shape,y_train.shape)  # (50000, 32, 32, 3) (50000, 1)
@@ -20,7 +20,7 @@ print(x_test.shape,y_test.shape)    # (10000, 32, 32, 3) (10000, 1)
 
 #1. 데이터
 # model= vgg16.VGG16() # include_top = True,input_shape=(224,224,3)이 디폴트
-Res50 = ResNet50(weights='imagenet',include_top=False,
+Res50 = resnet.ResNet50(weights='imagenet',include_top=False,
                     input_shape=(32,32,3))
 
 # VGG16.summary() # Trainable params: 14,714,688
@@ -39,7 +39,7 @@ from tensorflow.python.keras.callbacks import EarlyStopping
 es = EarlyStopping(monitor='val_loss',patience=10,mode='auto')
 model.compile(loss='sparse_categorical_crossentropy',optimizer='adam')
 
-model.fit(x_train,y_train,epochs=100,batch_size=4000,
+model.fit(x_train,y_train,epochs=100,batch_size=1000,
           callbacks=[es],validation_split=0.3)
 from sklearn.metrics import accuracy_score
 #4. 평가, 예측
@@ -57,7 +57,7 @@ print("acc : ",acc)
 ################### model.trainable = False 로 진행
 # acc :  0.1021
 
-
+# acc :  0.3835
 
 
 

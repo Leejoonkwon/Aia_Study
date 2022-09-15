@@ -29,7 +29,9 @@ vgg19 = VGG19(weights='imagenet',include_top=False,
 model = Sequential()
 model.add(vgg19)
 model.add(GlobalAveragePooling2D())
-model.add(Dense(100))
+model.add(Dense(512, activation='relu'))
+model.add(Dense(256, activation='sigmoid'))
+model.add(Dense(128, activation='relu'))
 model.add(Dense(100,activation='softmax'))
 # model.trainable =False
 model.summary()
