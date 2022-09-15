@@ -58,15 +58,15 @@ optimizer = optim.Adam(model.parameters(),lr=0.01) # 모든 parameters에 맞춰
 def train(model, criterion, optimizer, x, y ):
     # model.train()         # 훈련 mode (디폴트라서 명시 안하면 train mode임)
     optimizer.zero_grad()   # 1.손실함수의 기울기를 초기화
-    hypthesis = model(x)
+    hypothesis = model(x)
     # loss =  nn.MSELoss(hypthesis, y) # 에러
     # loss =  nn.MSELoss()(hypthesis, y)
-    loss  = criterion(hypthesis,y)
+    loss  = criterion(hypothesis,y)
     
     loss.backward()         # 2.가중치 역전파
     optimizer.step()        # 3.가중치 갱신
     return loss.item()
-epochs = 5000
+epochs = 1000
 for epoch in range(1, epochs +1):
     loss = train(model, criterion, optimizer, x, y)
     print('epoch : {}, loss : {}'.format(epoch,loss))
@@ -89,8 +89,9 @@ print('최종 loss : ',loss2)
 
 results = model(A).to(DEVICE)
                             
-             
-print('result : ',results.tolist())
+print('result : ',results.detach().cpu())
+
+# print('result : ',results.tolist())
 # 최종 loss :  0.015954621136188507
 # result :  [[10.204804420471191, 1.9247193336486816]]
 
