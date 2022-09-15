@@ -95,7 +95,7 @@ print('Accuracy : {:.4f}'.format(score))
 from sklearn.metrics import accuracy_score
 
 # acc = accuracy_score(y_predict,y_test) #  GPU 상태라서  error 임
-# print('ACC : ',acc)
+# print('ACC : ',acc) 
 
 acc = accuracy_score(y_predict.cpu(),y_test.cpu())
 print('ACC : ',acc)

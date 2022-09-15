@@ -39,11 +39,11 @@ y = train_set['count']
 x = x.values
 y = y.values
 from sklearn.model_selection import train_test_split
-
+   
 x_train,x_test,y_train,y_test \
 = train_test_split(x,y,train_size=0.7,
   shuffle=True,random_state=1234)
-
+   
 x_train = torch.FloatTensor(x_train)
 # y_train = torch.FloatTensor(y_train).unsqueeze(1).to(DEVICE)
 # y_train = torch.FloatTensor(y_train).to(DEVICE)
