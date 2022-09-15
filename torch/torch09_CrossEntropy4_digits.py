@@ -1,4 +1,6 @@
-from sklearn.datasets import load_breast_cancer
+# 이진분류가 아닌 다중분류는 loss가 crossentropyloss와 y를 LongTensor로 타입 교체한다.
+# 모델의 아웃풋 노드를 클래스에 맞게 입력!
+from sklearn.datasets import fetch_covtype,load_digits
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -11,12 +13,14 @@ DEVICE = torch.device('cuda:0' if USE_CUDA else 'cpu')
 print('torch : ',torch.__version__,'사용DEVICE : ',DEVICE)
 
 #1. 데이터
-datasets = load_breast_cancer()
+datasets = load_digits()
 x = datasets.data
 y = datasets.target
 # (569, 30) (569,)
 x = torch.FloatTensor(x)
-y = torch.FloatTensor(y)
+y = torch.LongTensor(y)
+print(y.unique())
+# tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 from sklearn.model_selection import train_test_split
 
 x_train,x_test,y_train,y_test \
@@ -24,9 +28,14 @@ x_train,x_test,y_train,y_test \
   shuffle=True,random_state=1234,stratify=y)
 
 x_train = torch.FloatTensor(x_train)
-y_train = torch.FloatTensor(y_train).unsqueeze(-1).to(DEVICE)
+# y_train = torch.FloatTensor(y_train).unsqueeze(1).to(DEVICE)
+# y_train = torch.FloatTensor(y_train).to(DEVICE)
+y_train = torch.LongTensor(y_train).to(DEVICE)
+
 x_test = torch.FloatTensor(x_test)
-y_test = torch.FloatTensor(y_test).unsqueeze(-1).to(DEVICE)
+# y_test = torch.FloatTensor(y_test).unsqueeze(1).to(DEVICE)
+# y_test = torch.FloatTensor(y_test).to(DEVICE)
+y_test = torch.LongTensor(y_test).to(DEVICE)
 
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
@@ -37,20 +46,22 @@ x_test = torch.FloatTensor(x_test).to(DEVICE)
 
 # sklearn에 있는 scaler 쓸 시 gpu 모드로 못함!
 # print(x_train.size())
-print(x_train.shape,y_train.shape) # (398, 30)
+print(x_train.shape,y_train.shape) 
+# torch.Size([1257, 64]) torch.Size([1257])
+
 #2. 모델 
 model = nn.Sequential(
-    nn.Linear(30,64),
+    nn.Linear(64,64),
     nn.ReLU(),
     nn.Linear(64,32),
     nn.ReLU(),
     nn.Linear(32,16),
-    nn.Linear(16,1),
-    nn.Sigmoid()
+    nn.Linear(16,10),
+    nn.Softmax()
 ).to(DEVICE)
 
 #3. 컴파일, 훈련
-criterion = nn.BCELoss()
+criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(),lr=0.01)
 
 def train(model,criterion,optimizer,x_train,y_train):
@@ -77,8 +88,9 @@ def evaluate(model,criterion,x_test,y_test):
 
 loss = evaluate(model, criterion,x_test,y_test)
 print('loss : ',loss)
-y_predict = (model(x_test) >= 0.5).float()
-print(y_predict[:10])
+
+y_predict = torch.argmax(model(x_test),axis=1)
+# print(y_predict[:10])
 score = (y_predict == y_test).float().mean()
 print('Accuracy : {:.4f}'.format(score))
 
@@ -89,3 +101,9 @@ from sklearn.metrics import accuracy_score
 
 acc = accuracy_score(y_predict.cpu(),y_test.cpu())
 print('ACC : ',acc)
+
+# loss :  1.504394769668579
+# Accuracy : 0.9556
+# ACC :  0.9555555555555556
+
+
