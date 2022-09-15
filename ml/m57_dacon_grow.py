@@ -40,7 +40,7 @@ model.add(Bidirectional(GRU(50,return_sequences=True),input_shape=(1440,37)))
 model.add(Dense(32, activation='relu'))
 model.add(Dense(1))
 model.summary()
-  
+   
 import time
 start_time = time.time()
 #3. 컴파일, 훈련
