@@ -20,6 +20,8 @@ test_target = np.load('D:/study_data/_save/_npy/test_target12.npy')
 # print(val_data.shape, val_target.shape) # (206, 1440, 37) (206,)
 # print(test_data.shape, test_target.shape)   # (195, 1440, 37) (195,)
 col_check = pd.read_csv('D:\study_data\_data\_csv\dacon_grow\\train_input/'+'CASE_01.csv',encoding='utf-8')
+col_check2 = pd.read_csv('D:\study_data\_data\_csv\dacon_grow\\train_target/'+'CASE_01.csv',encoding='utf-8')
+
 # print(col_check.columns)
 Index=['번호','내부온도관측치', '내부습도관측치', 'CO2관측치', 'EC관측치', '외부온도관측치', '외부습도관측치', '펌프상태',
        '펌프작동남은시간', '최근분무량', '일간누적분무량', '냉방상태', '냉방작동남은시간', '난방상태', '난방작동남은시간',
@@ -30,7 +32,9 @@ Index=['번호','내부온도관측치', '내부습도관측치', 'CO2관측치'
        '청색광추정광량']
 m,n,r = train_data.shape
 out_arr = np.column_stack((np.repeat(np.arange(m),n),train_data.reshape(m*(n),-1)))
+
 out_df = pd.DataFrame(out_arr,columns=Index)
+
 # out_df = out_df.drop(columns='0', axis=1)
 
 # print(out_df['최근분무량'].value_counts())
