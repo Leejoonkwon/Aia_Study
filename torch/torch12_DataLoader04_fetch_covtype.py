@@ -107,7 +107,7 @@ def evaluate(model,criterion,loader):
 loss = evaluate(model,criterion,test_loader)
 print('==============점수============')
 print('loss :', loss)
-           
+             
 y_predict = torch.argmax(model(x_test),axis=1)
 score = ((y_predict == y_test).float().mean())
 print('acc : {:.2f}%'.format(score*100))
