@@ -103,7 +103,7 @@ def evaluate(model,criterion,loader):
             loss = criterion(hypothesis,y_batch)
             total_loss += loss.item()
     return loss.item()
-      
+         
 loss = evaluate(model,criterion,test_loader)
 print('==============점수============')
 print('loss :', loss)
