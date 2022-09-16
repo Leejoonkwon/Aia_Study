@@ -113,6 +113,6 @@ score = ((y_predict == y_test).float().mean())
 print('acc : {:.2f}%'.format(score*100))
 # ==============점수============
 # loss : 1.7772973775863647      
-# acc : 51.88%
+# acc : 51.88%  
 
 
