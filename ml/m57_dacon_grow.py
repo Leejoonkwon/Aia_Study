@@ -79,7 +79,7 @@ hist = model.fit(train_data, label_data, epochs=500000, batch_size=100,
                 )    
 model.save_weights("C:\Study\_save/keras57_10_save_weights1.h5")
                                  
-    
+     
 #4. 평가,예측
 loss = model.evaluate(x_test, y_test)
 print('loss :', loss)
