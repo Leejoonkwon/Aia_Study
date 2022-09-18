@@ -1,12 +1,11 @@
 import pandas as pd
 import numpy as np
 import glob
+import random
 # from tensorflow.python.keras.models import Sequential
-# from tensorflow.python.keras.layers import Dense,LSTM,GRU
-from tensorflow.keras.layers import Bidirectional
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense,SimpleRNN,LSTM,GRU
-# from tensorflow.keras.layers import Bidirectional,Dense,LSTM
+# from tensorflow.python.keras.layers import Dense,LSTM,GRU,Dropout,Conv1D,MaxPooling2D,Convolution1D
+from keras.models import Sequential
+from keras.layers import Dense,LSTM,GRU,Dropout,BatchNormalization,Conv1D,MaxPooling1D
 from sklearn.model_selection import train_test_split
 train_data = np.load('D:/study_data/_save/_npy/train_data12.npy')
 label_data = np.load('D:/study_data/_save/_npy/label_data12.npy')
@@ -21,7 +20,7 @@ print(test_data.shape,test_target.shape)    # (195, 1440, 37) (195,)
 # val_data = val_data.reshape(206, 1440, 37, 1)
 # test_data = test_data.reshape(195, 1440, 37, 1)
                                                   
-# x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.87,shuffle=False)
+x_train,x_test,y_train,y_test = train_test_split(train_data,label_data,train_size=0.91,shuffle=True,random_state=123)
 # print(x_train.shape,x_test.shape) # (1462, 1440, 37) (145, 1440, 37)
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
 # scaler = StandardScaler()
@@ -32,12 +31,35 @@ from sklearn.preprocessing import MinMaxScaler,StandardScaler
 # x_test = scaler.transform(x_test)
 # x_train = x_train.reshape(1462,1440,37)
 # x_test = x_test.reshape(145,1440,37)
-
+#         layers.ConvLSTM2D(
+#             filters=40, kernel_size=(3, 3), padding="same", return_sequences=True
+#         ),
+#         layers.BatchNormalization(),
+#         layers.ConvLSTM2D(
+#             filters=40, kernel_size=(3, 3), padding="same", return_sequences=True
+#         ),
+#         layers.BatchNormalization(),
+#         layers.ConvLSTM2D(
+#             filters=40, kernel_size=(3, 3), padding="same", return_sequences=True
+#         ),
+#         layers.BatchNormalization(),
+#         layers.ConvLSTM2D(
+#             filters=40, kernel_size=(3, 3), padding="same", return_sequences=True
+#         ),
+# 출처: https://deep-deep-deep.tistory.com/32 [딥딥딥:티스토리]
 #2. 모델 구성      
-                                                                                              
+                    
 model = Sequential()
-model.add(Bidirectional(GRU(50,return_sequences=True),input_shape=(1440,37)))
-model.add(Dense(32, activation='relu'))
+
+model.add(LSTM(200,return_sequences=True,input_shape=(1440,37)))
+model.add(BatchNormalization())
+model.add(LSTM(200))
+model.add(BatchNormalization())
+model.add(Dense(512, activation='relu'))
+model.add(Dropout(0.3))
+model.add(Dense(256, activation='relu'))
+model.add(Dropout(0.3))
+model.add(Dense(128, activation='relu'))
 model.add(Dense(1))
 model.summary()
    
@@ -46,12 +68,12 @@ start_time = time.time()
 #3. 컴파일, 훈련
 from tensorflow.python.keras.callbacks import EarlyStopping,ReduceLROnPlateau
 import time
-es = EarlyStopping(monitor='val_loss',patience=5,mode='min',verbose=1)
+es = EarlyStopping(monitor='val_loss',patience=300,mode='min',verbose=1)
 
 
 model.compile(loss='mae', optimizer='adam',metrics=['mse'])
 # "".join은 " "사이에 있는 문자열을 합치겠다는 기능
-hist = model.fit(train_data, label_data, epochs=20, batch_size=2000, 
+hist = model.fit(train_data, label_data, epochs=500000, batch_size=100, 
                 validation_data=(val_data, val_target),
                 verbose=2,callbacks = [es]
                 )
@@ -59,13 +81,14 @@ model.save_weights("C:\Study\_save/keras57_10_save_weights1.h5")
 
 
 #4. 평가,예측
-# loss = model.evaluate(x_test, y_test)
-# print('loss :', loss)
-# from sklearn.metrics import r2_score
-# y_predict = model.predict(x_test)
-# r2 = r2_score(y_predict,y_test)
-# from sklearn.metrics import mean_squared_error
-# rmse = np.sqrt(mean_squared_error(y_test,y_predict))
+loss = model.evaluate(x_test, y_test)
+print('loss :', loss)
+from sklearn.metrics import r2_score
+y_predict = model.predict(x_test)
+
+r2 = r2_score(y_test,y_predict)
+from sklearn.metrics import mean_squared_error
+rmse = np.sqrt(mean_squared_error(y_test,y_predict))
                       
                   
 # y_predict = model.predict(x_test)
@@ -75,8 +98,8 @@ model.save_weights("C:\Study\_save/keras57_10_save_weights1.h5")
 # from sklearn.metrics import accuracy_score, r2_score,accuracy_score
 # r2 = r2_score(y_test, y_predict)
 # print('r2스코어 :', r2)
-
-
+# train_data2 = np.concatenate((train_data,val_data))
+# label_data2 = np.concatenate((label_data,val_target))
 # model.fit(train_data,label_data)
 y_summit = model.predict(test_data)
 model.save_weights("C:\Study\_save/keras57_15_save_weights1.h5")
@@ -121,4 +144,3 @@ print('걸린 시간:', end_time)
 # R2 : -46.606687007464885
 # RMSE : 1.6205276408795766
 # 걸린 시간: 1512.3487508296967
-
