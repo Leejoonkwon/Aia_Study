@@ -76,7 +76,7 @@ model.compile(loss='mae', optimizer='adam',metrics=['mse'])
 hist = model.fit(train_data, label_data, epochs=500000, batch_size=100, 
                 validation_data=(val_data, val_target),
                 verbose=2,callbacks = [es]
-                )
+                ) 
 model.save_weights("C:\Study\_save/keras57_10_save_weights1.h5")
 
 
