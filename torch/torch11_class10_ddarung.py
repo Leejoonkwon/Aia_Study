@@ -1,6 +1,3 @@
-# 이진분류가 아닌 다중분류는 loss가 crossentropyloss와 y를 LongTensor로 타입 교체한다.
-# 모델의 아웃풋 노드를 클래스에 맞게 입력!
-from sklearn.datasets import fetch_california_housing
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -67,14 +64,37 @@ print(x_train.shape,y_train.shape)
 # torch.Size([1021, 9]) torch.Size([1021, 1])
 
 #2. 모델 
-model = nn.Sequential(
-    nn.Linear(9,64),
-    nn.ReLU(),
-    nn.Linear(64,32),
-    nn.ReLU(),
-    nn.Linear(32,16),
-    nn.Linear(16,1),
-).to(DEVICE)
+# model = nn.Sequential(
+#     nn.Linear(4,64),
+#     nn.ReLU(),
+#     nn.Linear(64,32),
+#     nn.ReLU(),
+#     nn.Linear(32,16),
+#     nn.Linear(16,3),
+#     nn.Softmax()
+# ).to(DEVICE)
+class Model(nn.Module):
+    def __init__(self,input_dim,output_dim):
+        # super().__init__() # cannot assign module before Module.__init__() call  super없이 실행할 경우 error
+        super(Model,self).__init__()
+        self.linear1 = nn.Linear(input_dim, 64)
+        self.linear2 = nn.Linear(64, 32)
+        self.linear3 = nn.Linear(32, 16)
+        self.linear4 = nn.Linear(16, output_dim)
+        self.relu = nn.ReLU()
+        self.softmax = nn.Softmax()
+        
+    def forward(self, input_size):
+        x = self.linear1(input_size)
+        x = self.relu(x)
+        x = self.linear2(x)
+        x = self.relu(x)
+        x = self.linear3(x)
+        x = self.relu(x)
+        x = self.linear4(x)
+        return x
+    
+model = Model(x_train.shape[1],y_train.shape[1]).to(DEVICE)
 
 #3. 컴파일, 훈련
 criterion = nn.MSELoss()
@@ -105,19 +125,26 @@ def evaluate(model,criterion,x_test,y_test):
 loss = evaluate(model, criterion,x_test,y_test)
 print('loss : ',loss)
 
-# y_predict = torch.argmax(model(x_test),axis=1)
 y_predict = model(x_test)
+# print(y_predict[:10])
+# score = (y_predict == y_test).float().mean()
+# print('Accuracy : {:.4f}'.format(score))
 
-                            
-# print('result : ',y_predict.detach().cpu().numpy())
-from sklearn.metrics import r2_score
-r2 = r2_score(y_test.detach().cpu().numpy(),
-              y_predict.detach().cpu().numpy()
-              )
+from sklearn.metrics import accuracy_score,r2_score
+      
+# acc = accuracy_score(y_predict,y_test) #  GPU 상태라서  error 임
+# print('ACC : ',acc) 
+         
+r2 = r2_score(y_predict.detach().cpu().numpy(),
+              y_test.detach().cpu().numpy())
 print('R2 : ',r2)
-
 # ========== 평가, 예측========
-# loss :  0.28000548481941223
-# R2 :  0.7564272695202631
+# loss :  2719.689697265625
+# R2 :  0.5452915904159676
+
+
+
+
+
 
 

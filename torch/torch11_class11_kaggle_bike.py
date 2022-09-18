@@ -13,37 +13,47 @@ DEVICE = torch.device('cuda:0' if USE_CUDA else 'cpu')
 print('torch : ',torch.__version__,'사용DEVICE : ',DEVICE)
 
 #1. 데이터
-path = 'D:\study_data\_data\_csv\_ddarung/' # ".은 현재 폴더"
+path = 'D:\study_data\_data\_csv\kaggle_bike/' # ".은 현재 폴더"
 train_set = pd.read_csv(path + 'train.csv',
                         index_col=0)
 print(train_set)
 
-print(train_set.shape) #(1459, 10)
+print(train_set.shape) #(10886, 11)
 
 test_set = pd.read_csv(path + 'test.csv', #예측에서 쓸거야!!
                        index_col=0)
 
+sampleSubmission = pd.read_csv(path + 'sampleSubmission.csv',#예측에서 쓸거야!!
+                       index_col=0)
+            
+print(test_set)
+print(test_set.shape) #(6493, 8) #train_set과 열 값이 '1'차이 나는 건 count를 제외했기 때문이다.예측 단계에서 값을 대입
+
+print(train_set.columns)
+print(train_set.info()) #null은 누락된 값이라고 하고 "결측치"라고도 한다.
+print(train_set.describe()) 
+
 
 ###### 결측치 처리 1.제거##### dropna 사용
 print(train_set.isnull().sum()) #각 컬럼당 결측치의 합계
-train_set = train_set.fillna(train_set.median())
-print(train_set.isnull().sum())
-print(train_set.shape)
-test_set = test_set.fillna(test_set.median())
+print(train_set.shape) #(10886,11)
 
-x = train_set.drop(['count'],axis=1) #axis는 컬럼 
+
+x = train_set.drop([ 'casual', 'registered','count'],axis=1) #axis는 컬럼 
+
+
 print(x.columns)
-print(x.shape) #(1459, 9)
+print(x.shape) #(10886, 8)
 
 y = train_set['count']
 x = x.values
 y = y.values
 from sklearn.model_selection import train_test_split
-   
+
 x_train,x_test,y_train,y_test \
-= train_test_split(x,y,train_size=0.7,
+= train_test_split(x,y,train_size=0.95,
   shuffle=True,random_state=1234)
-   
+
 x_train = torch.FloatTensor(x_train)
 # y_train = torch.FloatTensor(y_train).unsqueeze(1).to(DEVICE)
 # y_train = torch.FloatTensor(y_train).to(DEVICE)
@@ -54,8 +64,8 @@ x_test = torch.FloatTensor(x_test)
 # y_test = torch.FloatTensor(y_test).to(DEVICE)
 y_test = torch.FloatTensor(y_test).unsqueeze(-1).to(DEVICE)
 
-from sklearn.preprocessing import StandardScaler
-scaler = StandardScaler()
+from sklearn.preprocessing import StandardScaler,MinMaxScaler
+scaler = MinMaxScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 x_train = torch.FloatTensor(x_train).to(DEVICE)
@@ -64,17 +74,39 @@ x_test = torch.FloatTensor(x_test).to(DEVICE)
 # sklearn에 있는 scaler 쓸 시 gpu 모드로 못함!
 # print(x_train.size())
 print(x_train.shape,y_train.shape) 
-# torch.Size([1021, 9]) torch.Size([1021, 1])
-
+# torch.Size([7620, 8]) torch.Size([7620, 1])
 #2. 모델 
-model = nn.Sequential(
-    nn.Linear(9,64),
-    nn.ReLU(),
-    nn.Linear(64,32),
-    nn.ReLU(),
-    nn.Linear(32,16),
-    nn.Linear(16,1),
-).to(DEVICE)
+# model = nn.Sequential(
+#     nn.Linear(4,64),
+#     nn.ReLU(),
+#     nn.Linear(64,32),
+#     nn.ReLU(),
+#     nn.Linear(32,16),
+#     nn.Linear(16,3),
+#     nn.Softmax()
+# ).to(DEVICE)
+class Model(nn.Module):
+    def __init__(self,input_dim,output_dim):
+        # super().__init__() # cannot assign module before Module.__init__() call  super없이 실행할 경우 error
+        super(Model,self).__init__()
+        self.linear1 = nn.Linear(input_dim, 64)
+        self.linear2 = nn.Linear(64, 32)
+        self.linear3 = nn.Linear(32, 16)
+        self.linear4 = nn.Linear(16, output_dim)
+        self.relu = nn.ReLU()
+        self.softmax = nn.Softmax()
+        
+    def forward(self, input_size):
+        x = self.linear1(input_size)
+        x = self.relu(x)
+        x = self.linear2(x)
+        x = self.relu(x)
+        x = self.linear3(x)
+        x = self.relu(x)
+        x = self.linear4(x)
+        return x
+    
+model = Model(x_train.shape[1],y_train.shape[1]).to(DEVICE)
 
 #3. 컴파일, 훈련
 criterion = nn.MSELoss()
@@ -105,19 +137,25 @@ def evaluate(model,criterion,x_test,y_test):
 loss = evaluate(model, criterion,x_test,y_test)
 print('loss : ',loss)
 
-# y_predict = torch.argmax(model(x_test),axis=1)
 y_predict = model(x_test)
+# print(y_predict[:10])
+# score = (y_predict == y_test).float().mean()
+# print('Accuracy : {:.4f}'.format(score))
 
-                            
-# print('result : ',y_predict.detach().cpu().numpy())
-from sklearn.metrics import r2_score
-r2 = r2_score(y_test.detach().cpu().numpy(),
-              y_predict.detach().cpu().numpy()
-              )
+from sklearn.metrics import accuracy_score,r2_score
+      
+# acc = accuracy_score(y_predict,y_test) #  GPU 상태라서  error 임
+# print('ACC : ',acc) 
+         
+r2 = r2_score(y_predict.detach().cpu().numpy(),
+              y_test.detach().cpu().numpy())
 print('R2 : ',r2)
-
 # ========== 평가, 예측========
-# loss :  0.28000548481941223
-# R2 :  0.7564272695202631
+# loss :  17589.369140625
+# R2 :  -0.44317249790840707
+
+
+
+
 
 
