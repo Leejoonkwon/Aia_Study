@@ -54,7 +54,10 @@ x_train = torch.FloatTensor(x_train).to(DEVICE)
 y_train = torch.FloatTensor(y_train).unsqueeze(-1).to(DEVICE)
 x_test = torch.FloatTensor(x_test).to(DEVICE)
 y_test = torch.FloatTensor(y_test).unsqueeze(-1).to(DEVICE)
+from torch.utils.data import TensorDataset,DataLoader
 
+train_loader = DataLoader(train_set,batch_size=40,shuffle=True)
+test_loader = DataLoader(test_set,batch_size=40)
 #2. 모델
 class Model(nn.Module):
     def __init__(self,input_dim,out_dim):
