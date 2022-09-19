@@ -86,7 +86,7 @@ test_set = TensorDataset(x_test,y_test)
 
 train_loader = DataLoader(train_set,batch_size=40,shuffle=True)
 test_loader = DataLoader(test_set,batch_size=40)
-       
+          
 #2. 모델
 class Model(nn.Module):
     def __init__(self,input_dim,out_dim):
