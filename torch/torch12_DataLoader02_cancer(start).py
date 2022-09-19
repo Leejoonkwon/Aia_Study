@@ -52,7 +52,7 @@ print(train_set[0][1])
 print(len(train_set)) # 398
 # x와 y  데이터 결합 
 train_loader = DataLoader(train_set,batch_size=40,shuffle=True)
-test_loader = DataLoader(test_set,batch_size=40,shuffle=True)
+test_loader = DataLoader(test_set,batch_size=40)
 print(train_loader)     # <torch.utils.data.dataloader.DataLoader object at 0x00000268FB3A48B0>
 
 
