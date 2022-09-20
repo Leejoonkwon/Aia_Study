@@ -73,7 +73,7 @@ x_train = torch.FloatTensor(x_train)
 x_test = torch.FloatTensor(x_test)
 y_train = torch.FloatTensor(y_train).unsqueeze(-1).to(DEVICE)
 y_test = torch.FloatTensor(y_test).unsqueeze(-1).to(DEVICE)
-     
+        
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
