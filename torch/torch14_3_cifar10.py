@@ -31,7 +31,7 @@ y_test = torch.LongTensor(y_test)
 # print(y_train.shape,y_test.shape) # torch.Size([50000]) torch.Size([10000])
 # print(x_train.shape[1]*x_train.shape[2]*x_train.shape[3])
 # print(np.min(x_train.numpy()),np.max(x_train.numpy())) # 0.0 1.0
-
+   
 x_train = x_train.reshape(50000, 32*32*3)
 x_test = x_test.reshape(10000, 32*32*3)
 print(x_train.shape,x_test.shape) # torch.Size([60000, 784]) torch.Size([10000, 784])
