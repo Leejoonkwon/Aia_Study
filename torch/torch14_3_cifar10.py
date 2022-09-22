@@ -35,7 +35,7 @@ y_test = torch.LongTensor(y_test)
 x_train = x_train.reshape(50000, 32*32*3)
 x_test = x_test.reshape(10000, 32*32*3)
 print(x_train.shape,x_test.shape) # torch.Size([60000, 784]) torch.Size([10000, 784])
-                            
+                              
 
 train_dset = TensorDataset(x_train,y_train)
 test_dset = TensorDataset(x_test,y_test)
