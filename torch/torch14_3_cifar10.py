@@ -17,7 +17,7 @@ transf = tr.Compose(tr.ToTensor())
                                                                
 USE_CUDA = torch.cuda.is_available() 
 DEVICE = torch.device('cuda:0' if USE_CUDA else 'cpu')
-
+   
 train_dataset = CIFAR10(path,train=True,download=True)
 test_dataset = CIFAR10(path,train=False,download=True)
 
