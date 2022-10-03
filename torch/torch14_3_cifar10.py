@@ -14,7 +14,7 @@ transf = tr.Compose(tr.ToTensor())
 # train_dataset = MNIST(path,train=True,download=True,transform=trasnf)
 # test_dataset = MNIST(path,train=False,download=True,transform=trasnf)
 # print(train_dataset[0][0].shape) # torch.Size([1, 15, 15])
-                                                                                                                              
+                                                                                                                                
 USE_CUDA = torch.cuda.is_available() 
 DEVICE = torch.device('cuda:0' if USE_CUDA else 'cpu')
    
