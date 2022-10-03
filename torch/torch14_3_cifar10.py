@@ -7,7 +7,7 @@ import torch.optim as optim
 from torch.optim import Adam
 import numpy as np
 import torchvision.transforms as tr
-
+  
 #1. 데이터
 path = './_data/torch_data/'
 transf = tr.Compose(tr.ToTensor())
