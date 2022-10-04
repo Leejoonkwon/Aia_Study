@@ -129,5 +129,5 @@ for epoch in range(1, epochs + 1):
     val_loss,val_acc = evaluate(model,criterion,test_loader)
     print('epoch : {}, loss : {:.4f} ,acc : {:.3f}, val_loss : {:.4}, val_acc : {:.3f}'.format(
         epoch,loss,acc,val_loss,val_acc))
-               
+                
 # epoch : 29, loss : 3.4772 ,acc : 0.169, val_loss : 3.551, val_acc : 0.161
