@@ -20,7 +20,7 @@ DEVICE = torch.device('cuda:0' if USE_CUDA else 'cpu')
    
 train_dataset = CIFAR10(path,train=True,download=True)
 test_dataset = CIFAR10(path,train=False,download=True)
-
+ 
 x_train,y_train = train_dataset.data/255., train_dataset.targets
 x_test,y_test = test_dataset.data/255. , test_dataset.targets
 x_train = torch.FloatTensor(x_train)
