@@ -122,7 +122,7 @@ def evaluate(model,criterion,loader):
             acc = (y_predict == y_batch).float().mean()
             epoch_acc += acc
     return epoch_loss/len(loader),epoch_acc/len(loader)
-             
+                
 epochs = 29
 for epoch in range(1, epochs + 1):
     loss,acc = train(model,criterion,optimizer,train_loader)
