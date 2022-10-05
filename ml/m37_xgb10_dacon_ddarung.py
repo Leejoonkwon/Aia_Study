@@ -56,7 +56,7 @@ test_set = test_set.fillna(test_set.median())
 # print(train_set.shape)
 # test_set2 = test_set.dropna()
 ###### 결측치 처리 4.위치 찾아 제거 #####
-
+ 
 def outliers(data_out):
     quartile_1, q2 , quartile_3 = np.percentile(data_out,
                                                [25,50,75]) # percentile 백분위
