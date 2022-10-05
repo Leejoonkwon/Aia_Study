@@ -15,7 +15,7 @@ x = torch.FloatTensor(x).unsqueeze(1)   # (3,) => # (3, 1)
 y = torch.FloatTensor(y).unsqueeze(-1)  # (3,) => # (3, 1)
 print(x, y) 
 print(x.shape,y.shape) # torch.Size([3, 1]) torch.Size([3, 1])
-
+ 
 #2. 모델 구성
 # model = Sequential()
 model = nn.Linear(1, 1) # 인풋 x의 컬럼 / 아웃풋 y의 컬럼
@@ -56,7 +56,7 @@ loss2 = evaluate(model, criterion, x, y)
 print('최종 loss : ',loss2)
 
 # y_predict = model.predict([4])
-results = model(torch.Tensor([[4]]))
+results = model(torch.Tensor([[4]])) 
 print('result : ',results.item())
 
 # 최종 loss :  3.72038653040363e-06
