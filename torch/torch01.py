@@ -15,7 +15,7 @@ x = torch.FloatTensor(x).unsqueeze(1)   # (3,) => # (3, 1)
 y = torch.FloatTensor(y).unsqueeze(-1)  # (3,) => # (3, 1)
 print(x, y) 
 print(x.shape,y.shape) # torch.Size([3, 1]) torch.Size([3, 1])
-
+ 
 #2. 모델 구성
 # model = Sequential()
 model = nn.Linear(1, 1) # 인풋 x의 컬럼 / 아웃풋 y의 컬럼
