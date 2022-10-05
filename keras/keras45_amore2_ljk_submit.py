@@ -112,7 +112,7 @@ def generator(data, window, offset):
     X = []
     
     for i in range(len(gen)-window-offset): # 420522
-        row = [[a] for a in gen[i:i+window]] #행
+        row = [[a] for a in gen[i:i+window]] #행 
         X.append(row)
         
         
