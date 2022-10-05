@@ -200,7 +200,7 @@ optuna.trial.Trial.suggest_loguniform() : 범위 내에서 로그 함수 값을 
 # l2_leaf_reg : float, [default=3.0]  range: [0,+inf]
 #  fold_permutation_block : int, [default=1] T[1, 256]. 
 def objectiveCAT(trial: Trial, x_train, y_train, x_test):
-    param = {
+    param = { 
         'n_estimators' : trial.suggest_int('n_estimators', 500, 4000),
         'depth' : trial.suggest_int('depth', 8, 16),
         'fold_permutation_block' : trial.suggest_int('fold_permutation_block', 1, 256),
