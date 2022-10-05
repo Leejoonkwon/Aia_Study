@@ -56,7 +56,7 @@ loss2 = evaluate(model, criterion, x, y)
 print('최종 loss : ',loss2)
 
 # y_predict = model.predict([4])
-results = model(torch.Tensor([[4]]))
+results = model(torch.Tensor([[4]])) 
 print('result : ',results.item())
 
 # 최종 loss :  3.72038653040363e-06
