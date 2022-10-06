@@ -192,7 +192,7 @@ optuna.trial.Trial.suggest_float() : 범위 내에서 소수형 값을 선택한
 optuna.trial.Trial.suggest_uniform() : 범위 내에서 균일분포 값을 선택한다.
 optuna.trial.Trial.suggest_discrete_uniform() : 범위 내에서 이산 균일분포 값을 선택한다.
 optuna.trial.Trial.suggest_loguniform() : 범위 내에서 로그 함수 값을 선택한다.
-'''                                      
+'''                                         
 # learning_ rate : float range: (0,1]
 # depth : int, [default=6]   range: [1,+inf]
 # od_pval : float, [default=None] range: [0,1]
