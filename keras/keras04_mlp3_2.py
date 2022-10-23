@@ -1,7 +1,7 @@
 import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
-             
+               
 #1. 데이터  
 x = np.array([range(10), range(21, 31), range(201, 211)])
 print(range(10))
