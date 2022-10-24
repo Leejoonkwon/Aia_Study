@@ -13,7 +13,7 @@ import matplotlib
 matplotlib.rcParams['font.family']='Malgun Gothic'
 matplotlib.rcParams['axes.unicode_minus']=False
 import pandas as pd
-   
+    
 #1. 데이터
 path = './_data/ddarung/' # ".은 현재 폴더"
 train_set = pd.read_csv(path + 'train.csv',
