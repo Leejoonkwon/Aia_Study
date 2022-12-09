@@ -2,7 +2,7 @@ from sklearn.datasets import load_diabetes
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
-       
+        
 #1. 데이터
 datasets = load_diabetes()
 x = datasets.data
