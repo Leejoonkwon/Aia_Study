@@ -121,7 +121,7 @@ empty_list = []
 for i in targetlist:
     test_target2 = pd.read_csv(path2+i)
     empty_list.append(test_target2)
-    
+# 데이터 분할 및 할당
 empty_list[0]['rate'] = y_summit[:29]
 empty_list[0].to_csv(path2+'TEST_01.csv')
 empty_list[1]['rate'] = y_summit[29:29+35]
