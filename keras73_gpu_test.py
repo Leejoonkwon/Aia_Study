@@ -43,7 +43,7 @@ model.add(Dense(100))
 model.add(Dense(10,activation='softmax'))
 # model.trainable =False
 model.summary()
-
+# vgg는 안돌아감 이유 찾기
 #3. 컴파일, 훈련
 from tensorflow.python.keras.callbacks import EarlyStopping
 es = EarlyStopping(monitor='val_loss',patience=10,mode='auto')
