@@ -1,5 +1,6 @@
 import tensorflow as tf
 gpus = tf.config.experimental.list_physical_devices('CPU')
+#  인자를 GPU랑 CPU를 바꿔서 실험
 if gpus :
     try :
         # tf.config.experimental.set_visible_devices(gpus[0],'GPU')
